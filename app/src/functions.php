@@ -29,3 +29,9 @@ function here(): string
     $q = $_SERVER['QUERY_STRING'] ?? '';
     return './' . ($q !== '' ? '?' . $q : '');
 }
+
+/** HTML d'une icône de catégorie (émoji ou « mdi:nom »). */
+function icon(?string $icon): string
+{
+    return Batons\Icons::html($icon);
+}

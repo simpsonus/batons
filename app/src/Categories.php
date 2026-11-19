@@ -54,8 +54,13 @@ final class Categories
         if ($icon === '') {
             $icon = '|';
         }
-        if (mb_strlen($icon) > 8) {
-            $errors['icon'] = 'Une icône courte : un émoji ou un ou deux caractères.';
+        if (preg_match('/^mdi[:\-]/i', $icon)) {
+            $icon = 'mdi:' . strtolower(substr($icon, 4)); // accepte aussi « mdi-coffee » ou « MDI:Coffee »
+        }
+        if (!Icons::isValid($icon)) {
+            $errors['icon'] = str_starts_with($icon, 'mdi:')
+                ? 'Icône inconnue : « ' . $icon . ' ».'
+                : 'Une icône courte : un émoji ou un ou deux caractères.';
         }
         // Une pastille de la palette (radio « color ») ou, à défaut, le sélecteur libre (« color_custom »).
         $color = strtolower(trim((string) ($in['color'] ?? $in['color_custom'] ?? '')));

@@ -36,6 +36,11 @@ Le nom vient des bâtons qu'on trace pour compter (IIII barrés). Slug technique
   Tout doit marcher sans JS (formulaires POST + redirection 303). Graphiques en **SVG générés en PHP**.
 - Sécurité : échapper toute sortie avec `e()`, jeton CSRF sur tout POST (`csrf()` dans les formulaires),
   requêtes toujours filtrées par `user_id`.
+- **Icônes** : émoji libre, ou `mdi:nom` (Material Design Icons, comme Home Assistant), rendues en SVG inline
+  par `Icons::html()` / `icon()` dans les vues. La table `app/icons/mdi.php` n'est **pas versionnée** : elle est
+  générée par `php app/bin/fetch-icons.php` (téléchargement jsDelivr, version épinglée), automatiquement au
+  build Docker. Sans elle, l'app marche avec les émojis seuls.
+- Tactile : pas de sélection de texte ni de menu contextuel sur un appui long (CSS `user-select`/`touch-callout`).
 - Interface en français pour l'instant (i18n prévue plus tard).
 
 ## Arborescence
@@ -61,6 +66,7 @@ Nouvelle évolution de schéma = nouveau fichier `app/migrations/00N_xxx.sql`, j
 ## Lancer en local
 
 ```
+php app/bin/fetch-icons.php                     # une fois : génère app/icons/mdi.php
 cd app && php -S 127.0.0.1:8080 -t public      # données dans app/data/
 BATONS_AUTH=header BATONS_AUTH_HEADER=X-User php -S …   # tester le mode header
 docker build -f docker/Dockerfile -t batons . && docker run -p 8080:8080 -v $PWD/data:/data batons
@@ -76,10 +82,11 @@ docker build -f docker/Dockerfile -t batons . && docker run -p 8080:8080 -v $PWD
 
 - [x] v0.1 : catégories, groupes, bâtons (tap éclair + saisie détaillée), stats, graphique, chronologie,
       archives, réorganisation, export CSV, Docker, add-on HA.
+- [x] v0.2 : icônes Material Design (sélecteur avec recherche, mots-clés français), correctif appui long iOS.
 - [ ] Recherche / filtre dans la chronologie, vue calendrier (heatmap) par catégorie.
 - [ ] Rappels / objectifs (« au moins 3 par semaine »).
 - [ ] Import CSV (et import depuis Chronicling).
-- [ ] Mode d'authentification `builtin`.
+- [ ] Mode d'authentification `builtin` (prérequis pour exposer l'app hors d'un proxy authentifiant, ex. port direct de l'add-on).
 - [ ] i18n (anglais).
 - [ ] Intégration HA facultative : capteurs (« temps depuis », « total du jour »), webhook/API pour ajouter
       un bâton depuis une automatisation. Toujours via une API générique, pas de code spécifique HA dans l'app.

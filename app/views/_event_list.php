@@ -17,7 +17,7 @@ $day = null;
         <span class="time"><?= $local->format('H:i') ?></span>
         <span class="body">
             <?php if ($showCategory): ?>
-                <a class="cat" href="<?= url('category', ['id' => $ev['category_id']]) ?>"><span class="icon sm"><?= e($ev['icon']) ?></span><?= e($ev['category_name']) ?></a>
+                <a class="cat" href="<?= url('category', ['id' => $ev['category_id']]) ?>"><span class="icon sm"><?= icon($ev['icon']) ?></span><?= e($ev['category_name']) ?></a>
             <?php endif; ?>
             <?php if ($ev['value'] !== null): ?>
                 <span class="value"><?= e(Chart::num($ev['value'])) ?><?= ($u = $ev['unit'] ?? $c['unit'] ?? null) ? ' ' . e($u) : '' ?></span>

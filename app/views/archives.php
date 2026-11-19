@@ -7,7 +7,7 @@
     <ul class="order-list">
         <?php foreach ($categories as $c): ?>
             <li style="--c: <?= e($c['color']) ?>">
-                <span class="icon sm"><?= e($c['icon']) ?></span>
+                <span class="icon sm"><?= icon($c['icon']) ?></span>
                 <a class="grow" href="<?= url('category', ['id' => $c['id']]) ?>"><?= e($c['name']) ?></a>
                 <span class="muted"><?= e(Time::ago($c['last_at'])) ?></span>
                 <form method="post" action="<?= url('category_archive') ?>">

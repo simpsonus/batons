@@ -170,6 +170,13 @@ switch ($route) {
         $page = max(0, (int) ($_GET['page'] ?? 0));
         Http::render('timeline', ['events' => Events::timeline($uid, 101, $page * 100), 'page' => $page], 'Chronologie');
 
+    // --- Recherche d'icônes (JSON, pour le sélecteur du formulaire) ----------------
+    case 'icons':
+        header('Content-Type: application/json; charset=utf-8');
+        header('Cache-Control: private, max-age=3600');
+        echo json_encode(Batons\Icons::search((string) ($_GET['q'] ?? '')), JSON_UNESCAPED_SLASHES);
+        exit;
+
     // --- Export CSV ----------------------------------------------------------------
     case 'export':
         header('Content-Type: text/csv; charset=utf-8');

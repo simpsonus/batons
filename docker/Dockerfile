@@ -8,7 +8,7 @@ ARG BATONS_VERSION=dev
 RUN apk add --no-cache \
         nginx \
         php83 php83-fpm php83-opcache php83-session php83-mbstring php83-ctype \
-        php83-pdo php83-pdo_sqlite php83-pdo_pgsql php83-pdo_mysql \
+        php83-pdo php83-pdo_sqlite php83-pdo_pgsql php83-pdo_mysql php83-openssl \
         tzdata \
     && ln -sf /usr/sbin/php-fpm83 /usr/sbin/php-fpm
 
@@ -18,7 +18,9 @@ COPY docker/php.ini         /etc/php83/conf.d/99-batons.ini
 COPY docker/entrypoint.sh   /entrypoint.sh
 COPY app/                   /app/
 
-RUN chmod +x /entrypoint.sh && rm -rf /app/data
+# Icônes Material Design (celles de Home Assistant), téléchargées à la construction.
+RUN chmod +x /entrypoint.sh && rm -rf /app/data /app/icons \
+    && php83 /app/bin/fetch-icons.php
 
 ENV BATONS_DATA_DIR=/data
 VOLUME /data

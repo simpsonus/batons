@@ -198,3 +198,32 @@ h3.day { font-size: .85rem; color: var(--muted); font-weight: 600; margin: 1.2re
     h1 { font-size: 1.3rem; }
     .row-actions form { display: none; }
 }
+
+/* --- Icônes MDI (SVG inline) et sélecteur ---------------------------------- */
+.icon svg { width: 62%; height: 62%; fill: currentColor; }
+.icon-field { display: flex; align-items: center; gap: .8rem; }
+.icon-field label { margin-bottom: .8rem; }
+.icon-picker { border: 1px solid var(--line); border-radius: 12px; padding: .7rem; margin-bottom: 1rem; background: var(--bg); }
+.icon-picker input[type=search] {
+    font: inherit; width: 100%; padding: .5rem .7rem; border-radius: 9px;
+    border: 1px solid var(--line); background: var(--surface); color: var(--ink);
+}
+.icon-results { display: grid; grid-template-columns: repeat(auto-fill, minmax(2.6rem, 1fr)); gap: .3rem; margin: .6rem 0 .3rem; max-height: 14rem; overflow-y: auto; }
+.icon-choice {
+    display: grid; place-items: center; aspect-ratio: 1; border: 1px solid transparent; border-radius: 9px;
+    background: var(--surface); color: var(--ink); cursor: pointer; padding: 0;
+}
+.icon-choice svg { width: 1.4rem; height: 1.4rem; fill: currentColor; }
+.icon-choice:hover { border-color: var(--line); }
+.icon-choice.selected { border-color: var(--c, var(--accent)); color: var(--c, var(--accent)); background: color-mix(in srgb, var(--c, var(--accent)) 12%, transparent); }
+.small { font-size: .8rem; margin: 0; }
+code { font-size: .85em; background: var(--line); padding: .05rem .3rem; border-radius: 4px; }
+
+/* --- Tactile : pas de sélection de texte ni de menu contextuel sur un appui long --- */
+.tile, .tap, .more, .btn, .seg a, .icon-choice {
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+}

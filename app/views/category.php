@@ -12,7 +12,7 @@ $events = array_slice($events, 0, 50);
 ?>
 <div class="page-head cat-head" style="--c: <?= e($c['color']) ?>">
     <div class="cat-title">
-        <span class="icon big"><?= e($c['icon']) ?></span>
+        <span class="icon big"><?= icon($c['icon']) ?></span>
         <div>
             <h1><?= e($c['name']) ?></h1>
             <?php if ($c['group_name']): ?><p class="muted"><?= e($c['group_name']) ?></p><?php endif; ?>

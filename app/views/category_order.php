@@ -7,7 +7,7 @@
 <ul class="order-list">
     <?php foreach ($categories as $i => $c): ?>
         <li style="--c: <?= e($c['color']) ?>">
-            <span class="icon sm"><?= e($c['icon']) ?></span>
+            <span class="icon sm"><?= icon($c['icon']) ?></span>
             <span class="grow"><?= e($c['name']) ?><?php if ($c['group_name']): ?> <span class="muted">· <?= e($c['group_name']) ?></span><?php endif; ?></span>
             <?php foreach (['up' => '↑', 'down' => '↓'] as $dir => $arrow): ?>
                 <form method="post" action="<?= url('category_move') ?>">

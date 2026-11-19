@@ -2,3 +2,4 @@ app/data/
 app/config.php
 *.sqlite*
 .DS_Store
+app/icons/

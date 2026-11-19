@@ -15,11 +15,22 @@ $palette = ['#c2410c', '#b91c1c', '#be185d', '#7c3aed', '#1d4ed8', '#0e7490', '#
             <input type="text" name="name" value="<?= e($c['name']) ?>" maxlength="80" required autofocus placeholder="ex. Café, Arrosage du ficus, Migraine">
             <?php if (isset($errors['name'])): ?><span class="error"><?= e($errors['name']) ?></span><?php endif; ?>
         </label>
-        <label class="narrow">Icône
-            <input type="text" name="icon" value="<?= e($c['icon']) ?>" maxlength="8" placeholder="☕" class="icon-input">
+    </div>
+
+    <div class="icon-field" style="--c: <?= e($c['color']) ?>">
+        <span class="icon big" data-icon-preview><?= icon($c['icon'] ?: '|') ?></span>
+        <label class="grow">Icône <span class="muted">un émoji, ou une icône comme dans Home Assistant (<code>mdi:coffee</code>)</span>
+            <input type="text" name="icon" value="<?= e($c['icon']) ?>" maxlength="64" placeholder="☕ ou mdi:coffee" autocomplete="off" data-icon-input>
             <?php if (isset($errors['icon'])): ?><span class="error"><?= e($errors['icon']) ?></span><?php endif; ?>
         </label>
     </div>
+    <?php if (Batons\Icons::available()): ?>
+        <div class="icon-picker" data-icon-picker hidden>
+            <input type="search" placeholder="Chercher une icône : café, course, pilule, plante…" data-icon-search autocomplete="off">
+            <div class="icon-results" data-icon-results></div>
+            <p class="muted small">Icônes <a href="https://pictogrammers.com/library/mdi/" target="_blank" rel="noopener">Material Design Icons</a>, les mêmes que dans Home Assistant.</p>
+        </div>
+    <?php endif; ?>
 
     <fieldset>
         <legend>Couleur</legend>

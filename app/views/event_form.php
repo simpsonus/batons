@@ -2,7 +2,7 @@
 <div class="page-head">
     <h1>Modifier le bâton</h1>
 </div>
-<p class="muted"><span class="icon sm" style="--c: <?= e($ev['color']) ?>"><?= e($ev['icon']) ?></span> <?= e($ev['category_name']) ?></p>
+<p class="muted"><span class="icon sm" style="--c: <?= e($ev['color']) ?>"><?= icon($ev['icon']) ?></span> <?= e($ev['category_name']) ?></p>
 
 <form class="card" method="post" action="<?= url('event_save') ?>">
     <?= csrf() ?>

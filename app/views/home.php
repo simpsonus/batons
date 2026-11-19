@@ -37,7 +37,7 @@ $currentGroup = false;
             <?= csrf() ?>
             <input type="hidden" name="id" value="<?= (int) $c['id'] ?>">
             <button class="tap" title="Ajouter un bâton maintenant">
-                <span class="icon"><?= e($c['icon']) ?></span>
+                <span class="icon"><?= icon($c['icon']) ?></span>
                 <span class="name"><?= e($c['name']) ?></span>
                 <span class="meta">
                     <?php if ((int) $c['today_count'] > 0): ?>
