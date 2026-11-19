@@ -179,6 +179,11 @@ docker build -f docker/Dockerfile -t batons . && docker run -p 8080:8080 -v $PWD
 - [x] v0.20.1 : ✕ / Annuler / Enregistrer ramènent à la page d'origine (`from`).
 - [x] v0.21 : Réorganiser par glisser-déposer (catégories entre groupes), plier/déplier, renommer/fusionner les groupes.
 - [x] v0.21.1 : groupe sous le doigt pendant le glisser (écart mesuré avant repli), pas de remplissage Contact Safari.
+- [ ] Calendrier : couleurs trop sombres pour 1 bâton/jour (cas le plus fréquent), surtout en mode sombre
+      (`.cal-1` = 40 % de la couleur mêlée à `--surface` ; niveau fixe `min(4, n)` dans `Chart::calendar()`).
+      Pistes proposées (pas encore validées) : échelle relative au maximum de la catégorie sur la période
+      (si le max est 1, chaque jour coché = couleur pleine), niveau 1 plus lumineux (≈ 60–65 %), légende
+      avec les vraies valeurs.
 - [ ] Type de catégorie « Éléments » générique (éléments nommés sans catalogue, plusieurs en parallèle,
       début/fin/durée — mécanique des œuvres) : à faire si un cas concret apparaît (ex. « Traitements »).
 - [ ] Plus tard éventuellement : synchro BetaSeries / Trakt (pas SensCritique ni SerieBox : pas d'API
