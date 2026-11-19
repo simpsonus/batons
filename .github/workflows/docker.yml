@@ -1,16 +1,19 @@
 # Construit et publie l'image multi-arch sur ghcr.io/simpsonus/batons.
-#  - à chaque tag vX.Y.Z  -> image X.Y.Z + latest (c'est ce tag que l'add-on HA télécharge)
-#  - à chaque push sur main -> image « edge »
+#
+# À chaque push sur main :
+#   - si la version de ha-addon/config.yaml n'a pas encore de tag vX.Y.Z :
+#       image X.Y.Z + latest, puis création du tag et de la release GitHub (automatique) ;
+#   - sinon : image « edge » seulement.
+# Il suffit donc d'augmenter la version (bootstrap.php + config.yaml) et de pousser.
 name: Image Docker
 
 on:
   push:
     branches: [main]
-    tags: ["v*"]
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   packages: write
 
 jobs:
@@ -18,16 +21,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Version
         id: v
         run: |
-          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
-            echo "version=${GITHUB_REF#refs/tags/v}" >> "$GITHUB_OUTPUT"
-            echo "tags=ghcr.io/${GITHUB_REPOSITORY,,}:${GITHUB_REF#refs/tags/v},ghcr.io/${GITHUB_REPOSITORY,,}:latest" >> "$GITHUB_OUTPUT"
-          else
+          version=$(sed -n 's/^version: *"\{0,1\}\([^"]*\)"\{0,1\}$/\1/p' ha-addon/config.yaml)
+          image="ghcr.io/${GITHUB_REPOSITORY,,}"
+          if git rev-parse -q --verify "refs/tags/v$version" >/dev/null; then
+            echo "Version $version déjà publiée : image edge seulement"
+            echo "release=false" >> "$GITHUB_OUTPUT"
             echo "version=edge" >> "$GITHUB_OUTPUT"
-            echo "tags=ghcr.io/${GITHUB_REPOSITORY,,}:edge" >> "$GITHUB_OUTPUT"
+            echo "tags=$image:edge" >> "$GITHUB_OUTPUT"
+          else
+            echo "Nouvelle version $version"
+            echo "release=true" >> "$GITHUB_OUTPUT"
+            echo "version=$version" >> "$GITHUB_OUTPUT"
+            echo "tags=$image:$version,$image:latest,$image:edge" >> "$GITHUB_OUTPUT"
           fi
 
       - uses: docker/setup-qemu-action@v3
@@ -46,3 +57,13 @@ jobs:
           push: true
           tags: ${{ steps.v.outputs.tags }}
           build-args: BATONS_VERSION=${{ steps.v.outputs.version }}
+
+      - name: Release GitHub
+        if: steps.v.outputs.release == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "v${{ steps.v.outputs.version }}" \
+            --target "$GITHUB_SHA" \
+            --title "Bâtons ${{ steps.v.outputs.version }}" \
+            --notes "$(git log -1 --format=%B "$GITHUB_SHA")"

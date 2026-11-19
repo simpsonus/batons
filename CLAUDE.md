@@ -41,6 +41,13 @@ Le nom vient des bâtons qu'on trace pour compter (IIII barrés). Slug technique
   générée par `php app/bin/fetch-icons.php` (téléchargement jsDelivr, version épinglée), automatiquement au
   build Docker. Sans elle, l'app marche avec les émojis seuls.
 - Tactile : pas de sélection de texte ni de menu contextuel sur un appui long (CSS `user-select`/`touch-callout`).
+- **Responsive et accessible (exigence, WCAG 2.2 AA visé)** : vérifier de 320 px à grand écran sans défilement
+  horizontal ; cibles tactiles ≥ 44 px (`--tap`) ; contrastes AA (couleur de catégorie en texte via `--c-ink`,
+  éclaircie en sombre) ; focus visible ; lien d'évitement ; boutons-icônes avec `aria-label` explicite
+  (`ui_icon()` pour les pictos d'interface) ; icônes décoratives `aria-hidden` ; erreurs de formulaire liées par
+  `aria-describedby` + `aria-invalid` ; graphique doublé d'un tableau pour lecteurs d'écran ; pas de message
+  qui disparaît tout seul ; `prefers-reduced-motion` respecté ; un seul `h1` et pas de saut de niveau de titre.
+- L'interface ne mentionne pas Home Assistant (l'app doit rester neutre).
 - Interface en français pour l'instant (i18n prévue plus tard).
 
 ## Arborescence
@@ -74,9 +81,11 @@ docker build -f docker/Dockerfile -t batons . && docker run -p 8080:8080 -v $PWD
 
 ## Publier une version (pour l'add-on HA)
 
-1. Mettre à jour `VERSION` dans `app/src/bootstrap.php` et `version` dans `ha-addon/config.yaml`.
-2. `git tag vX.Y.Z && git push --tags` → la CI publie `ghcr.io/simpsonus/batons:X.Y.Z`.
-3. Le paquet ghcr doit être **public** (réglage à faire une fois sur GitHub) pour que HA puisse le télécharger.
+1. Mettre à jour `VERSION` dans `app/src/bootstrap.php` et `version` dans `ha-addon/config.yaml` (les deux identiques).
+2. Pousser sur `main`. La CI voit qu'il n'existe pas encore de tag `vX.Y.Z` : elle publie
+   `ghcr.io/simpsonus/batons:X.Y.Z` (+ `latest`), puis crée elle-même le tag et la release GitHub.
+   Sans changement de version, elle ne publie que l'image `edge`. Pas besoin de créer de release à la main.
+3. Le paquet ghcr est public (réglage fait une fois) : HA propose alors la mise à jour de l'add-on.
 
 ## Feuille de route
 
@@ -85,6 +94,8 @@ docker build -f docker/Dockerfile -t batons . && docker run -p 8080:8080 -v $PWD
 - [x] v0.2 : icônes Material Design (sélecteur avec recherche, mots-clés français), correctif appui long iOS.
 - [x] v0.3 : import (exports CSV Chronicling events/categories/groups, et export CSV de Bâtons), sans doublons
       (`app/src/Importer.php` : SF Symbols -> MDI, couleurs iOS -> palette).
+- [x] v0.4 : boutons-icônes Modifier/Supprimer, passe responsive (320 px → desktop) et accessibilité ;
+      la CI crée elle-même les releases.
 - [ ] Recherche / filtre dans la chronologie, vue calendrier (heatmap) par catégorie.
 - [ ] Rappels / objectifs (« au moins 3 par semaine »).
 - [ ] Mode d'authentification `builtin` (prérequis pour exposer l'app hors d'un proxy authentifiant, ex. port direct de l'add-on).

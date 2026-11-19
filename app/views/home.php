@@ -16,7 +16,7 @@ $currentGroup = false;
 
 <?php if (!$categories): ?>
     <div class="empty">
-        <svg class="tally-big" viewBox="0 0 32 32" aria-hidden="true"><g stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M7 7v18M12 7v18M17 7v18M22 7v18"/><path d="M4 21 26 11"/></g></svg>
+        <svg class="tally-big" aria-hidden="true" focusable="false" viewBox="0 0 32 32"><g stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M7 7v18M12 7v18M17 7v18M22 7v18"/><path d="M4 21 26 11"/></g></svg>
         <p><strong>Rien à compter pour l'instant.</strong></p>
         <p>Crée une catégorie (« Café », « Arrosage », « Migraine »…), puis touche sa tuile à chaque fois que ça arrive.</p>
         <a class="btn" href="<?= url('category_new') ?>">Créer ma première catégorie</a>
@@ -36,20 +36,20 @@ $currentGroup = false;
         <form method="post" action="<?= url('tap') ?>">
             <?= csrf() ?>
             <input type="hidden" name="id" value="<?= (int) $c['id'] ?>">
-            <button class="tap" title="Ajouter un bâton maintenant">
-                <span class="icon"><?= icon($c['icon']) ?></span>
-                <span class="name"><?= e($c['name']) ?></span>
+            <button class="tap">
+                <span class="icon" aria-hidden="true"><?= icon($c['icon']) ?></span>
+                <span class="name"><span class="sr">Ajouter un bâton : </span><?= e($c['name']) ?></span>
                 <span class="meta">
                     <?php if ((int) $c['today_count'] > 0): ?>
                         <b><?= (int) $c['today_count'] ?></b> aujourd'hui<?php if ($c['unit'] && $c['today_sum'] !== null): ?> · <?= e(Chart::num($c['today_sum']) . ' ' . $c['unit']) ?><?php endif; ?>
                     <?php else: ?>
-                        <?= e(Time::ago($c['last_at'])) ?>
+                        <?php if ($c['last_at']): ?><span class="sr">dernier bâton </span><?php endif; ?><?= e(Time::ago($c['last_at'])) ?>
                     <?php endif; ?>
                 </span>
             </button>
         </form>
         <a class="more" href="<?= url('category', ['id' => $c['id']]) ?>" title="Détails, saisie avec date, valeur ou note">
-            <span aria-hidden="true">›</span><span class="sr">Détails de <?= e($c['name']) ?></span>
+            <?= ui_icon('chevron') ?><span class="sr">Détails de <?= e($c['name']) ?></span>
         </a>
     </div>
 <?php endforeach; ?>

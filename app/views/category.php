@@ -12,7 +12,7 @@ $events = array_slice($events, 0, 50);
 ?>
 <div class="page-head cat-head" style="--c: <?= e($c['color']) ?>">
     <div class="cat-title">
-        <span class="icon big"><?= icon($c['icon']) ?></span>
+        <span class="icon big" aria-hidden="true"><?= icon($c['icon']) ?></span>
         <div>
             <h1><?= e($c['name']) ?></h1>
             <?php if ($c['group_name']): ?><p class="muted"><?= e($c['group_name']) ?></p><?php endif; ?>
@@ -24,7 +24,7 @@ $events = array_slice($events, 0, 50);
     </div>
 </div>
 
-<form class="card add-form" method="post" action="<?= url('event_add') ?>" style="--c: <?= e($c['color']) ?>">
+<form class="card add-form" method="post" action="<?= url('event_add') ?>" style="--c: <?= e($c['color']) ?>" aria-label="Ajouter un bâton avec date, valeur ou note">
     <?= csrf() ?>
     <input type="hidden" name="category_id" value="<?= $id ?>">
     <div class="row">
@@ -41,6 +41,7 @@ $events = array_slice($events, 0, 50);
     <button class="btn accent">+ Ajouter un bâton</button>
 </form>
 
+<h2 class="sr">Statistiques</h2>
 <section class="stats">
     <div class="stat wide">
         <span class="k">Dernier bâton</span>
@@ -55,7 +56,8 @@ $events = array_slice($events, 0, 50);
     <div class="stat"><span class="k">Intervalle moyen</span><span class="v"><?= $stats['avg_interval'] !== null ? e(Time::duration($stats['avg_interval'])) : '—' ?></span></div>
 </section>
 
-<section class="card">
+<section class="card" aria-labelledby="chart-title">
+    <h2 class="sr" id="chart-title">Graphique</h2>
     <div class="chart-head">
         <nav class="seg" aria-label="Échelle">
             <?php foreach (['day' => '30 jours', 'week' => '12 semaines', 'month' => '12 mois'] as $k => $label): ?>
@@ -69,7 +71,18 @@ $events = array_slice($events, 0, 50);
             </nav>
         <?php endif; ?>
     </div>
-    <?= Chart::bars($series, $metric, $c['color'], $c['unit']) ?>
+    <?php $scaleLabel = ['day' => '30 derniers jours', 'week' => '12 dernières semaines', 'month' => '12 derniers mois'][$scale]; ?>
+    <div aria-hidden="true"><?= Chart::bars($series, $metric, $c['color'], $c['unit']) ?></div>
+    <div class="sr"><table>
+        <caption><?= $metric === 'sum' ? 'Somme' : 'Nombre de bâtons' ?> sur les <?= $scaleLabel ?></caption>
+        <thead><tr><th scope="col">Période</th><th scope="col"><?= $metric === 'sum' ? 'Somme' . ($c['unit'] ? ' (' . e($c['unit']) . ')' : '') : 'Nombre' ?></th></tr></thead>
+        <tbody>
+        <?php foreach ($series as $p): ?>
+            <tr><th scope="row"><?= e($scale === 'day' ? Time::shortDate($p['date']) : ($scale === 'week' ? 'semaine du ' . Time::shortDate($p['date']) : $p['label'] . ' ' . $p['date']->format('Y'))) ?></th>
+                <td><?= e(Chart::num($p[$metric])) ?></td></tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table></div>
 </section>
 
 <section>

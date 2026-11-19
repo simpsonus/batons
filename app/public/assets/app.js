@@ -21,6 +21,7 @@
         picker.hidden = false;
         const search = picker.querySelector('[data-icon-search]');
         const results = picker.querySelector('[data-icon-results]');
+        const status = picker.querySelector('[data-icon-status]');
         const svg = (p) => `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${p}"/></svg>`;
         let timer, seq = 0;
         const load = async (q) => {
@@ -30,17 +31,22 @@
                 const list = await res.json();
                 if (mine !== seq) return;
                 results.innerHTML = list.length ? '' : '<p class="muted">Aucune icône trouvée (essaie en anglais : coffee, run, pill…).</p>';
+                if (status && q) status.textContent = list.length + ' icône' + (list.length > 1 ? 's' : '') + ' trouvée' + (list.length > 1 ? 's' : '');
                 list.forEach(({ n, p }) => {
                     const b = document.createElement('button');
                     b.type = 'button';
                     b.className = 'icon-choice' + (iconInput.value === 'mdi:' + n ? ' selected' : '');
                     b.title = n;
+                    b.setAttribute('aria-label', 'Icône ' + n.replace(/-/g, ' '));
+                    b.setAttribute('aria-pressed', iconInput.value === 'mdi:' + n ? 'true' : 'false');
                     b.innerHTML = svg(p);
                     b.addEventListener('click', () => {
                         iconInput.value = 'mdi:' + n;
                         if (preview) preview.innerHTML = svg(p);
-                        results.querySelectorAll('.selected').forEach((el) => el.classList.remove('selected'));
+                        results.querySelectorAll('.selected').forEach((el) => { el.classList.remove('selected'); el.setAttribute('aria-pressed', 'false'); });
                         b.classList.add('selected');
+                        b.setAttribute('aria-pressed', 'true');
+                        if (status) status.textContent = 'Icône ' + n.replace(/-/g, ' ') + ' choisie';
                     });
                     results.appendChild(b);
                 });
@@ -65,7 +71,11 @@
         btn.addEventListener('click', () => navigator.vibrate?.(15));
     });
 
-    // Le message flash disparaît tout seul.
-    const flash = document.querySelector('.flash');
-    if (flash) setTimeout(() => flash.remove(), 6000);
+    // Message flash : bouton de fermeture (pas de disparition automatique, pour laisser le temps de lire / annuler).
+    const flash = document.querySelector('[data-flash]');
+    const close = flash?.querySelector('[data-flash-close]');
+    if (close) {
+        close.hidden = false;
+        close.addEventListener('click', () => { flash.remove(); document.getElementById('contenu')?.focus(); });
+    }
 })();

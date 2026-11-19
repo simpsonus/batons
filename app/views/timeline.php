@@ -2,6 +2,7 @@
 $hasMore = count($events) > 100;
 $events = array_slice($events, 0, 100);
 $showCategory = true;
+$dayLevel = 2;
 ?>
 <div class="page-head"><h1>Chronologie</h1></div>
 

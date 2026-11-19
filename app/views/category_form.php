@@ -1,6 +1,7 @@
 <?php
 $isEdit = !empty($c['id']);
-$palette = ['#c2410c', '#b91c1c', '#be185d', '#7c3aed', '#1d4ed8', '#0e7490', '#047857', '#4d7c0f', '#a16207', '#57534e'];
+$palette = ['#c2410c' => 'Orange', '#b91c1c' => 'Rouge', '#be185d' => 'Rose', '#7c3aed' => 'Violet', '#1d4ed8' => 'Bleu',
+            '#0e7490' => 'Bleu canard', '#047857' => 'Vert', '#4d7c0f' => 'Vert olive', '#a16207' => 'Ocre', '#57534e' => 'Gris'];
 ?>
 <div class="page-head">
     <h1><?= $isEdit ? 'Modifier la catégorie' : 'Nouvelle catégorie' ?></h1>
@@ -12,37 +13,39 @@ $palette = ['#c2410c', '#b91c1c', '#be185d', '#7c3aed', '#1d4ed8', '#0e7490', '#
 
     <div class="row">
         <label class="grow">Nom
-            <input type="text" name="name" value="<?= e($c['name']) ?>" maxlength="80" required autofocus placeholder="ex. Café, Arrosage du ficus, Migraine">
-            <?php if (isset($errors['name'])): ?><span class="error"><?= e($errors['name']) ?></span><?php endif; ?>
+            <input type="text" name="name" value="<?= e($c['name']) ?>" maxlength="80" required <?= $isEdit ? '' : 'autofocus' ?> <?= isset($errors['name']) ? 'aria-invalid="true" aria-describedby="err-name"' : '' ?> placeholder="ex. Café, Arrosage du ficus, Migraine">
+            <?php if (isset($errors['name'])): ?><span class="error" id="err-name"><?= e($errors['name']) ?></span><?php endif; ?>
         </label>
     </div>
 
     <div class="icon-field" style="--c: <?= e($c['color']) ?>">
-        <span class="icon big" data-icon-preview><?= icon($c['icon'] ?: '|') ?></span>
-        <label class="grow">Icône <span class="muted">un émoji, ou une icône comme dans Home Assistant (<code>mdi:coffee</code>)</span>
-            <input type="text" name="icon" value="<?= e($c['icon']) ?>" maxlength="64" placeholder="☕ ou mdi:coffee" autocomplete="off" data-icon-input>
-            <?php if (isset($errors['icon'])): ?><span class="error"><?= e($errors['icon']) ?></span><?php endif; ?>
+        <span class="icon big" aria-hidden="true" data-icon-preview><?= icon($c['icon'] ?: '|') ?></span>
+        <label class="grow">Icône <span class="muted">un émoji, ou une icône Material Design notée <code>mdi:nom</code></span>
+            <input type="text" name="icon" value="<?= e($c['icon']) ?>" maxlength="64" placeholder="☕ ou mdi:coffee" autocomplete="off" data-icon-input <?= isset($errors['icon']) ? 'aria-invalid="true" aria-describedby="err-icon"' : '' ?>>
+            <?php if (isset($errors['icon'])): ?><span class="error" id="err-icon"><?= e($errors['icon']) ?></span><?php endif; ?>
         </label>
     </div>
     <?php if (Batons\Icons::available()): ?>
         <div class="icon-picker" data-icon-picker hidden>
-            <input type="search" placeholder="Chercher une icône : café, course, pilule, plante…" data-icon-search autocomplete="off">
-            <div class="icon-results" data-icon-results></div>
-            <p class="muted small">Icônes <a href="https://pictogrammers.com/library/mdi/" target="_blank" rel="noopener">Material Design Icons</a>, les mêmes que dans Home Assistant.</p>
+            <label class="sr" for="icon-search">Chercher une icône</label>
+            <input type="search" id="icon-search" placeholder="Chercher une icône : café, course, pilule, plante…" data-icon-search autocomplete="off">
+            <div class="icon-results" data-icon-results role="group" aria-label="Icônes proposées"></div>
+            <p class="sr" aria-live="polite" data-icon-status></p>
+            <p class="muted small">Icônes <a href="https://pictogrammers.com/library/mdi/" target="_blank" rel="noopener">Material Design Icons<span class="sr"> (nouvel onglet)</span></a>.</p>
         </div>
     <?php endif; ?>
 
     <fieldset>
         <legend>Couleur</legend>
         <div class="swatches">
-            <?php foreach ($palette as $col): ?>
+            <?php foreach ($palette as $col => $colName): ?>
                 <label class="swatch" style="--c: <?= $col ?>">
-                    <input type="radio" name="color" value="<?= $col ?>" <?= strtolower($c['color']) === $col ? 'checked' : '' ?>>
+                     <input type="radio" name="color" value="<?= $col ?>" aria-label="<?= $colName ?>" <?= strtolower($c['color']) === $col ? 'checked' : '' ?>>
                     <span></span>
                 </label>
             <?php endforeach; ?>
             <label class="swatch custom" title="Autre couleur">
-                <input type="color" name="color_custom" value="<?= e($c['color']) ?>" data-color-custom>
+                <input type="color" name="color_custom" value="<?= e($c['color']) ?>" data-color-custom aria-label="Autre couleur">
             </label>
         </div>
     </fieldset>
