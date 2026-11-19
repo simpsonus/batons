@@ -23,7 +23,8 @@ final class Events
         return Db::one(
             'SELECT e.*, c.name AS category_name, c.icon, c.color, c.unit
                FROM events e JOIN categories c ON c.id = e.category_id
-              WHERE e.id = ? AND c.user_id = ?',
+               LEFT JOIN groups g ON g.id = c.group_id
+              WHERE e.id = ? AND c.user_id = ?' . Privacy::visibleSql(),
             [$id, $userId]
         );
     }
@@ -51,9 +52,11 @@ final class Events
     public static function timeline(int $userId, int $limit = 100, int $offset = 0): array
     {
         return Db::all(
-            'SELECT e.*, c.name AS category_name, c.icon, c.color, c.unit
+            'SELECT e.*, c.name AS category_name, c.icon, c.color, c.unit,
+                    CASE WHEN c.hidden = 1 OR g.hidden = 1 THEN 1 ELSE 0 END AS is_hidden
                FROM events e JOIN categories c ON c.id = e.category_id
-              WHERE c.user_id = ?
+               LEFT JOIN groups g ON g.id = c.group_id
+              WHERE c.user_id = ?' . Privacy::visibleSql() . '
               ORDER BY e.occurred_at DESC, e.id DESC LIMIT ? OFFSET ?',
             [$userId, $limit, $offset]
         );
@@ -66,7 +69,7 @@ final class Events
             'SELECT e.occurred_at, c.name AS category, g.name AS grp, e.value, c.unit, e.note
                FROM events e JOIN categories c ON c.id = e.category_id
                LEFT JOIN groups g ON g.id = c.group_id
-              WHERE c.user_id = ? ORDER BY e.occurred_at',
+              WHERE c.user_id = ?' . Privacy::visibleSql() . ' ORDER BY e.occurred_at',
             [$userId]
         );
     }

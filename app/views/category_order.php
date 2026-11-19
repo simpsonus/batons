@@ -6,10 +6,10 @@ foreach ($categories as $c) {
 }
 $sections = [];
 foreach ($groups as $g) {
-    $sections[] = ['id' => (int) $g['id'], 'name' => $g['name'], 'items' => $byGroup[$g['id']] ?? []];
+    $sections[] = ['id' => (int) $g['id'], 'name' => $g['name'], 'hidden' => (bool) $g['hidden'], 'items' => $byGroup[$g['id']] ?? []];
 }
 if (!empty($byGroup[0])) {
-    $sections[] = ['id' => 0, 'name' => $groups ? 'Sans groupe' : null, 'items' => $byGroup[0]];
+    $sections[] = ['id' => 0, 'name' => $groups ? 'Sans groupe' : null, 'hidden' => false, 'items' => $byGroup[0]];
 }
 $groupCount = count($groups);
 
@@ -34,10 +34,21 @@ $moveButton = static function (string $route, int $id, string $dir, string $labe
     <section class="order-group" aria-labelledby="grp-<?= $gi ?>">
         <div class="order-group-head">
             <h2 id="grp-<?= $gi ?>"><?= e($sec['name'] ?? 'Catégories') ?></h2>
-            <?php if ($sec['id'] > 0 && $groupCount > 1): ?>
+            <?php if ($sec['id'] > 0): ?>
                 <div class="order-buttons">
-                    <?= $moveButton('group_move', $sec['id'], 'up', 'le groupe ' . $sec['name'], $gi > 0) ?>
-                    <?= $moveButton('group_move', $sec['id'], 'down', 'le groupe ' . $sec['name'], $gi < $groupCount - 1) ?>
+                    <form method="post" action="<?= url('group_hide') ?>">
+                        <?= csrf() ?>
+                        <input type="hidden" name="id" value="<?= $sec['id'] ?>">
+                        <input type="hidden" name="hidden" value="<?= $sec['hidden'] ? '0' : '1' ?>">
+                        <input type="hidden" name="back" value="<?= e(here()) ?>">
+                        <button class="icon-btn<?= $sec['hidden'] ? ' is-hidden' : '' ?>" aria-pressed="<?= $sec['hidden'] ? 'true' : 'false' ?>"
+                                aria-label="Masquer le groupe <?= e($sec['name']) ?>" title="<?= $sec['hidden'] ? 'Groupe masqué : le rendre visible' : 'Masquer le groupe' ?>">
+                            <?= ui_icon($sec['hidden'] ? 'eye-off' : 'eye') ?></button>
+                    </form>
+                    <?php if ($groupCount > 1): ?>
+                        <?= $moveButton('group_move', $sec['id'], 'up', 'le groupe ' . $sec['name'], $gi > 0) ?>
+                        <?= $moveButton('group_move', $sec['id'], 'down', 'le groupe ' . $sec['name'], $gi < $groupCount - 1) ?>
+                    <?php endif; ?>
                 </div>
             <?php endif; ?>
         </div>
@@ -48,7 +59,7 @@ $moveButton = static function (string $route, int $id, string $dir, string $labe
                 <?php $n = count($sec['items']); foreach ($sec['items'] as $i => $c): ?>
                     <li style="--c: <?= e($c['color']) ?>">
                         <span class="icon sm" aria-hidden="true"><?= icon($c['icon']) ?></span>
-                        <span class="grow"><?= e($c['name']) ?></span>
+                        <span class="grow"><?= e($c['name']) ?><?php if ($c['hidden']): ?> <span class="hidden-mark" title="Catégorie masquée"><?= ui_icon('eye-off') ?><span class="sr">(masquée)</span></span><?php endif; ?></span>
                         <?php if ($n > 1): ?>
                             <span class="order-buttons">
                                 <?= $moveButton('category_move', (int) $c['id'], 'up', $c['name'], $i > 0) ?>

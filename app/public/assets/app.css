@@ -127,6 +127,43 @@ svg.ui { width: 1.35rem; height: 1.35rem; fill: currentColor; flex: none; }
 .appmenu-panel :focus-visible { outline-color: var(--focus); }
 .appmenu-version { margin: .3rem .8rem .2rem; padding-top: .4rem; border-top: 1px solid var(--line); font-size: .85rem; color: var(--muted); }
 
+/* --- Éléments masqués ---------------------------------------------------------- */
+.appmenu-private { list-style: none; margin: .3rem 0 0; padding: .3rem 0 0; border-top: 1px solid var(--line); }
+.appmenu-panel a svg.ui, .menu-btn svg.ui { width: 1.2rem; height: 1.2rem; margin-right: .5rem; color: var(--muted); }
+.appmenu-private form { margin: 0; }
+.menu-btn {
+    display: flex; align-items: center; width: 100%; min-height: var(--tap); padding: 0 .8rem; border-radius: 8px;
+    background: none; border: 0; color: inherit; font: inherit; font-weight: 500; text-align: left; cursor: pointer;
+}
+.menu-btn:hover { background: var(--bg); }
+.lock-quick { margin: 0 0 0 auto; }
+.topbar .lock-quick .icon-btn { color: #fdba74; }
+.topbar .lock-quick .icon-btn:hover { background: rgb(255 255 255 / .1); color: #fff; }
+.hidden-mark { display: inline-flex; vertical-align: middle; color: var(--muted); }
+.hidden-mark svg.ui { width: 1rem; height: 1rem; }
+.badge svg.ui { width: .95rem; height: .95rem; vertical-align: -2px; }
+.icon-btn.is-hidden { color: var(--accent); }
+.check { display: flex; align-items: center; gap: .6rem; min-height: var(--tap); }
+.check input { width: 1.4rem; height: 1.4rem; margin: 0; accent-color: var(--accent-bg); flex: none; }
+.check label { margin: 0; display: inline-flex; align-items: center; gap: .35rem; flex: none; }
+.check label svg.ui { width: 1.15rem; height: 1.15rem; color: var(--muted); }
+.field-help { margin: 0 0 1rem; }
+.narrow-card { max-width: 28rem; margin-left: auto; margin-right: auto; }
+.unlock-card { text-align: center; }
+.unlock-card label { text-align: left; }
+.unlock-icon { display: inline-grid; place-items: center; width: 3.5rem; height: 3.5rem; border-radius: 50%; background: var(--bg); color: var(--muted); margin-bottom: .5rem; }
+.unlock-icon svg.ui { width: 1.8rem; height: 1.8rem; }
+.pin-input { letter-spacing: .4em; font-variant-numeric: tabular-nums; }
+.btn.wide { width: 100%; }
+.btn svg.ui { width: 1.15rem; height: 1.15rem; }
+.or { display: flex; align-items: center; gap: .7rem; color: var(--muted); margin: 1rem 0; }
+.or::before, .or::after { content: ""; flex: 1; border-top: 1px solid var(--line); }
+.help-list { padding-left: 1.2rem; }
+input[type=password] {
+    font: inherit; font-size: max(1rem, 16px); font-weight: normal; min-height: var(--tap); padding: .5rem .7rem; border-radius: 9px;
+    border: 1px solid var(--field); background: var(--bg); color: var(--ink); width: 100%; max-width: 100%;
+}
+
 /* --- Réorganisation ------------------------------------------------------------ */
 .order-group { margin-bottom: 1.4rem; }
 .order-group-head { display: flex; align-items: center; justify-content: space-between; gap: .5rem; margin-bottom: .4rem; }
@@ -352,3 +389,5 @@ legend { font-size: .9rem; font-weight: 600; margin-bottom: .4rem; padding: 0; }
     .tile::before, .events li { forced-color-adjust: none; }
     .icon-btn, .swatch span { border: 1px solid ButtonText; }
 }
+.card > h2:first-child { margin-top: 0; }
+[data-passkey-register] { margin-top: 1rem; }

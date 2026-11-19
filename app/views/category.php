@@ -17,6 +17,7 @@ $events = array_slice($events, 0, 50);
             <h1><?= e($c['name']) ?></h1>
             <?php if ($c['group_name']): ?><p class="muted"><?= e($c['group_name']) ?></p><?php endif; ?>
             <?php if ($c['archived']): ?><p class="badge">Archivée</p><?php endif; ?>
+            <?php if ($c['hidden'] || $c['group_hidden']): ?><p class="badge"><?= ui_icon('eye-off') ?> Masquée<?= !$c['hidden'] ? ' (via son groupe)' : '' ?></p><?php endif; ?>
         </div>
     </div>
     <div class="actions">

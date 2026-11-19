@@ -27,7 +27,7 @@ $currentGroup = false;
     <?php if ($c['group_name'] !== $currentGroup): ?>
         <?php if ($currentGroup !== false): ?></div><?php endif; ?>
         <?php $currentGroup = $c['group_name']; ?>
-        <?php if ($currentGroup !== null): ?><h2 class="group"><?= e($currentGroup) ?></h2>
+        <?php if ($currentGroup !== null): ?><h2 class="group"><?= e($currentGroup) ?><?php if ($c['group_hidden']): ?> <span class="hidden-mark" title="Groupe masqué"><?= ui_icon('eye-off') ?><span class="sr">(masqué)</span></span><?php endif; ?></h2>
         <?php elseif ($categories[0]['group_name'] !== null): ?><h2 class="group">Sans groupe</h2><?php endif; ?>
         <div class="grid">
     <?php endif; ?>
@@ -38,7 +38,7 @@ $currentGroup = false;
             <input type="hidden" name="id" value="<?= (int) $c['id'] ?>">
             <button class="tap">
                 <span class="icon" aria-hidden="true"><?= icon($c['icon']) ?></span>
-                <span class="name"><span class="sr">Ajouter un bâton : </span><?= e($c['name']) ?></span>
+                <span class="name"><span class="sr">Ajouter un bâton : </span><?= e($c['name']) ?><?php if ($c['hidden']): ?> <span class="hidden-mark" title="Catégorie masquée"><?= ui_icon('eye-off') ?><span class="sr">(masquée)</span></span><?php endif; ?></span>
                 <span class="meta">
                     <?php if ((int) $c['today_count'] > 0): ?>
                         <b><?= (int) $c['today_count'] ?></b> aujourd'hui<?php if ($c['unit'] && $c['today_sum'] !== null): ?> · <?= e(Chart::num($c['today_sum']) . ' ' . $c['unit']) ?><?php endif; ?>

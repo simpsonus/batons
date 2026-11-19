@@ -24,7 +24,7 @@ $day = null;
         <span class="time"><time datetime="<?= e($local->format(DATE_ATOM)) ?>"><?= $local->format('H:i') ?></time></span>
         <span class="body">
             <?php if ($showCategory): ?>
-                <a class="cat" href="<?= url('category', ['id' => $ev['category_id']]) ?>"><span class="icon sm" aria-hidden="true"><?= icon($ev['icon']) ?></span><?= e($ev['category_name']) ?></a>
+                <a class="cat" href="<?= url('category', ['id' => $ev['category_id']]) ?>"><span class="icon sm" aria-hidden="true"><?= icon($ev['icon']) ?></span><?= e($ev['category_name']) ?><?php if (!empty($ev['is_hidden'])): ?> <span class="hidden-mark" title="Masquée"><?= ui_icon('eye-off') ?><span class="sr">(masquée)</span></span><?php endif; ?></a>
             <?php endif; ?>
             <?php if ($ev['value'] !== null): ?>
                 <span class="value"><?= e(Chart::num($ev['value'])) ?><?= ($u = $ev['unit'] ?? $c['unit'] ?? null) ? ' ' . e($u) : '' ?></span>

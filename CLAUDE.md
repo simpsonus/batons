@@ -48,6 +48,14 @@ Le nom vient des bâtons qu'on trace pour compter (IIII barrés). Slug technique
   `aria-describedby` + `aria-invalid` ; graphique doublé d'un tableau pour lecteurs d'écran ; pas de message
   qui disparaît tout seul ; `prefers-reduced-motion` respecté ; un seul `h1` et pas de saut de niveau de titre.
 - L'interface ne mentionne pas Home Assistant (l'app doit rester neutre).
+- **Éléments masqués** (`Privacy.php`, `WebAuthn.php`, `Cbor.php`) : `categories.hidden` / `groups.hidden`.
+  Verrouillé = invisibles PARTOUT (accueil, chronologie, archives, export, réorganiser, liste des groupes,
+  compte rendu d'import, URL directes -> 404). Toute nouvelle requête qui liste des catégories ou des bâtons
+  doit ajouter `Privacy::visibleSql()` (avec `LEFT JOIN groups g`). Déverrouillage : code à 6 chiffres haché
+  (`password_hash`, 5 essais puis blocage 15 min) ou passkey WebAuthn (Face ID / Touch ID…), implémentée sans
+  bibliothèque (ES256/RS256, attestation « none », vérification utilisateur requise, rpId enregistré avec la clé).
+  État en session, expiration après `BATONS_HIDDEN_TIMEOUT` s d'inactivité (300). Masquer exige un code défini.
+  Ce n'est pas du chiffrement (le dire dans l'interface).
 - Interface en français pour l'instant (i18n prévue plus tard).
 
 ## Arborescence
@@ -98,7 +106,7 @@ docker build -f docker/Dockerfile -t batons . && docker run -p 8080:8080 -v $PWD
       la CI crée elle-même les releases.
 - [x] v0.5 : menu sur le logo (Archives, Importer, Exporter ; `<details>` sans JS requis),
       réorganisation des groupes entre eux et des catégories dans leur groupe.
-- [ ] Catégories / groupes masqués, déverrouillage par code ou Face ID / Touch ID (WebAuthn) — en discussion.
+- [x] v0.6 : catégories et groupes **masqués** (à la « Photos masquées » d'Apple), voir ci-dessous.
 - [ ] Recherche / filtre dans la chronologie, vue calendrier (heatmap) par catégorie.
 - [ ] Rappels / objectifs (« au moins 3 par semaine »).
 - [ ] Mode d'authentification `builtin` (prérequis pour exposer l'app hors d'un proxy authentifiant, ex. port direct de l'add-on).

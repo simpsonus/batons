@@ -75,6 +75,111 @@
         });
     }
 
+    // --- Éléments masqués -------------------------------------------------------------
+
+    // Reverrouillage : recharge la page à l'expiration, pour ne pas laisser d'éléments masqués à l'écran.
+    const relock = parseInt(document.body.dataset.relock || '0', 10);
+    if (relock > 0) {
+        const deadline = Date.now() + relock * 1000;
+        const check = () => { if (Date.now() >= deadline) location.reload(); };
+        setTimeout(check, relock * 1000 + 500);
+        document.addEventListener('visibilitychange', () => { if (!document.hidden) check(); });
+    }
+
+    // Passkeys (WebAuthn) : Face ID, Touch ID, Windows Hello…
+    const b64uToBuf = (s) => Uint8Array.from(atob(s.replace(/-/g, '+').replace(/_/g, '/') + '==='.slice((s.length + 3) % 4)), (c) => c.charCodeAt(0)).buffer;
+    const bufToB64u = (b) => btoa(String.fromCharCode(...new Uint8Array(b))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    const csrfToken = () => document.querySelector('input[name="csrf"]')?.value || '';
+    const post = async (route, fields) => {
+        const fd = new FormData();
+        fd.append('csrf', csrfToken());
+        Object.entries(fields).forEach(([k, v]) => fd.append(k, v));
+        const res = await fetch('./?r=' + route, { method: 'POST', body: fd, credentials: 'same-origin' });
+        const json = await res.json().catch(() => ({ error: 'Réponse inattendue du serveur.' }));
+        if (!res.ok || json.error) throw new Error(json.error || 'Erreur ' + res.status);
+        return json;
+    };
+    const showError = (el, msg) => { if (el) { el.textContent = msg; el.hidden = false; } };
+    const friendly = (e) => (e && e.name === 'NotAllowedError')
+        ? 'Opération annulée ou non autorisée.'
+        : (e && e.name === 'InvalidStateError') ? 'Cet appareil est déjà enregistré.' : (e?.message || String(e));
+    const platformAuth = async () => {
+        try {
+            return !!(window.PublicKeyCredential && window.isSecureContext
+                && await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable());
+        } catch (e) { return false; }
+    };
+
+    // Déverrouillage
+    const unlockBox = document.querySelector('[data-passkey-unlock]');
+    if (unlockBox && document.querySelector('[data-has-passkeys]')) {
+        platformAuth().then((ok) => {
+            if (!ok) return;
+            unlockBox.hidden = false;
+            const btn = unlockBox.querySelector('[data-passkey-unlock-btn]');
+            const err = document.querySelector('[data-passkey-error]');
+            btn.focus();
+            btn.addEventListener('click', async () => {
+                err.hidden = true;
+                btn.disabled = true;
+                try {
+                    const o = await post('passkey_options', { mode: 'get' });
+                    o.challenge = b64uToBuf(o.challenge);
+                    o.allowCredentials = (o.allowCredentials || []).map((c) => ({ ...c, id: b64uToBuf(c.id) }));
+                    const cred = await navigator.credentials.get({ publicKey: o });
+                    await post('passkey_unlock', {
+                        id: cred.id,
+                        clientDataJSON: bufToB64u(cred.response.clientDataJSON),
+                        authenticatorData: bufToB64u(cred.response.authenticatorData),
+                        signature: bufToB64u(cred.response.signature),
+                    });
+                    location.href = './';
+                } catch (e) {
+                    showError(err, friendly(e));
+                } finally {
+                    btn.disabled = false;
+                }
+            });
+        });
+    }
+
+    // Enregistrement d'un appareil
+    const regBox = document.querySelector('[data-passkey-register]');
+    if (regBox) {
+        platformAuth().then((ok) => {
+            if (!ok) return;
+            regBox.hidden = false;
+            document.querySelector('[data-passkey-unsupported]')?.setAttribute('hidden', '');
+            const name = regBox.querySelector('[data-passkey-name]');
+            const ua = navigator.userAgent;
+            name.value = /iPhone/.test(ua) ? 'iPhone' : /iPad/.test(ua) ? 'iPad' : /Macintosh/.test(ua) ? 'Mac'
+                : /Android/.test(ua) ? 'Android' : /Windows/.test(ua) ? 'PC Windows' : 'Cet appareil';
+            const btn = regBox.querySelector('[data-passkey-register-btn]');
+            const err = regBox.querySelector('[data-passkey-error]');
+            btn.addEventListener('click', async () => {
+                err.hidden = true;
+                btn.disabled = true;
+                try {
+                    const o = await post('passkey_options', { mode: 'register' });
+                    o.challenge = b64uToBuf(o.challenge);
+                    o.user.id = b64uToBuf(o.user.id);
+                    o.excludeCredentials = (o.excludeCredentials || []).map((c) => ({ ...c, id: b64uToBuf(c.id) }));
+                    const cred = await navigator.credentials.create({ publicKey: o });
+                    await post('passkey_register', {
+                        name: name.value,
+                        clientDataJSON: bufToB64u(cred.response.clientDataJSON),
+                        attestationObject: bufToB64u(cred.response.attestationObject),
+                    });
+                    location.reload();
+                } catch (e) {
+                    showError(err, friendly(e));
+                } finally {
+                    btn.disabled = false;
+                }
+            });
+        });
+    }
+
     // Retour haptique discret sur mobile lors d'un tap.
     document.querySelectorAll('.tap').forEach((btn) => {
         btn.addEventListener('click', () => navigator.vibrate?.(15));

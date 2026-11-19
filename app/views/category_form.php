@@ -60,6 +60,14 @@ $palette = ['#c2410c' => 'Orange', '#b91c1c' => 'Rouge', '#be185d' => 'Rose', '#
         </label>
     </div>
 
+    <div class="check">
+        <input type="checkbox" name="hidden" value="1" id="f-hidden" <?= !empty($c['hidden']) ? 'checked' : '' ?>
+               aria-describedby="f-hidden-help<?= isset($errors['hidden']) ? ' err-hidden' : '' ?>" <?= isset($errors['hidden']) ? 'aria-invalid="true"' : '' ?>>
+        <label for="f-hidden"><?= ui_icon('eye-off') ?> Masquer cette catégorie</label>
+    </div>
+    <p class="muted small field-help" id="f-hidden-help">Invisible partout tant que les éléments masqués ne sont pas déverrouillés (menu du logo).</p>
+    <?php if (isset($errors['hidden'])): ?><p class="error" id="err-hidden"><?= e($errors['hidden']) ?></p><?php endif; ?>
+
     <div class="form-actions">
         <button class="btn accent"><?= $isEdit ? 'Enregistrer' : 'Créer' ?></button>
         <a class="btn ghost" href="<?= $isEdit ? url('category', ['id' => $c['id']]) : url() ?>">Annuler</a>

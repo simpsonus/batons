@@ -50,6 +50,8 @@ final class Importer
     private int $userId;
     /** @var array<string,int> nom en minuscules -> id */
     private array $categoryIds = [];
+    /** Noms des catégories masquées, à ne pas citer dans le compte rendu tant que c'est verrouillé. */
+    private array $hiddenNames = [];
 
     public array $report = [
         'categories_created' => [], 'categories_existing' => [], 'events_imported' => 0,
@@ -59,6 +61,7 @@ final class Importer
     public function __construct(int $userId)
     {
         $this->userId = $userId;
+        $this->hiddenNames = Privacy::isUnlocked() ? [] : Privacy::hiddenCategoryNames($userId);
         foreach (Db::all('SELECT id, name FROM categories WHERE user_id = ?', [$userId]) as $c) {
             $this->categoryIds[mb_strtolower($c['name'])] = (int) $c['id'];
         }
@@ -177,7 +180,8 @@ final class Importer
         $key = mb_strtolower($name);
         if (isset($this->categoryIds[$key])) {
             if (!in_array($name, $this->report['categories_created'], true)
-                && !in_array($name, $this->report['categories_existing'], true)) {
+                && !in_array($name, $this->report['categories_existing'], true)
+                && !in_array($key, $this->hiddenNames, true)) {
                 $this->report['categories_existing'][] = $name;
             }
             return $this->categoryIds[$key];

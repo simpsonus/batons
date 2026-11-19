@@ -1,4 +1,4 @@
-<?php $r = $_GET['r'] ?? 'home'; ?>
+<?php $r = $_GET['r'] ?? 'home'; $unlocked = Batons\Privacy::isUnlocked(); ?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -10,7 +10,7 @@
     <link rel="manifest" href="assets/manifest.webmanifest">
     <link rel="stylesheet" href="assets/app.css?v=<?= Batons\VERSION ?>">
 </head>
-<body>
+<body<?= $unlocked ? ' data-relock="' . Batons\Privacy::remaining() . '"' : '' ?>>
 <a class="skip" href="#contenu">Aller au contenu</a>
 <header class="topbar">
     <details class="appmenu" data-appmenu>
@@ -25,9 +25,23 @@
                 <li><a href="<?= url('import') ?>" <?= $r === 'import' ? 'aria-current="page"' : '' ?>>Importer</a></li>
                 <li><a href="<?= url('export') ?>">Exporter (CSV)</a></li>
             </ul>
+            <ul class="appmenu-private">
+                <?php if ($unlocked): ?>
+                    <li><a href="<?= url('privacy') ?>" <?= $r === 'privacy' ? 'aria-current="page"' : '' ?>><?= ui_icon('eye') ?> Confidentialité</a></li>
+                    <li><form method="post" action="<?= url('lock') ?>"><?= csrf() ?><button class="menu-btn"><?= ui_icon('lock') ?> Verrouiller les éléments masqués</button></form></li>
+                <?php else: ?>
+                    <li><a href="<?= url('unlock') ?>" <?= $r === 'unlock' ? 'aria-current="page"' : '' ?>><?= ui_icon('eye-off') ?> Afficher les éléments masqués</a></li>
+                <?php endif; ?>
+            </ul>
             <p class="appmenu-version">Bâtons <?= Batons\VERSION ?></p>
         </nav>
     </details>
+    <?php if ($unlocked): ?>
+        <form method="post" action="<?= url('lock') ?>" class="lock-quick">
+            <?= csrf() ?>
+            <button class="icon-btn" aria-label="Éléments masqués visibles : verrouiller" title="Verrouiller les éléments masqués"><?= ui_icon('lock-open') ?></button>
+        </form>
+    <?php endif; ?>
     <nav aria-label="Navigation principale">
         <a href="<?= url() ?>" <?= $r === 'home' ? 'aria-current="page"' : '' ?>>Catégories</a>
         <a href="<?= url('timeline') ?>" <?= $r === 'timeline' ? 'aria-current="page"' : '' ?>>Chronologie</a>

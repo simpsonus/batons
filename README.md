@@ -44,6 +44,7 @@ racine web (ou dans un sous-dossier). Le dossier `app/data/` doit être accessib
 | `BATONS_AUTH_HEADER` | `Remote-User` | En-tête portant l'identifiant (mode `header`) |
 | `BATONS_AUTH_NAME_HEADER` | — | En-tête portant le nom affiché (facultatif) |
 | `BATONS_TRUSTED_PROXIES` | — | IP autorisées à envoyer l'en-tête, séparées par des virgules |
+| `BATONS_HIDDEN_TIMEOUT` | `300` | Secondes d'inactivité avant reverrouillage des éléments masqués |
 
 ⚠️ En mode `none`, n'exposez pas Bâtons sur Internet sans protection devant (reverse proxy avec authentification, VPN…).
 
