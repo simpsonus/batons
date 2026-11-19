@@ -127,3 +127,6 @@ docker build -f docker/Dockerfile -t batons . && docker run -p 8080:8080 -v $PWD
 - [ ] Intégration HA facultative : capteurs (« temps depuis », « total du jour »), webhook/API pour ajouter
       un bâton depuis une automatisation. Toujours via une API générique, pas de code spécifique HA dans l'app.
 - [ ] PWA hors ligne.
+- [ ] (mis de côté) Widgets iOS : impossibles pour une app web. Pistes étudiées : API à clé personnelle +
+      publication MQTT (découverte HA) pour les widgets personnalisés de l'app Home Assistant, et/ou
+      Raccourcis iOS appelant l'API. Catégories masquées jamais exposées. App native Swift écartée.
