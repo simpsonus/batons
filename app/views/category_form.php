@@ -5,6 +5,7 @@ $palette = ['#c2410c' => 'Orange', '#b91c1c' => 'Rouge', '#be185d' => 'Rose', '#
 ?>
 <div class="page-head">
     <h1><?= $isEdit ? 'Modifier la catégorie' : 'Nouvelle catégorie' ?></h1>
+    <div class="head-tools"><?= close_link($isEdit ? url('category', ['id' => $c['id']]) : url(), 'Fermer sans enregistrer') ?></div>
 </div>
 
 <form class="card" method="post" action="<?= url('category_save') ?>">

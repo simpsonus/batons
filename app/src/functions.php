@@ -64,6 +64,12 @@ function ui_icon(string $name): string
     return '<svg class="ui" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="' . $paths[$name] . '"/></svg>';
 }
 
+/** Croix « fermer la page » (en haut à droite des pages secondaires) : un lien vers un écran fixe. */
+function close_link(string $href, string $label): string
+{
+    return '<a class="icon-btn close-btn" href="' . e($href) . '" aria-label="' . e($label) . '" title="' . e($label) . '">' . ui_icon('close') . '</a>';
+}
+
 /** Note affichée : « ★ 7/10 » (avec texte lisible par les lecteurs d'écran). */
 function rating_badge(?int $r): string
 {

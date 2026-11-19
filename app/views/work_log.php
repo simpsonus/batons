@@ -19,6 +19,7 @@ $maxSeason = $seasons ? max(array_keys($seasons)) : null;
             <?php endif; ?>
         </div>
     </div>
+    <div class="head-tools"><?= close_link($last ? url('work', ['id' => $c['id'], 'work' => $w['id']]) : url('work_add', ['id' => $c['id']]), 'Fermer sans enregistrer') ?></div>
 </div>
 
 <h2 class="card-title">Nouveau bâton</h2>

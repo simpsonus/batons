@@ -19,7 +19,7 @@ $avg = $ratings ? (int) round(array_sum($ratings) / count($ratings)) : null;
             </p>
         </div>
     </div>
-    <div class="actions">
+    <div class="head-tools">
         <?= help_box('Comment ça marche', array_filter([
             $c['kind'] === 'serie' ? '<strong>▶ S02E05</strong> : ajoute l\'épisode suivant, vu maintenant.' : null,
             $c['kind'] === 'livre' ? '<strong>▶ Tome 2</strong> (« tome 1 lu ») : marque le tome en cours comme lu aujourd\'hui et commence le suivant.' : null,
@@ -29,6 +29,7 @@ $avg = $ratings ? (int) round(array_sum($ratings) / count($ratings)) : null;
             $c['kind'] !== 'film' ? '<strong>J\'arrête là</strong> : ne plus proposer ce titre dans « Continuer » (tu peux reprendre quand tu veux).' : null,
             'Le crayon de l\'historique corrige un bâton (date, épisode, note…), la corbeille le supprime.',
         ])) ?>
+        <?= close_link(url('work_add', ['id' => $c['id']]), 'Fermer la fiche (retour à ' . $c['name'] . ')') ?>
     </div>
 </div>
 

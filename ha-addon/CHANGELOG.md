@@ -1,5 +1,14 @@
 # Journal des modifications
 
+## 0.18.0
+- **Fiche d'une catégorie** : un crayon ✎ juste à côté du nom pour la modifier (à la place du bouton
+  « Modifier ») et une croix ✕ en haut à droite pour fermer la fiche (retour à l'accueil, ou à l'écran
+  « Continuer » pour les films, séries, livres et jeux).
+- **La même croix ✕ en haut à droite** sur la fiche d'une œuvre, la modification d'une catégorie,
+  l'ajout d'un bâton à une œuvre et la modification d'un bâton : plus besoin de chercher « Annuler »
+  en bas (il reste disponible à côté d'« Enregistrer »).
+- Petits écrans : le titre d'une œuvre ne se coupe plus au milieu d'un mot.
+
 ## 0.17.0
 - **« Nouvelle catégorie » et « Réorganiser »** sont réunis sur une ligne à part, tout en bas de
   l'accueil, sous un filet : on ne croit plus ajouter une catégorie dans le dernier groupe.

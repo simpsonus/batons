@@ -1,6 +1,7 @@
 <?php use Batons\Time; ?>
 <div class="page-head">
     <h1>Modifier le bâton</h1>
+    <div class="head-tools"><?= close_link(url('category', ['id' => $ev['category_id']]), 'Fermer sans enregistrer') ?></div>
 </div>
 <p class="muted"><span class="icon sm" aria-hidden="true" style="--c: <?= e($ev['color']) ?>"><?= icon($ev['icon']) ?></span> <?= e($ev['category_name']) ?></p>
 
