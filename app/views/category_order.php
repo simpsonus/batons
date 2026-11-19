@@ -28,7 +28,7 @@ $moveButton = static function (string $route, int $id, string $dir, string $labe
     <h1>Réorganiser</h1>
     <div class="actions"><a class="btn" href="<?= url() ?>">Terminé</a></div>
 </div>
-<p class="muted">Les flèches des groupes déplacent un groupe entier ; celles des catégories les déplacent à l'intérieur de leur groupe. Pour changer une catégorie de groupe, touche le crayon ✎ à côté de son nom, sur sa page.</p>
+<p class="muted">Les flèches des groupes déplacent un groupe entier ; celles des catégories les déplacent à l'intérieur de leur groupe. Pour changer une catégorie de groupe, utilise le crayon ✎ à côté de son nom, sur sa page.</p>
 
 <?php foreach ($sections as $gi => $sec): ?>
     <section class="order-group" aria-labelledby="grp-<?= $gi ?>">

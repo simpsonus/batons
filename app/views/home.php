@@ -10,7 +10,7 @@ $currentGroup = false;
     <div class="empty">
         <svg class="tally-big" aria-hidden="true" focusable="false" viewBox="0 0 32 32"><g stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M7 7v18M12 7v18M17 7v18M22 7v18"/><path d="M4 21 26 11"/></g></svg>
         <p><strong>Rien à compter pour l'instant.</strong></p>
-        <p>Crée une catégorie (« Café », « Arrosage », « Migraine »…), puis touche sa tuile à chaque fois que ça arrive.</p>
+        <p>Crée une catégorie (« Café », « Arrosage », « Migraine »…), puis appuie sur sa tuile à chaque fois que ça arrive.</p>
         <a class="btn" href="<?= url('category_new') ?>">Créer ma première catégorie</a>
     </div>
 <?php endif; ?>
@@ -49,9 +49,9 @@ $currentGroup = false;
                 <span class="meta">
                     <?php $openP = $c['periods'] ? Batons\Periods::open((int) $c['id']) : null; ?>
                     <?php if ($openP): ?>
-                        <b>En cours</b> depuis <?= e(Batons\Works::daysLabel((int) $openP['days'])) ?><span class="sr"> ; toucher pour terminer</span>
+                        <b>En cours</b> depuis <?= e(Batons\Works::daysLabel((int) $openP['days'])) ?><span class="sr"> ; activer pour terminer</span>
                     <?php elseif ($c['periods'] && !$openP && (int) $c['today_count'] === 0): ?>
-                        <?php if ($c['last_at']): ?><span class="sr">dernier bâton </span><?php endif; ?><?= e(Time::ago($c['last_at'])) ?><span class="sr"> ; toucher pour commencer</span>
+                        <?php if ($c['last_at']): ?><span class="sr">dernier bâton </span><?php endif; ?><?= e(Time::ago($c['last_at'])) ?><span class="sr"> ; activer pour commencer</span>
                     <?php elseif ((int) $c['today_count'] > 0): ?>
                         <b><?= (int) $c['today_count'] ?></b> aujourd'hui<?php if ($c['unit'] && $c['today_sum'] !== null): ?> · <?= e(Chart::num($c['today_sum']) . ' ' . $c['unit']) ?><?php endif; ?>
                     <?php else: ?>

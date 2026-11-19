@@ -85,7 +85,8 @@ Le nom vient des bâtons qu'on trace pour compter (IIII barrés). Slug technique
   d'hôtes) : le navigateur ne contacte jamais les catalogues. Saisie manuelle toujours possible.
   Mention TMDB obligatoire (« utilise l'API TMDB mais n'est ni approuvé ni certifié par TMDB »).
   Tests hors ligne : `BATONS_HTTP_FIXTURES=fichier.php` (tableau regex => JSON) remplace le réseau.
-- Interface en français pour l'instant (i18n prévue plus tard).
+- Interface en français pour l'instant (i18n prévue plus tard). Verbes valables au doigt comme à la souris
+  (« choisis », « ouvre », « appuie sur », jamais « touche » ni « tap ») ; les aides citent les libellés exacts des boutons.
 
 ## Arborescence
 
@@ -165,6 +166,7 @@ docker build -f docker/Dockerfile -t batons . && docker run -p 8080:8080 -v $PWD
       alignée sur celle du bas, titres d'onglet masqués sur téléphone.
 - [x] v0.18 : ✎ à côté du nom de la catégorie, ✕ « fermer » en haut à droite des pages secondaires.
 - [x] v0.19 : ✕ sur l'écran d'une catégorie œuvre, « Fiche » -> ligne « Statistiques et historique » en bas.
+- [x] v0.20 : aides réécrites (ajouter un titre d'abord), vocabulaire neutre doigt/souris, insécables dans `help_box()`.
 - [ ] Type de catégorie « Éléments » générique (éléments nommés sans catalogue, plusieurs en parallèle,
       début/fin/durée — mécanique des œuvres) : à faire si un cas concret apparaît (ex. « Traitements »).
 - [ ] Plus tard éventuellement : synchro BetaSeries / Trakt (pas SensCritique ni SerieBox : pas d'API

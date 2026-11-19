@@ -106,7 +106,9 @@ function help_box(string $title, array $items): string
 {
     $html = '<details class="help-box"><summary aria-label="Aide : ' . e($title) . '" title="Aide"><span aria-hidden="true">?</span></summary>'
         . '<div class="help-pop" role="note"><p class="help-title">' . e($title) . '</p><ul>';
-    foreach ($items as $it) {
+    foreach (array_filter($items) as $it) {
+        // Espaces insécables de la typographie française : « mot » et « : ; ? ! » ne se retrouvent pas seuls en début de ligne.
+        $it = str_replace(['« ', ' »', ' :', ' ;', ' ?', ' !'], ["«\u{00A0}", "\u{00A0}»", "\u{00A0}:", "\u{00A0};", "\u{00A0}?", "\u{00A0}!"], $it);
         $html .= '<li>' . $it . '</li>';
     }
     return $html . '</ul></div></details>';

@@ -1,5 +1,14 @@
 # Journal des modifications
 
+## 0.20.0
+- **Aide « ? » réécrite** pour les films, séries, livres et jeux : elle commence par l'essentiel
+  (ajouter un titre : le chercher, le choisir, puis « + Ajouter le bâton ») et renvoie aux vrais
+  libellés des boutons.
+- **Textes valables au doigt comme à la souris** : « touche » et « tap » remplacés par « choisis »,
+  « ouvre », « appuie » partout dans l'application.
+- Typographie : les guillemets « » et la ponctuation ne se retrouvent plus seuls en début de ligne
+  dans les aides.
+
 ## 0.19.0
 - **Écran d'une catégorie films / séries / livres / jeux** (celui qui s'ouvre en touchant la tuile) :
   une croix ✕ en haut à droite ramène à l'accueil.

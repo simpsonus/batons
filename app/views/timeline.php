@@ -7,7 +7,7 @@ $dayLevel = 2;
 <h1 class="tab-title">Chronologie</h1>
 
 <?php if (!$events): ?>
-    <p class="muted">Aucun bâton pour l'instant. Touche une tuile sur l'écran <a href="<?= url() ?>">Catégories</a> pour commencer.</p>
+    <p class="muted">Aucun bâton pour l'instant. Appuie sur une tuile de l'écran <a href="<?= url() ?>">Catégories</a> pour commencer.</p>
 <?php else: ?>
     <?php require __DIR__ . '/_event_list.php'; ?>
     <div class="pager">

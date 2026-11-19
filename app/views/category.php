@@ -86,7 +86,7 @@ $events = array_slice($events, 0, 50);
         <div class="card-head">
             <h2 id="per-title" class="card-title">Périodes</h2>
             <?= help_box('Les périodes', [
-                'Sur l\'accueil, <strong>un tap sur la tuile commence</strong> une période (« en cours ») ; <strong>le tap suivant la termine</strong>.',
+                'Sur l\'accueil, <strong>un appui sur la tuile commence</strong> une période (« en cours ») ; <strong>l\'appui suivant la termine</strong>.',
                 'Une seule période à la fois. La durée compte les jours du début à la fin.',
                 'Une période passée : ajoute un bâton ci-dessous en choisissant « Le début » puis un autre avec « La fin », chacun à sa date.',
                 'Une erreur ? « Annuler » dans le message en haut, ou le crayon de l\'historique pour corriger une date.',
@@ -120,7 +120,7 @@ $events = array_slice($events, 0, 50);
                 <?php endforeach; ?>
             </ul>
         <?php else: ?>
-            <p class="muted">Aucune période pour l'instant. Un tap sur la tuile, ou « Commencer aujourd'hui », en ouvre une.</p>
+            <p class="muted">Aucune période pour l'instant. Un appui sur la tuile, ou « Commencer aujourd'hui », en ouvre une.</p>
         <?php endif; ?>
         <p class="muted small">Autre date ? Ajoute un bâton ci-dessous en choisissant « Le début » ou « La fin », ou modifie un bâton de l'historique.</p>
     </section>

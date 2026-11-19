@@ -22,7 +22,7 @@ $palette = ['#c2410c' => 'Orange', '#b91c1c' => 'Rouge', '#be185d' => 'Rose', '#
     <fieldset>
         <legend>Type</legend>
         <div class="kind-choice">
-            <?php foreach (['simple' => 'Simple (un tap = un bâton)', 'serie' => 'Séries', 'film' => 'Films', 'livre' => 'Livres', 'jeu' => 'Jeux vidéo'] as $k => $label): ?>
+            <?php foreach (['simple' => 'Simple (un appui = un bâton)', 'serie' => 'Séries', 'film' => 'Films', 'livre' => 'Livres', 'jeu' => 'Jeux vidéo'] as $k => $label): ?>
                 <label class="chip wide"><input type="radio" name="kind" value="<?= $k ?>" <?= ($c['kind'] ?? 'simple') === $k ? 'checked' : '' ?>><span><?= $label ?></span></label>
             <?php endforeach; ?>
         </div>
@@ -33,8 +33,8 @@ $palette = ['#c2410c' => 'Orange', '#b91c1c' => 'Rouge', '#be185d' => 'Rose', '#
         <input type="checkbox" name="periods" value="1" id="f-periods" <?= !empty($c['periods']) ? 'checked' : '' ?> aria-describedby="f-periods-help">
         <label for="f-periods">Suivre des périodes (début et fin)</label>
     </div>
-    <p class="muted small field-help" id="f-periods-help">Pour les catégories simples : un tap commence la période (un rhume…),
-        le tap suivant la termine ; la page de la catégorie montre les durées. Une seule période à la fois.</p>
+    <p class="muted small field-help" id="f-periods-help">Pour les catégories simples : un appui sur la tuile commence la période (un rhume…),
+        l'appui suivant la termine ; la page de la catégorie montre les durées. Une seule période à la fois.</p>
 
     <div class="icon-field" style="--c: <?= e($c['color']) ?>">
         <span class="icon big" aria-hidden="true" data-icon-preview><?= icon($c['icon'] ?: '|') ?></span>

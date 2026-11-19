@@ -8,15 +8,31 @@ $kindLabel = ['film' => 'un film', 'serie' => 'une série', 'livre' => 'un livre
     <div class="cat-title">
         <span class="icon big" aria-hidden="true"><?= icon($c['icon']) ?></span>
         <h1><?= e($c['name']) ?></h1>
-        <?= help_box('Comment ça marche', array_merge([
-    'serie' => ['<strong>▶ S02E05</strong> : ajoute cet épisode, vu maintenant.', 'Un autre épisode ou une autre date : touche le titre, puis « + Ajouter un épisode… ».'],
-    'film' => ['Touche le titre pour revoir l\'historique ou ajouter un visionnage avec date et note.'],
-    'livre' => ['<strong>▶ Tome 2</strong> (« tome 1 lu ») : marque le tome en cours comme lu aujourd\'hui et commence le suivant.', '<strong>Tome 1 lu ✓</strong> : marque seulement le tome en cours comme lu ; le tome suivant reste proposé.', 'Tu ne liras pas la suite ? Touche le titre, puis « J\'arrête là ».'],
-    'jeu' => ['<strong>▶ Partie</strong> : ajoute une partie jouée maintenant.', '<strong>Terminé ✓</strong> : marque le jeu comme fini aujourd\'hui (la durée est calculée depuis son début).', 'Tu abandonnes le jeu ? Touche le titre, puis « J\'arrête là ».'],
-][$c['kind']], [
-            'Une autre date (hier, la semaine dernière) : touche le titre, puis « + Ajouter… » et choisis la date.',
-            'Une erreur ? « Annuler » dans le message qui s\'affiche en haut défait l\'action.',
-        ])) ?>
+        <?= help_box('Comment ça marche', [
+    'serie' => [
+        '<strong>Une série commencée :</strong> cherche-la, choisis-la dans les résultats, indique la saison et l\'épisode, puis « + Ajouter le bâton ».',
+        '<strong>▶ S02E05</strong> : ajoute cet épisode, vu maintenant.',
+        '<strong>Un autre épisode ou une autre date :</strong> ouvre la fiche de la série (son titre dans « Continuer »), puis « + Ajouter un épisode… ».',
+    ],
+    'film' => [
+        '<strong>Un film vu :</strong> cherche-le, choisis-le dans les résultats, puis « + Ajouter le bâton ». La date est réglée sur maintenant, la note sur 10 est facultative.',
+        '<strong>Vu un autre jour :</strong> change la date dans ce même écran avant d\'ajouter.',
+        '<strong>Un film déjà noté :</strong> ouvre sa fiche depuis « Statistiques et historique », en bas de cet écran (historique, note, nouveau visionnage).',
+    ],
+    'livre' => [
+        '<strong>Un livre commencé :</strong> cherche-le, choisis-le dans les résultats, puis « + Ajouter le bâton » (il est marqué « commencé »).',
+        '<strong>▶ Tome 2</strong> (« tome 1 lu ») : marque le tome en cours comme lu aujourd\'hui et commence le suivant.',
+        '<strong>Tome 1 lu ✓</strong> : marque seulement le tome en cours comme lu ; le tome suivant reste proposé.',
+        '<strong>Tu ne liras pas la suite ?</strong> Ouvre la fiche du livre (son titre dans « Continuer »), puis « J\'arrête là ».',
+    ],
+    'jeu' => [
+        '<strong>Un jeu commencé :</strong> cherche-le, choisis-le dans les résultats, puis « + Ajouter le bâton » (il est marqué « commencé »).',
+        '<strong>▶ Partie</strong> : ajoute une partie jouée maintenant.',
+        '<strong>Terminé ✓</strong> : marque le jeu comme fini aujourd\'hui (la durée est calculée depuis son début).',
+        '<strong>Tu abandonnes le jeu ?</strong> Ouvre sa fiche (son titre dans « Continuer »), puis « J\'arrête là ».',
+    ],
+][$c['kind']] + ['x' => $c['kind'] === 'film' ? null : '<strong>Une autre date</strong> (hier, la semaine dernière) : change la date dans l\'écran d\'ajout, ou ouvre la fiche du titre puis « + Ajouter… ».',
+                 'y' => '<strong>Une erreur ?</strong> « Annuler » dans le message en haut de l\'écran défait l\'action.']) ?>
     </div>
     <div class="head-tools"><?= close_link(url(), 'Fermer (retour aux catégories)') ?></div>
 </div>
