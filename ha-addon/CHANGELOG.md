@@ -1,5 +1,12 @@
 # Journal des modifications
 
+## 0.14.0
+- Livres en plusieurs tomes : **chaque tome a son début et sa fin**. « ▶ Tome 2 » marque le tome 1 lu
+  et commence le tome 2 (en une fois) ; 🏁 marque le tome en cours comme lu.
+- « Continuer » et la liste affichent « Tome 2 en cours depuis 3 jours » / « Tome 2 lu ».
+- Fiche du livre : section « Tome par tome » avec la durée de chaque tome.
+- « Annuler » défait d'un coup les deux bâtons créés par « ▶ Tome suivant ».
+
 ## 0.13.1
 - « Continuer » (jeux et livres) liste **tous** les titres en cours, même commencés il y a longtemps,
   chacun avec ▶ et 🏁. Seuls disparaissent les titres terminés, et ceux jamais marqués « commencé »

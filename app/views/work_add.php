@@ -21,7 +21,11 @@ $kindLabel = ['film' => 'un film', 'serie' => 'une série', 'livre' => 'un livre
                     <span class="poster sm" aria-hidden="true"><?php if (poster_url($w)): ?><img src="<?= e(poster_url($w)) ?>" alt="" width="46" height="69"><?php else: ?><?= icon($c['icon']) ?><?php endif; ?></span>
                     <span class="work-text">
                         <a class="work-title" href="<?= url('work', ['id' => $c['id'], 'work' => $w['id']]) ?>"><?= e($w['title']) ?></a>
-                        <span class="muted small">dernier : <?= e(Batons\Time::ago($w['last_at'])) ?></span>
+                        <?php
+                        $stC = in_array($c['kind'], Works::TRACKED, true) ? Works::status((int) $w['id'], (int) $c['id']) : null;
+                        $volC = $c['kind'] === 'livre' ? Works::currentVolume((int) $w['id'], (int) $c['id']) : null;
+                        ?>
+                        <span class="muted small"><?php if ($stC && $stC['state'] === 'playing'): ?><?= $volC ? 'Tome ' . $volC . ' en cours' : 'En cours' ?> depuis <?= e(Works::daysLabel((int) $stC['days'])) ?><?php elseif ($stC && $stC['state'] === 'done'): ?><?= $volC ? 'Tome ' . $volC . ' lu' : 'Terminé' ?> · <?= e(Batons\Time::ago($w['last_at'])) ?><?php else: ?>dernier : <?= e(Batons\Time::ago($w['last_at'])) ?><?php endif; ?></span>
                     </span>
                     <?php if (!empty($n['reading'])): ?>
                     <a class="btn ghost next-btn" href="<?= url('work', ['id' => $c['id'], 'work' => $w['id']]) ?>">En cours</a>
@@ -29,7 +33,7 @@ $kindLabel = ['film' => 'un film', 'serie' => 'une série', 'livre' => 'un livre
                     <form method="post" action="<?= url('work_next', ['id' => $c['id'], 'work' => $w['id']]) ?>">
                         <?= csrf() ?>
                         <input type="hidden" name="back" value="<?= e(url()) ?>">
-                        <button class="btn accent next-btn" aria-label="Ajouter <?= e($w['title']) ?>, <?= e((Works::progressLong($n['season'] ?? null, $n['episode'] ?? null, $n['volume'] ?? null) ?: 'une partie')) ?>, maintenant">
+                        <button class="btn accent next-btn" aria-label="<?= e($w['title']) ?> : <?= isset($n['volume']) && $c['kind'] === 'livre' ? e(($stC && $stC['state'] === 'playing' && $volC ? 'tome ' . $volC . ' lu, ' : '') . 'commencer le tome ' . $n['volume']) : 'ajouter ' . e((Works::progressLong($n['season'] ?? null, $n['episode'] ?? null, $n['volume'] ?? null) ?: 'une partie')) . ' maintenant' ?>">
                             <span aria-hidden="true">▶</span> <?= e((Works::progress($n['season'] ?? null, $n['episode'] ?? null, $n['volume'] ?? null) ?: 'Partie')) ?>
                         </button>
                     </form>
@@ -39,7 +43,7 @@ $kindLabel = ['film' => 'un film', 'serie' => 'une série', 'livre' => 'un livre
                             <?= csrf() ?>
                             <input type="hidden" name="milestone" value="finish">
                             <input type="hidden" name="back" value="<?= e(here()) ?>">
-                            <button class="icon-btn finish-btn" aria-label="<?= e($w['title']) ?> : <?= $c['kind'] === 'livre' ? 'lu' : 'terminé' ?> aujourd'hui" title="<?= $c['kind'] === 'livre' ? 'Lu' : 'Terminé' ?> aujourd'hui"><span aria-hidden="true">🏁</span></button>
+                            <button class="icon-btn finish-btn" aria-label="<?= e($w['title']) ?> : <?= $c['kind'] === 'livre' ? ($volC ? 'tome ' . $volC . ' lu' : 'lu') : 'terminé' ?> aujourd'hui" title="<?= $c['kind'] === 'livre' ? ($volC ? 'Tome ' . $volC . ' lu' : 'Lu') : 'Terminé' ?> aujourd'hui"><span aria-hidden="true">🏁</span></button>
                         </form>
                     <?php endif; ?>
                 </li>

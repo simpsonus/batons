@@ -154,9 +154,15 @@ switch ($route) {
         Http::back();
 
     case 'undo':
-        $ev = $event(Http::intInput('id'));
-        Events::delete((int) $ev['id']);
-        Http::flash('Bâton annulé.');
+        $ids = array_filter(array_map('intval', explode(',', Http::input('ids') ?: Http::input('id'))));
+        $n = 0;
+        foreach ($ids as $undoId) {
+            if ($ev = Events::find($uid, $undoId)) { // seulement les bâtons de l'utilisateur
+                Events::delete((int) $ev['id']);
+                $n++;
+            }
+        }
+        Http::flash($n > 1 ? 'Bâtons annulés.' : 'Bâton annulé.');
         Http::back();
 
     // --- Fiche catégorie ----------------------------------------------------------
@@ -366,7 +372,12 @@ switch ($route) {
         if ($m === null || !in_array($c['kind'], Batons\Works::TRACKED, true)) {
             Http::redirect('work', ['id' => $c['id'], 'work' => $w['id']]);
         }
-        $evId = Events::addWork((int) $c['id'], Time::nowUtc(), (int) $w['id'], null, null, null, null, null, $m);
+        // Livre en plusieurs tomes : l'étape porte le numéro du tome en cours.
+        $vol = $c['kind'] === 'livre' ? Batons\Works::currentVolume((int) $w['id'], (int) $c['id']) : null;
+        if ($m === 'start' && $vol !== null) {
+            $vol = null; // « Recommencer » un livre : on repart sans tome, la fiche permet d'en préciser un
+        }
+        $evId = Events::addWork((int) $c['id'], Time::nowUtc(), (int) $w['id'], null, null, $vol, null, null, $m);
         $st = Batons\Works::status((int) $w['id'], (int) $c['id']);
         Http::flash($m === 'finish'
             ? '« ' . $w['title'] . ' » ' . ($c['kind'] === 'livre' ? 'lu' : 'terminé') . ' en ' . Batons\Works::daysLabel((int) $st['days']) . '. Bravo !'
@@ -379,6 +390,23 @@ switch ($route) {
         $next = Batons\Works::next($uid, $w, Batons\Works::lastEvent((int) $w['id'], (int) $c['id']));
         if ($next === null) {
             Http::redirect('work_log', ['id' => $c['id'], 'work' => $w['id']]);
+        }
+        if ($c['kind'] === 'livre' && isset($next['volume'])) {
+            // Tome suivant : le tome en cours est marqué lu, et le suivant commencé (même instant).
+            $st = Batons\Works::status((int) $w['id'], (int) $c['id']);
+            $cur = Batons\Works::currentVolume((int) $w['id'], (int) $c['id']);
+            $now = Time::nowUtc();
+            $msg = '';
+            $undo = [];
+            if ($st['state'] === 'playing' && $cur !== null) {
+                // Fin du tome en cours une seconde avant le début du suivant (ordre garanti, jamais dans le futur).
+                $undo[] = Events::addWork((int) $c['id'], gmdate('Y-m-d H:i:s', strtotime($now . ' UTC') - 1), (int) $w['id'], null, null, $cur, null, null, 'finish');
+                $msg = 'Tome ' . $cur . ' lu, ';
+            }
+            $undo[] = $evId = Events::addWork((int) $c['id'], $now, (int) $w['id'],
+                null, null, (int) $next['volume'], null, null, 'start');
+            Http::flash('« ' . $w['title'] . ' » : ' . $msg . 'tome ' . $next['volume'] . ' commencé.', $undo);
+            Http::back('category', ['id' => $c['id']]);
         }
         $evId = Events::addWork((int) $c['id'], Time::nowUtc(), (int) $w['id'],
             $next['season'] ?? null, $next['episode'] ?? null, $next['volume'] ?? null, null, null);

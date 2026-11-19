@@ -143,6 +143,8 @@ docker build -f docker/Dockerfile -t batons . && docker run -p 8080:8080 -v $PWD
 - [x] v0.13 : option `categories.periods` sur les catégories simples (`Periods.php`) : bâtons début/fin anonymes,
       **une seule période ouverte à la fois** (choix assumé : périodes sans nom), tap = début puis fin ;
       🏁 dans « Continuer » pour jeux/livres.
+- [x] v0.14 : livres en tomes : « ▶ Tome N+1 » = fin du tome N (1 s avant) + début du tome N+1 ; étapes avec
+      `volume` ; `Works::currentVolume()`, `Works::volumes()` ; flash « Annuler » multi-bâtons.
 - [ ] Type de catégorie « Éléments » générique (éléments nommés sans catalogue, plusieurs en parallèle,
       début/fin/durée — mécanique des œuvres) : à faire si un cas concret apparaît (ex. « Traitements »).
 - [ ] Plus tard éventuellement : synchro BetaSeries / Trakt (pas SensCritique ni SerieBox : pas d'API

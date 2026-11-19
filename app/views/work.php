@@ -23,7 +23,8 @@ $avg = $ratings ? (int) round(array_sum($ratings) / count($ratings)) : null;
 
 <?php if (in_array($c['kind'], Works::TRACKED, true)): $st = Works::status((int) $w['id'], (int) $c['id']); $ml = Works::milestoneLabels($c['kind']); ?>
     <section class="card game-status" style="--c: <?= e($c['color']) ?>" aria-labelledby="st-title">
-        <h2 id="st-title" class="card-title">Progression</h2>
+        <?php $curVol = $c['kind'] === 'livre' ? Works::currentVolume((int) $w['id'], (int) $c['id']) : null; ?>
+        <h2 id="st-title" class="card-title">Progression<?= $curVol ? ' · tome ' . $curVol : '' ?></h2>
         <?php if ($st['state'] === 'none'): ?>
             <p class="muted">Pas encore commencé.</p>
         <?php else: ?>
@@ -44,6 +45,21 @@ $avg = $ratings ? (int) round(array_sum($ratings) / count($ratings)) : null;
             <?php endif; ?>
         </form>
         <p class="muted small">Autre date ? « + Ajouter <?= $verb ?>… » puis « <?= e($ml['start']) ?> » ou « <?= e($ml['finish']) ?> », ou modifie le bâton dans l'historique.</p>
+    </section>
+<?php endif; ?>
+
+<?php if ($c['kind'] === 'livre' && ($vols = Works::volumes((int) $w['id'], (int) $c['id']))): ?>
+    <section class="card" aria-labelledby="vol-title">
+        <h2 id="vol-title" class="card-title">Tome par tome</h2>
+        <ul class="period-list">
+            <?php foreach ($vols as $v): ?>
+                <li>
+                    <span>Tome <?= $v['volume'] ?> · <?= e(Time::shortDate(Time::local($v['start']))) ?>
+                        → <?= $v['finish'] ? e(Time::shortDate(Time::local($v['finish']))) : '<em>en cours</em>' ?></span>
+                    <strong><?= e(Works::daysLabel((int) $v['days'])) ?></strong>
+                </li>
+            <?php endforeach; ?>
+        </ul>
     </section>
 <?php endif; ?>
 

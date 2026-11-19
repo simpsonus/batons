@@ -59,7 +59,8 @@ $events = array_slice($events, 0, 50);
                             <a class="work-title" href="<?= url('work', ['id' => $id, 'work' => $w['id']]) ?>"><?= e($w['title']) ?></a>
                             <?php $stW = $statuses[$w['id']] ?? null; ?>
                             <span class="muted small"><?= e(implode(' · ', array_filter([
-                                $stW ? ($stW['state'] === 'done' ? $mlC['done'] . ' en ' . Batons\Works::daysLabel((int) $stW['days']) : 'En cours depuis ' . Batons\Works::daysLabel((int) $stW['days'])) : null,
+                                $stW ? (($vW = $c['kind'] === 'livre' ? Batons\Works::currentVolume((int) $w['id'], $id) : null) ? 'Tome ' . $vW . ' ' : '')
+                                    . ($stW['state'] === 'done' ? ($vW ? 'lu' : $mlC['done']) . ' en ' . Batons\Works::daysLabel((int) $stW['days']) : ($vW ? 'en cours' : 'En cours') . ' depuis ' . Batons\Works::daysLabel((int) $stW['days'])) : null,
                                 Batons\Works::progress($lastW['season'] ?? null, $lastW['episode'] ?? null, $lastW['volume'] ?? null),
                                 Time::ago($w['last_at']),
                                 (int) $w['n'] > 1 ? $w['n'] . ' bâtons' : null,

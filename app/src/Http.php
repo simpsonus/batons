@@ -98,9 +98,10 @@ final class Http
     }
 
     /** Message flash ; $undo = id d'un bâton qu'on peut annuler. */
-    public static function flash(string $message, ?int $undo = null): void
+    /** Message flash ; $undo = id (ou liste d'ids) de bâton(s) que « Annuler » supprimera. */
+    public static function flash(string $message, int|array|null $undo = null): void
     {
-        $_SESSION['flash'] = ['message' => $message, 'undo' => $undo];
+        $_SESSION['flash'] = ['message' => $message, 'undo' => $undo === null ? null : implode(',', array_map('intval', (array) $undo))];
     }
 
     public static function takeFlash(): ?array

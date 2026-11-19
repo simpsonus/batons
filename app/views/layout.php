@@ -75,7 +75,7 @@ $unlocked = $authMethod !== null && Batons\Privacy::isUnlocked();
         <?php if ($flash['undo']): ?>
             <form method="post" action="<?= url('undo') ?>">
                 <?= csrf() ?>
-                <input type="hidden" name="id" value="<?= (int) $flash['undo'] ?>">
+                <input type="hidden" name="ids" value="<?= e($flash['undo']) ?>">
                 <input type="hidden" name="back" value="<?= e(here()) ?>">
                 <button class="flash-btn">Annuler</button>
             </form>

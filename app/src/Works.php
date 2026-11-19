@@ -193,6 +193,41 @@ final class Works
             : ['' => 'Une partie', 'start' => 'Le début du jeu', 'finish' => 'La fin du jeu', 'plural' => 'jeux', 'done' => 'Terminé'];
     }
 
+    /** Tome du dernier « Commencé » d'un livre (le tome en cours ou le dernier lu), ou null. */
+    public static function currentVolume(int $workId, int $categoryId): ?int
+    {
+        $v = Db::value("SELECT volume FROM events WHERE work_id = ? AND category_id = ? AND milestone = 'start'
+                         ORDER BY occurred_at DESC, id DESC LIMIT 1", [$workId, $categoryId]);
+        return $v !== null ? (int) $v : null;
+    }
+
+    /**
+     * Lecture tome par tome : pour chaque tome ayant un « Commencé », [volume, start, finish|null, days].
+     * Du plus récent au plus ancien.
+     */
+    public static function volumes(int $workId, int $categoryId): array
+    {
+        $rows = Db::all("SELECT occurred_at, milestone, volume FROM events
+                          WHERE work_id = ? AND category_id = ? AND milestone IN ('start', 'finish') AND volume IS NOT NULL
+                          ORDER BY occurred_at, id", [$workId, $categoryId]);
+        $byVol = [];
+        foreach ($rows as $r) {
+            $v = (int) $r['volume'];
+            if ($r['milestone'] === 'start') {
+                $byVol[$v] = ['volume' => $v, 'start' => $r['occurred_at'], 'finish' => null];
+            } elseif (isset($byVol[$v]) && $byVol[$v]['finish'] === null) {
+                $byVol[$v]['finish'] = $r['occurred_at'];
+            }
+        }
+        foreach ($byVol as &$p) {
+            $end = Time::local($p['finish'] ?? Time::nowUtc())->setTime(0, 0);
+            $p['days'] = (int) Time::local($p['start'])->setTime(0, 0)->diff($end)->days;
+        }
+        unset($p);
+        usort($byVol, static fn($a, $b) => strcmp($b['start'], $a['start']));
+        return $byVol;
+    }
+
     /** « 47 jours », « 1 jour », « le jour même » */
     public static function daysLabel(int $days): string
     {
