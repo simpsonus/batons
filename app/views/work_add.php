@@ -9,7 +9,18 @@ $kindLabel = ['film' => 'un film', 'serie' => 'une série', 'livre' => 'un livre
         <span class="icon big" aria-hidden="true"><?= icon($c['icon']) ?></span>
         <h1><?= e($c['name']) ?></h1>
     </div>
-    <div class="actions"><a class="btn ghost" href="<?= url('category', ['id' => $c['id']]) ?>">Fiche</a></div>
+    <div class="actions">
+        <?= help_box('Comment ça marche', array_merge([
+    'serie' => ['<strong>▶ S02E05</strong> : ajoute cet épisode, vu maintenant.', 'Un autre épisode ou une autre date : touche le titre, puis « + Ajouter un épisode… ».'],
+    'film' => ['Touche le titre pour revoir l\'historique ou ajouter un visionnage avec date et note.'],
+    'livre' => ['<strong>▶ Tome 2</strong> (« tome 1 lu ») : marque le tome en cours comme lu aujourd\'hui et commence le suivant.', '<strong>Tome 1 lu ✓</strong> : marque seulement le tome en cours comme lu ; le tome suivant reste proposé.', 'Tu ne liras pas la suite ? Touche le titre, puis « J\'arrête là ».'],
+    'jeu' => ['<strong>▶ Partie</strong> : ajoute une partie jouée maintenant.', '<strong>Terminé ✓</strong> : marque le jeu comme fini aujourd\'hui (la durée est calculée depuis son début).', 'Tu abandonnes le jeu ? Touche le titre, puis « J\'arrête là ».'],
+][$c['kind']], [
+            'Une autre date (hier, la semaine dernière) : touche le titre, puis « + Ajouter… » et choisis la date.',
+            'Une erreur ? « Annuler » dans le message qui s\'affiche en haut défait l\'action.',
+        ])) ?>
+        <a class="btn ghost" href="<?= url('category', ['id' => $c['id']]) ?>">Fiche</a>
+    </div>
 </div>
 
 <?php if ($continue): ?>
@@ -27,25 +38,7 @@ $kindLabel = ['film' => 'un film', 'serie' => 'une série', 'livre' => 'un livre
                         ?>
                         <span class="muted small"><?php if ($stC && $stC['state'] === 'playing'): ?><?= $volC ? 'Tome ' . $volC . ' en cours' : 'En cours' ?> depuis <?= e(Works::daysLabel((int) $stC['days'])) ?><?php elseif ($stC && $stC['state'] === 'done'): ?><?= $volC ? 'Tome ' . $volC . ' lu' : 'Terminé' ?> · <?= e(Batons\Time::ago($w['last_at'])) ?><?php else: ?>dernier : <?= e(Batons\Time::ago($w['last_at'])) ?><?php endif; ?></span>
                     </span>
-                    <?php if (!empty($n['reading'])): ?>
-                    <a class="btn ghost next-btn" href="<?= url('work', ['id' => $c['id'], 'work' => $w['id']]) ?>">En cours</a>
-                    <?php else: ?>
-                    <form method="post" action="<?= url('work_next', ['id' => $c['id'], 'work' => $w['id']]) ?>">
-                        <?= csrf() ?>
-                        <input type="hidden" name="back" value="<?= e(url()) ?>">
-                        <button class="btn accent next-btn" aria-label="<?= e($w['title']) ?> : <?= isset($n['volume']) && $c['kind'] === 'livre' ? e(($stC && $stC['state'] === 'playing' && $volC ? 'tome ' . $volC . ' lu, ' : '') . 'commencer le tome ' . $n['volume']) : 'ajouter ' . e((Works::progressLong($n['season'] ?? null, $n['episode'] ?? null, $n['volume'] ?? null) ?: 'une partie')) . ' maintenant' ?>">
-                            <span aria-hidden="true">▶</span> <?= e((Works::progress($n['season'] ?? null, $n['episode'] ?? null, $n['volume'] ?? null) ?: 'Partie')) ?>
-                        </button>
-                    </form>
-                    <?php endif; ?>
-                    <?php if (in_array($c['kind'], Works::TRACKED, true) && Works::status((int) $w['id'], (int) $c['id'])['state'] === 'playing'): ?>
-                        <form method="post" action="<?= url('work_mark', ['id' => $c['id'], 'work' => $w['id']]) ?>">
-                            <?= csrf() ?>
-                            <input type="hidden" name="milestone" value="finish">
-                            <input type="hidden" name="back" value="<?= e(here()) ?>">
-                            <button class="icon-btn finish-btn" aria-label="<?= e($w['title']) ?> : <?= $c['kind'] === 'livre' ? ($volC ? 'tome ' . $volC . ' lu' : 'lu') : 'terminé' ?> aujourd'hui" title="<?= $c['kind'] === 'livre' ? ($volC ? 'Tome ' . $volC . ' lu' : 'Lu') : 'Terminé' ?> aujourd'hui"><span aria-hidden="true">🏁</span></button>
-                        </form>
-                    <?php endif; ?>
+                    <?php $back = here(); require __DIR__ . '/_work_actions.php'; ?>
                 </li>
             <?php endforeach; ?>
         </ul>

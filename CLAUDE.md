@@ -95,7 +95,7 @@ repository.yaml         pour ajouter le dépôt comme source d'add-ons dans HA
 
 `users` → `groups` (facultatifs) → `categories` (nom, icône, couleur, unité, position, archivée, masquée, kind)
 → `events` (occurred_at UTC, value, note, + work_id, season, episode, volume, rating, milestone pour les œuvres).
-`works` (par utilisateur : kind, source, source_id, titre, sous-titre, année, affiche, saisons en JSON).
+`works` (par utilisateur : kind, source, source_id, titre, sous-titre, année, affiche, saisons en JSON, stopped_at).
 Autres : `passkeys`, `user_settings`, `login_failures`, `http_cache`.
 Nouvelle évolution de schéma = nouveau fichier `app/migrations/00N_xxx.sql`, jamais modifier un ancien.
 
@@ -145,6 +145,9 @@ docker build -f docker/Dockerfile -t batons . && docker run -p 8080:8080 -v $PWD
       🏁 dans « Continuer » pour jeux/livres.
 - [x] v0.14 : livres en tomes : « ▶ Tome N+1 » = fin du tome N (1 s avant) + début du tome N+1 ; étapes avec
       `volume` ; `Works::currentVolume()`, `Works::volumes()` ; flash « Annuler » multi-bâtons.
+- [x] v0.15 : boutons d'action **avec libellé + sous-titre** (`views/_work_actions.php`), jamais d'icône seule
+      pour une action qui enregistre ; infobulles `title` explicites ; aide contextuelle `help_box()`
+      (details/summary) ; `works.stopped_at` (« J'arrête là », effacé par tout nouveau bâton de l'œuvre).
 - [ ] Type de catégorie « Éléments » générique (éléments nommés sans catalogue, plusieurs en parallèle,
       début/fin/durée — mécanique des œuvres) : à faire si un cas concret apparaît (ex. « Traitements »).
 - [ ] Plus tard éventuellement : synchro BetaSeries / Trakt (pas SensCritique ni SerieBox : pas d'API

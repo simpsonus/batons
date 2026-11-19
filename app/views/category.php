@@ -67,15 +67,7 @@ $events = array_slice($events, 0, 50);
                             ]))) ?></span>
                             <?php if ($w['avg_rating'] !== null): ?><?= rating_badge((int) round((float) $w['avg_rating'])) ?><?php endif; ?>
                         </span>
-                        <?php if ($nextW && !($c['kind'] === 'jeu' && $stW && $stW['state'] === 'done')): ?>
-                            <form method="post" action="<?= url('work_next', ['id' => $id, 'work' => $w['id']]) ?>">
-                                <?= csrf() ?>
-                                <input type="hidden" name="back" value="<?= e(here()) ?>">
-                                <button class="btn ghost next-btn" aria-label="Ajouter <?= e($w['title']) ?>, <?= e((Batons\Works::progressLong($nextW['season'] ?? null, $nextW['episode'] ?? null, $nextW['volume'] ?? null) ?: 'une partie')) ?>, maintenant">
-                                    <span aria-hidden="true">▶</span> <?= e((Batons\Works::progress($nextW['season'] ?? null, $nextW['episode'] ?? null, $nextW['volume'] ?? null) ?: 'Partie')) ?>
-                                </button>
-                            </form>
-                        <?php endif; ?>
+                        <?php $n = $nextW; $back = here(); require __DIR__ . '/_work_actions.php'; ?>
                     </li>
                 <?php endforeach; ?>
             </ul>
@@ -88,7 +80,15 @@ $events = array_slice($events, 0, 50);
     $openP = ($periods && $periods[0]['finish'] === null) ? $periods[0] : null;
     $pStats = Batons\Periods::stats($periods); ?>
     <section class="card game-status" style="--c: <?= e($c['color']) ?>" aria-labelledby="per-title">
-        <h2 id="per-title" class="card-title">Périodes</h2>
+        <div class="card-head">
+            <h2 id="per-title" class="card-title">Périodes</h2>
+            <?= help_box('Les périodes', [
+                'Sur l\'accueil, <strong>un tap sur la tuile commence</strong> une période (« en cours ») ; <strong>le tap suivant la termine</strong>.',
+                'Une seule période à la fois. La durée compte les jours du début à la fin.',
+                'Une période passée : ajoute un bâton ci-dessous en choisissant « Le début » puis un autre avec « La fin », chacun à sa date.',
+                'Une erreur ? « Annuler » dans le message en haut, ou le crayon de l\'historique pour corriger une date.',
+            ]) ?>
+        </div>
         <?php if ($openP): ?>
             <p><strong>En cours</strong> depuis le <?= e(Time::longDate(Time::local($openP['start']))) ?>
                 (<?= e(Batons\Works::daysLabel((int) $openP['days'])) ?>).</p>

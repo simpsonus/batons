@@ -492,3 +492,36 @@ a.tap { text-decoration: none; }
 .period-list li { display: flex; justify-content: space-between; gap: .6rem; padding: .45rem 0; border-top: 1px solid var(--line); font-variant-numeric: tabular-nums; }
 .period-list li:first-child { border-top: 0; }
 .finish-btn { font-size: 1.2rem; }
+
+/* --- Boutons d'action avec libellé + sous-titre ------------------------------------- */
+.work-list li { flex-wrap: wrap; }
+.work-btns { display: flex; gap: .4rem; margin-left: auto; flex-wrap: wrap; justify-content: flex-end; }
+.work-btns form { margin: 0; }
+.next-btn, .finish-btn { flex-direction: column; gap: 0; line-height: 1.15; padding: .35rem .8rem; }
+.btn-main { font-weight: 700; white-space: nowrap; }
+.btn-sub { font-size: .75rem; font-weight: 500; opacity: .9; white-space: nowrap; }
+@media (max-width: 480px) {
+    .work-list .work-btns { width: 100%; padding-left: calc(46px + .7rem); justify-content: flex-start; }
+}
+.work-actions .work-btns { margin-left: 0; justify-content: flex-start; }
+.notice { border-left: 4px solid var(--c, var(--accent)); }
+.notice p { margin-top: 0; }
+.notice form { margin: 0; }
+
+/* --- Aide « ? » ---------------------------------------------------------------------- */
+.help-box { position: relative; }
+.help-box > summary {
+    list-style: none; cursor: pointer; display: grid; place-items: center;
+    width: var(--tap); height: var(--tap); border-radius: 50%; border: 1px solid var(--field);
+    font-weight: 700; font-size: 1.05rem; color: var(--muted); background: var(--surface);
+}
+.help-box > summary::-webkit-details-marker { display: none; }
+.help-box[open] > summary { color: var(--ink); border-color: var(--ink); }
+.help-pop {
+    position: absolute; right: 0; top: calc(100% + .4rem); z-index: 15; width: min(22rem, calc(100vw - 2rem));
+    background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 12px;
+    box-shadow: 0 8px 28px rgb(0 0 0 / .18); padding: .8rem 1rem; font-size: .92rem; text-align: left;
+}
+.help-title { margin: 0 0 .4rem; font-weight: 700; }
+.help-pop ul { margin: 0; padding-left: 1.1rem; }
+.help-pop li { margin: .3rem 0; }

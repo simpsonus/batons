@@ -288,6 +288,9 @@ switch ($route) {
         }
         $continue = [];
         foreach (Batons\Works::inCategory($uid, (int) $c['id']) as $w) {
+            if ($w['stopped_at']) {
+                continue; // « J'arrête là »
+            }
             $next = Batons\Works::next($uid, $w, Batons\Works::lastEvent((int) $w['id'], (int) $c['id']));
             if (in_array($w['kind'], Batons\Works::TRACKED, true)) {
                 $st = Batons\Works::status((int) $w['id'], (int) $c['id']);
@@ -383,6 +386,17 @@ switch ($route) {
             ? '« ' . $w['title'] . ' » ' . ($c['kind'] === 'livre' ? 'lu' : 'terminé') . ' en ' . Batons\Works::daysLabel((int) $st['days']) . '. Bravo !'
             : '« ' . $w['title'] . ' » commencé aujourd\'hui.', $evId);
         Http::back('work', ['id' => $c['id'], 'work' => $w['id']]);
+
+    case 'work_stop':
+    case 'work_resume':
+        $c = $category(Http::intInput('id'));
+        $w = Batons\Works::find($uid, (int) Http::intInput('work')) ?? Http::notFound('Œuvre');
+        Batons\Db::run('UPDATE works SET stopped_at = ? WHERE id = ? AND user_id = ?',
+            [$route === 'work_stop' ? Time::nowUtc() : null, $w['id'], $uid]);
+        Http::flash($route === 'work_stop'
+            ? '« ' . $w['title'] . ' » ne sera plus proposé dans « Continuer ».'
+            : '« ' . $w['title'] . ' » est de nouveau proposé dans « Continuer ».');
+        Http::redirect('work', ['id' => $c['id'], 'work' => $w['id']]);
 
     case 'work_next':
         $c = $category(Http::intInput('id'));

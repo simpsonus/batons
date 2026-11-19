@@ -17,7 +17,9 @@ final class Events
             [$categoryId, $occurredAtUtc ?? Time::nowUtc(), $value, $note === '' ? null : $note,
              in_array($milestone, ['start', 'finish'], true) ? $milestone : null, Time::nowUtc()]
         );
-        return Db::lastId();
+        $id = Db::lastId();
+        Db::run('UPDATE works SET stopped_at = NULL WHERE id = ? AND stopped_at IS NOT NULL', [$workId]); // reprise
+        return $id;
     }
 
     /** Bâton d'une catégorie « œuvre ». */

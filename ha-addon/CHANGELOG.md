@@ -1,5 +1,14 @@
 # Journal des modifications
 
+## 0.15.0
+- **Boutons explicites** : fini les icônes seules pour les actions qui enregistrent quelque chose.
+  « ▶ Tome 4 · tome 3 lu », « Tome 3 lu ✓ · aujourd'hui », « ▶ S02E05 · vu », « Terminé ✓ »…
+- **Infobulles** détaillées au survol (ordinateur) : chaque bouton dit exactement ce qu'il va faire.
+- **Aide « ? »** sur l'écran « Continuer », la fiche d'une œuvre et le bloc Périodes : une courte
+  explication des actions, au doigt comme à la souris.
+- **« J'arrête là »** sur la fiche d'une série, d'un livre ou d'un jeu : il n'est plus proposé dans
+  « Continuer » (par exemple, tu ne liras pas la suite). « Reprendre » le remet ; ajouter un bâton aussi.
+
 ## 0.14.0
 - Livres en plusieurs tomes : **chaque tome a son début et sa fin**. « ▶ Tome 2 » marque le tome 1 lu
   et commence le tome 2 (en une fois) ; 🏁 marque le tome en cours comme lu.

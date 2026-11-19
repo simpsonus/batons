@@ -81,3 +81,17 @@ function poster_url(array $w): ?string
 {
     return !empty($w['has_poster']) ? url('poster', ['id' => $w['id']]) : null;
 }
+
+/**
+ * Petite aide contextuelle « ? » (details/summary : clavier, lecteurs d'écran, tactile, sans JS).
+ * $items : liste de phrases (HTML déjà échappé autorisé, à n'utiliser qu'avec du texte de l'application).
+ */
+function help_box(string $title, array $items): string
+{
+    $html = '<details class="help-box"><summary aria-label="Aide : ' . e($title) . '" title="Aide"><span aria-hidden="true">?</span></summary>'
+        . '<div class="help-pop" role="note"><p class="help-title">' . e($title) . '</p><ul>';
+    foreach ($items as $it) {
+        $html .= '<li>' . $it . '</li>';
+    }
+    return $html . '</ul></div></details>';
+}

@@ -224,7 +224,7 @@ final class Works
             $p['days'] = (int) Time::local($p['start'])->setTime(0, 0)->diff($end)->days;
         }
         unset($p);
-        usort($byVol, static fn($a, $b) => strcmp($b['start'], $a['start']));
+        usort($byVol, static fn($a, $b) => [$b['start'], $b['volume']] <=> [$a['start'], $a['volume']]);
         return $byVol;
     }
 

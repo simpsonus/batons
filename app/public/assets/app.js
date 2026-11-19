@@ -205,6 +205,15 @@
         });
     }
 
+    // Aides « ? » : fermeture par Échap ou clic à l'extérieur.
+    document.addEventListener('click', (ev) => {
+        document.querySelectorAll('details.help-box[open]').forEach((d) => { if (!d.contains(ev.target)) d.open = false; });
+    });
+    document.addEventListener('keydown', (ev) => {
+        if (ev.key !== 'Escape') return;
+        document.querySelectorAll('details.help-box[open]').forEach((d) => { d.open = false; d.querySelector('summary').focus(); });
+    });
+
     // Retour haptique discret sur mobile lors d'un tap.
     document.querySelectorAll('.tap').forEach((btn) => {
         btn.addEventListener('click', () => navigator.vibrate?.(15));
