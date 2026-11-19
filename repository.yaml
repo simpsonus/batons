@@ -1,0 +1,4 @@
+# Permet d'ajouter ce dépôt comme source d'add-ons dans Home Assistant.
+name: Bâtons
+url: https://github.com/simpsonus/batons
+maintainer: simpsonus

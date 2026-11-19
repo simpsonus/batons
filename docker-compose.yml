@@ -1,0 +1,18 @@
+# Exemple de déploiement Docker autonome.
+#   docker compose up -d   ->  http://localhost:8080
+services:
+  batons:
+    image: ghcr.io/simpsonus/batons:latest
+    # build: { context: ., dockerfile: docker/Dockerfile }   # pour construire localement
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./data:/data
+    environment:
+      TZ: Europe/Paris
+      BATONS_AUTH: none
+      # Derrière un reverse proxy qui authentifie (Authelia, Authentik…) :
+      # BATONS_AUTH: header
+      # BATONS_AUTH_HEADER: Remote-User
+      # BATONS_TRUSTED_PROXIES: 172.18.0.1
+    restart: unless-stopped

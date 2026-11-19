@@ -1,0 +1,29 @@
+# Add-on Home Assistant : une simple enveloppe autour de l'image Docker générique.
+# Rien de spécifique à HA dans l'application : tout passe par des variables d'environnement.
+name: Bâtons
+version: "0.1.0"
+slug: batons
+description: Compter et dater tout ce qui compte (habitudes, événements, symptômes…).
+url: https://github.com/simpsonus/batons
+arch:
+  - amd64
+  - aarch64
+image: ghcr.io/simpsonus/batons
+startup: application
+boot: auto
+
+ingress: true
+ingress_port: 8080
+panel_icon: mdi:counter
+panel_title: Bâtons
+
+# Identité fournie par Home Assistant Ingress (seul le Supervisor, 172.30.32.2, peut joindre l'add-on).
+environment:
+  BATONS_DATA_DIR: /data
+  BATONS_AUTH: header
+  BATONS_AUTH_HEADER: X-Remote-User-Name
+  BATONS_AUTH_NAME_HEADER: X-Remote-User-Display-Name
+  BATONS_TRUSTED_PROXIES: 172.30.32.2
+
+options: {}
+schema: {}

@@ -1,0 +1,60 @@
+<?php
+use Batons\Chart;
+use Batons\Time;
+
+$currentGroup = false;
+?>
+<div class="page-head">
+    <h1>Catégories</h1>
+    <div class="actions">
+        <?php if (count($categories) > 1): ?>
+            <a class="btn ghost" href="<?= url('category_order') ?>">Réorganiser</a>
+        <?php endif; ?>
+        <a class="btn" href="<?= url('category_new') ?>">+ Catégorie</a>
+    </div>
+</div>
+
+<?php if (!$categories): ?>
+    <div class="empty">
+        <svg class="tally-big" viewBox="0 0 32 32" aria-hidden="true"><g stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M7 7v18M12 7v18M17 7v18M22 7v18"/><path d="M4 21 26 11"/></g></svg>
+        <p><strong>Rien à compter pour l'instant.</strong></p>
+        <p>Crée une catégorie (« Café », « Arrosage », « Migraine »…), puis touche sa tuile à chaque fois que ça arrive.</p>
+        <a class="btn" href="<?= url('category_new') ?>">Créer ma première catégorie</a>
+    </div>
+<?php endif; ?>
+
+<?php foreach ($categories as $c): ?>
+    <?php if ($c['group_name'] !== $currentGroup): ?>
+        <?php if ($currentGroup !== false): ?></div><?php endif; ?>
+        <?php $currentGroup = $c['group_name']; ?>
+        <?php if ($currentGroup !== null): ?><h2 class="group"><?= e($currentGroup) ?></h2>
+        <?php elseif ($categories[0]['group_name'] !== null): ?><h2 class="group">Sans groupe</h2><?php endif; ?>
+        <div class="grid">
+    <?php endif; ?>
+
+    <div class="tile" style="--c: <?= e($c['color']) ?>">
+        <form method="post" action="<?= url('tap') ?>">
+            <?= csrf() ?>
+            <input type="hidden" name="id" value="<?= (int) $c['id'] ?>">
+            <button class="tap" title="Ajouter un bâton maintenant">
+                <span class="icon"><?= e($c['icon']) ?></span>
+                <span class="name"><?= e($c['name']) ?></span>
+                <span class="meta">
+                    <?php if ((int) $c['today_count'] > 0): ?>
+                        <b><?= (int) $c['today_count'] ?></b> aujourd'hui<?php if ($c['unit'] && $c['today_sum'] !== null): ?> · <?= e(Chart::num($c['today_sum']) . ' ' . $c['unit']) ?><?php endif; ?>
+                    <?php else: ?>
+                        <?= e(Time::ago($c['last_at'])) ?>
+                    <?php endif; ?>
+                </span>
+            </button>
+        </form>
+        <a class="more" href="<?= url('category', ['id' => $c['id']]) ?>" title="Détails, saisie avec date, valeur ou note">
+            <span aria-hidden="true">›</span><span class="sr">Détails de <?= e($c['name']) ?></span>
+        </a>
+    </div>
+<?php endforeach; ?>
+<?php if ($currentGroup !== false): ?></div><?php endif; ?>
+
+<?php if ($archivedCount): ?>
+    <p class="muted center"><a href="<?= url('archives') ?>"><?= $archivedCount ?> catégorie<?= $archivedCount > 1 ? 's' : '' ?> archivée<?= $archivedCount > 1 ? 's' : '' ?></a></p>
+<?php endif; ?>

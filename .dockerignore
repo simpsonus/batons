@@ -1,0 +1,6 @@
+.git
+.github
+app/data
+app/config.php
+ha-addon
+*.md
