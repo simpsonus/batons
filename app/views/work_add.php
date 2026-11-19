@@ -2,7 +2,7 @@
 use Batons\Catalog;
 use Batons\Works;
 
-$kindLabel = ['film' => 'un film', 'serie' => 'une série', 'livre' => 'un livre'][$c['kind']];
+$kindLabel = ['film' => 'un film', 'serie' => 'une série', 'livre' => 'un livre', 'jeu' => 'un jeu'][$c['kind']];
 ?>
 <div class="page-head cat-head" style="--c: <?= e($c['color']) ?>">
     <div class="cat-title">
@@ -20,17 +20,16 @@ $kindLabel = ['film' => 'un film', 'serie' => 'une série', 'livre' => 'un livre
                 <li>
                     <span class="poster sm" aria-hidden="true"><?php if (poster_url($w)): ?><img src="<?= e(poster_url($w)) ?>" alt="" width="46" height="69"><?php else: ?><?= icon($c['icon']) ?><?php endif; ?></span>
                     <span class="work-text">
-                        <strong><?= e($w['title']) ?></strong>
+                        <a class="work-title" href="<?= url('work', ['id' => $c['id'], 'work' => $w['id']]) ?>"><?= e($w['title']) ?></a>
                         <span class="muted small">dernier : <?= e(Batons\Time::ago($w['last_at'])) ?></span>
                     </span>
                     <form method="post" action="<?= url('work_next', ['id' => $c['id'], 'work' => $w['id']]) ?>">
                         <?= csrf() ?>
                         <input type="hidden" name="back" value="<?= e(url()) ?>">
-                        <button class="btn accent next-btn" aria-label="Ajouter <?= e($w['title']) ?>, <?= e(Works::progressLong($n['season'] ?? null, $n['episode'] ?? null, $n['volume'] ?? null)) ?>, maintenant">
-                            <span aria-hidden="true">▶</span> <?= e(Works::progress($n['season'] ?? null, $n['episode'] ?? null, $n['volume'] ?? null)) ?>
+                        <button class="btn accent next-btn" aria-label="Ajouter <?= e($w['title']) ?>, <?= e((Works::progressLong($n['season'] ?? null, $n['episode'] ?? null, $n['volume'] ?? null) ?: 'une partie')) ?>, maintenant">
+                            <span aria-hidden="true">▶</span> <?= e((Works::progress($n['season'] ?? null, $n['episode'] ?? null, $n['volume'] ?? null) ?: 'Partie')) ?>
                         </button>
                     </form>
-                    <a class="icon-btn" href="<?= url('work_log', ['id' => $c['id'], 'work' => $w['id']]) ?>" aria-label="Autre épisode, date ou note pour <?= e($w['title']) ?>" title="Autre choix…"><?= ui_icon('pencil') ?></a>
                 </li>
             <?php endforeach; ?>
         </ul>
@@ -40,7 +39,7 @@ $kindLabel = ['film' => 'un film', 'serie' => 'une série', 'livre' => 'un livre
 <section class="card" aria-labelledby="search-title">
     <h2 id="search-title" class="card-title">Ajouter <?= $kindLabel ?></h2>
     <?php if (!$sources): ?>
-        <p class="muted">La recherche de films demande une clé TMDB gratuite :
+        <p class="muted">La recherche <?= $c['kind'] === 'jeu' ? 'de jeux demande une clé RAWG' : 'de films demande une clé TMDB' ?> gratuite :
             <a href="<?= url('account') ?>">menu du logo › Compte › Catalogues</a>. En attendant, saisis le titre à la main.</p>
     <?php else: ?>
         <form method="get" action="./" role="search" data-work-search>
@@ -56,7 +55,8 @@ $kindLabel = ['film' => 'un film', 'serie' => 'une série', 'livre' => 'un livre
             <?php require __DIR__ . '/_work_results.php'; ?>
         </div>
         <p class="muted small">Recherche via <?= e(implode(', ', $sources)) ?> : le texte tapé est envoyé à ce service.
-            <?php if (in_array('TMDB', $sources, true)): ?>Ce produit utilise l'API TMDB mais n'est ni approuvé ni certifié par TMDB.<?php endif; ?></p>
+            <?php if (in_array('TMDB', $sources, true)): ?>Ce produit utilise l'API TMDB mais n'est ni approuvé ni certifié par TMDB.<?php endif; ?>
+            <?php if (in_array('RAWG', $sources, true)): ?>Données de jeux : <a href="https://rawg.io" target="_blank" rel="noopener">RAWG<span class="sr"> (nouvel onglet)</span></a>.<?php endif; ?></p>
     <?php endif; ?>
 
     <details class="manual" <?= !$sources || ($q !== '' && !$results) ? 'open' : '' ?>>
@@ -67,7 +67,7 @@ $kindLabel = ['film' => 'un film', 'serie' => 'une série', 'livre' => 'un livre
                 <label>Titre
                     <input type="text" name="title" value="<?= e($q) ?>" maxlength="200" required>
                 </label>
-                <label><?= $c['kind'] === 'livre' ? 'Auteur' : 'Précision' ?> <span class="muted">facultatif</span>
+                <label><?= $c['kind'] === 'livre' ? 'Auteur' : ($c['kind'] === 'jeu' ? 'Plateforme' : 'Précision') ?> <span class="muted">facultatif</span>
                     <input type="text" name="subtitle" maxlength="200">
                 </label>
             </div>

@@ -31,7 +31,7 @@
         <input type="text" name="note" maxlength="500" value="<?= e($ev['note']) ?>" autocomplete="off">
     </label>
     <div class="form-actions">
-        <button class="btn accent">Enregistrer</button>
+        <button class="btn accent">Mettre à jour</button>
         <a class="btn ghost" href="<?= url('category', ['id' => $ev['category_id']]) ?>">Annuler</a>
     </div>
 </form>

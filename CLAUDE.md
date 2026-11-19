@@ -62,11 +62,14 @@ Le nom vient des bâtons qu'on trace pour compter (IIII barrés). Slug technique
   bibliothèque (ES256/RS256, attestation « none », vérification utilisateur requise, rpId enregistré avec la clé).
   État en session, expiration après `BATONS_HIDDEN_TIMEOUT` s d'inactivité (300). Masquer exige un code défini.
   Ce n'est pas du chiffrement (le dire dans l'interface).
-- **Catégories « œuvre »** (`categories.kind` = `serie` | `film` | `livre`, sinon `simple`) : chaque bâton
+- **Catégories « œuvre »** (`categories.kind` = `serie` | `film` | `livre` | `jeu`, sinon `simple`) : chaque bâton
   pointe vers une œuvre (`works`) avec saison/épisode (séries), tome (livres) et note 1–10 facultative.
   La tuile ouvre `work_add` (« Continuer » = épisode/tome suivant en un tap, puis recherche). Catalogues
   interrogés **côté serveur** (`Catalog.php`, `Net.php` avec cache `http_cache`) : TMDB (clé, réglage par
-  utilisateur dans Compte ou `BATONS_TMDB_KEY`), TVmaze (séries sans clé), Google Books puis Open Library.
+  utilisateur dans Compte ou `BATONS_TMDB_KEY`), TVmaze (séries sans clé), Google Books puis Open Library,
+  RAWG pour les jeux (clé, `BATONS_RAWG_KEY` ; lien actif vers rawg.io obligatoire là où ses données s'affichent).
+  Chaque œuvre a sa fiche (route `work` : historique, ▶ suivant, « + Ajouter … ») ; dans les listes, le titre
+  mène à la fiche (pas de crayon : un crayon = modifier un bâton existant, bouton « Mettre à jour »).
   Affiches copiées dans `data_dir/posters`, vignettes de recherche relayées via `thumb` (liste blanche
   d'hôtes) : le navigateur ne contacte jamais les catalogues. Saisie manuelle toujours possible.
   Mention TMDB obligatoire (« utilise l'API TMDB mais n'est ni approuvé ni certifié par TMDB »).
@@ -131,6 +134,7 @@ docker build -f docker/Dockerfile -t batons . && docker run -p 8080:8080 -v $PWD
       `Chart::calendar()` + tableau mensuel pour lecteurs d'écran).
 - [x] v0.9 : catégories « œuvre » (séries, films, livres) : recherche catalogue, épisode/tome suivant,
       note sur 10, affiches, export/réimport.
+- [x] v0.10 : jeux vidéo (RAWG, « ▶ Partie »), fiche œuvre, libellés Ajouter / Mettre à jour clarifiés.
 - [ ] Plus tard éventuellement : synchro BetaSeries / Trakt (pas SensCritique ni SerieBox : pas d'API
       publique). Jamais de synchro pour une catégorie masquée.
 - [ ] Recherche / filtre dans la chronologie.

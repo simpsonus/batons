@@ -68,6 +68,16 @@ final class Events
         );
     }
 
+    /** Bâtons d'une œuvre dans une catégorie, du plus récent au plus ancien. */
+    public static function forWork(int $workId, int $categoryId): array
+    {
+        return Db::all(
+            'SELECT e.*, w.title AS work_title FROM events e JOIN works w ON w.id = e.work_id
+              WHERE e.work_id = ? AND e.category_id = ? ORDER BY e.occurred_at DESC, e.id DESC',
+            [$workId, $categoryId]
+        );
+    }
+
     /** Derniers bâtons toutes catégories confondues. */
     public static function timeline(int $userId, int $limit = 100, int $offset = 0): array
     {

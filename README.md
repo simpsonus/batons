@@ -8,7 +8,7 @@ web auto-hébergée.
 - PHP 8.3 sans framework, SQLite, aucune dépendance JS
 - Mobile d'abord, thème clair/sombre automatique, installable en PWA
 - Multi-utilisateur via un reverse proxy qui authentifie (Home Assistant, Authelia, Authentik…)
-- Catégories « œuvre » : séries (épisode suivant en un tap), films, livres (tome), avec note sur 10
+- Catégories « œuvre » : séries (épisode suivant en un tap), films, livres (tome), jeux vidéo, avec note sur 10
 - Export CSV
 
 ## Installation
@@ -46,6 +46,7 @@ racine web (ou dans un sous-dossier). Le dossier `app/data/` doit être accessib
 | `BATONS_AUTH_NAME_HEADER` | — | En-tête portant le nom affiché (facultatif) |
 | `BATONS_TRUSTED_PROXIES` | — | IP autorisées à envoyer l'en-tête, séparées par des virgules |
 | `BATONS_HIDDEN_TIMEOUT` | `300` | Secondes d'inactivité avant reverrouillage des éléments masqués |
+| `BATONS_RAWG_KEY` | — | Clé RAWG commune (jeux vidéo) ; chaque utilisateur peut aussi saisir la sienne |
 | `BATONS_TMDB_KEY` | — | Clé TMDB commune (films et séries) ; chaque utilisateur peut aussi saisir la sienne dans « Compte » |
 
 En mode `builtin` seul, le premier visiteur crée le compte **administrateur** (qui crée ensuite les autres) :

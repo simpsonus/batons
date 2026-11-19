@@ -45,7 +45,7 @@ final class Net
             return null;
         }
         // La clé de cache ignore les secrets (clé d'API dans l'URL, en-têtes).
-        $key = hash('sha256', preg_replace('/([?&])api_key=[^&]*/', '$1', $url));
+        $key = hash('sha256', preg_replace('/([?&])(api_key|key)=[^&]*/', '$1', $url));
         if ($ttl > 0) {
             $row = Db::one('SELECT body, fetched_at FROM http_cache WHERE key = ?', [$key]);
             if ($row !== null && (int) $row['fetched_at'] > time() - $ttl) {

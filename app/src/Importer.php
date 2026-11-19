@@ -166,7 +166,7 @@ final class Importer
                 $this->report['errors'][] = 'Ligne ' . ($i + 2) . ' ignorée (date ou catégorie manquante).';
                 continue;
             }
-            $kind = in_array($r['type'] ?? '', ['film', 'serie', 'livre'], true) ? $r['type'] : 'simple';
+            $kind = in_array($r['type'] ?? '', ['film', 'serie', 'livre', 'jeu'], true) ? $r['type'] : 'simple';
             $id = $this->category($name, ['group' => trim($r['groupe'] ?? ''), 'unit' => trim($r['unite'] ?? ''), 'kind' => $kind]);
             $work = trim((string) ($r['oeuvre'] ?? ''));
             if ($work !== '' && $kind !== 'simple') {

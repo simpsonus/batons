@@ -8,7 +8,7 @@ final class Works
 {
     /** Hôtes autorisés pour le téléchargement des affiches (évite de suivre n'importe quelle URL). */
     private const POSTER_HOSTS = ['image.tmdb.org', 'static.tvmaze.com', 'books.google.com',
-        'books.googleusercontent.com', 'covers.openlibrary.org'];
+        'books.googleusercontent.com', 'covers.openlibrary.org', 'media.rawg.io'];
 
     public static function find(int $userId, int $id): ?array
     {
@@ -99,6 +99,9 @@ final class Works
      */
     public static function next(int $userId, array $work, ?array $last): ?array
     {
+        if ($work['kind'] === 'jeu') {
+            return ['session' => true]; // une partie de plus
+        }
         if ($work['kind'] === 'livre') {
             return ($last && $last['volume']) ? ['volume' => (int) $last['volume'] + 1] : null;
         }

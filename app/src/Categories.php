@@ -77,7 +77,7 @@ final class Categories
             'unit'  => $unit === '' ? null : mb_substr($unit, 0, 20),
             'group' => trim((string) ($in['group'] ?? '')),
             'hidden'=> !empty($in['hidden']),
-            'kind'  => in_array($in['kind'] ?? 'simple', ['simple', 'film', 'serie', 'livre'], true) ? $in['kind'] : 'simple',
+            'kind'  => in_array($in['kind'] ?? 'simple', ['simple', 'film', 'serie', 'livre', 'jeu'], true) ? $in['kind'] : 'simple',
         ], $errors];
     }
 

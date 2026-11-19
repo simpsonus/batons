@@ -14,13 +14,15 @@ $maxSeason = $seasons ? max(array_keys($seasons)) : null;
             <h1><?= e($w['title']) ?></h1>
             <p class="muted"><?= e(implode(' · ', array_filter([$w['year'], $w['subtitle']]))) ?></p>
             <?php if ($last): ?>
-                <p class="small">Dernier bâton : <?= e(trim(Works::progress($last['season'], $last['episode'], $last['volume']) . ' · ' . Time::ago($last['occurred_at']), ' ·')) ?></p>
+                <p class="small">Dernier bâton : <?= e(trim(Works::progress($last['season'], $last['episode'], $last['volume']) . ' · ' . Time::ago($last['occurred_at']), ' ·')) ?>
+                    · <a href="<?= url('event_edit', ['id' => $last['id']]) ?>">le modifier</a></p>
             <?php endif; ?>
         </div>
     </div>
 </div>
 
-<form class="card" method="post" action="<?= url('work_log', ['id' => $c['id'], 'work' => $w['id']]) ?>" style="--c: <?= e($c['color']) ?>">
+<h2 class="card-title">Nouveau bâton</h2>
+<form class="card" method="post" action="<?= url('work_log', ['id' => $c['id'], 'work' => $w['id']]) ?>" style="--c: <?= e($c['color']) ?>" aria-label="Nouveau bâton pour <?= e($w['title']) ?>">
     <?= csrf() ?>
     <?php if ($c['kind'] === 'serie'): ?>
         <div class="row">
@@ -50,8 +52,9 @@ $maxSeason = $seasons ? max(array_keys($seasons)) : null;
     <label>Note écrite <span class="muted">facultatif</span>
         <input type="text" name="note" maxlength="500" autocomplete="off">
     </label>
+    <?php if ($w['source'] === 'rawg'): ?><p class="muted small">Données de jeux : <a href="https://rawg.io" target="_blank" rel="noopener">RAWG<span class="sr"> (nouvel onglet)</span></a>.</p><?php endif; ?>
     <div class="form-actions">
         <button class="btn accent">+ Ajouter le bâton</button>
-        <a class="btn ghost" href="<?= url('work_add', ['id' => $c['id']]) ?>">Annuler</a>
+        <a class="btn ghost" href="<?= $last ? url('work', ['id' => $c['id'], 'work' => $w['id']]) : url('work_add', ['id' => $c['id']]) ?>">Annuler</a>
     </div>
 </form>

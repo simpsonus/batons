@@ -14,7 +14,7 @@ namespace Batons;
  */
 final class Catalog
 {
-    public const KINDS = ['film' => 'Films', 'serie' => 'Séries', 'livre' => 'Livres'];
+    public const KINDS = ['film' => 'Films', 'serie' => 'Séries', 'livre' => 'Livres', 'jeu' => 'Jeux vidéo'];
 
     private const TMDB = 'https://api.themoviedb.org/3';
     private const TMDB_IMG = 'https://image.tmdb.org/t/p/w185';
@@ -27,6 +27,7 @@ final class Catalog
             'film'  => $tmdb ? ['TMDB'] : [],
             'serie' => $tmdb ? ['TMDB'] : ['TVmaze'],
             'livre' => ['Google Books', 'Open Library'],
+            'jeu'   => Settings::rawgKey($userId) !== '' ? ['RAWG'] : [],
             default => [],
         };
     }
@@ -42,6 +43,7 @@ final class Catalog
             'film'  => $key !== '' ? self::tmdbSearch('movie', $q, $key) : [],
             'serie' => $key !== '' ? self::tmdbSearch('tv', $q, $key) : self::tvmazeSearch($q),
             'livre' => self::googleBooksSearch($q) ?: self::openLibrarySearch($q),
+            'jeu'   => ($rk = Settings::rawgKey($userId)) !== '' ? self::rawgSearch($q, $rk) : [],
             default => [],
         };
     }
@@ -55,6 +57,7 @@ final class Catalog
             'tvmaze'      => self::tvmazeDetails($id),
             'gbooks'      => self::googleBooksDetails($id),
             'openlibrary' => self::openLibraryDetails($id),
+            'rawg'        => ($rk = Settings::rawgKey($userId)) !== '' ? self::rawgDetails($id, $rk) : null,
             default       => null,
         };
     }
@@ -165,6 +168,43 @@ final class Catalog
             'subtitle' => null,
             'year' => preg_match('/^\d{4}/', (string) ($s['premiered'] ?? ''), $m) ? (int) $m[0] : null,
             'poster' => $s['image']['medium'] ?? null,
+        ];
+    }
+
+    // --- Jeux vidéo : RAWG (clé gratuite ; lien vers RAWG obligatoire là où ses données s'affichent) ---
+
+    private static function rawgSearch(string $q, string $key): array
+    {
+        $data = Net::json('https://api.rawg.io/api/games?' . http_build_query([
+            'search' => $q, 'page_size' => 12, 'key' => $key,
+        ]), [], 3600);
+        $out = [];
+        foreach ($data['results'] ?? [] as $r) {
+            if (isset($r['id'])) {
+                $out[] = self::rawgItem($r);
+            }
+        }
+        return $out;
+    }
+
+    private static function rawgDetails(string $id, string $key): ?array
+    {
+        if (!ctype_digit($id)) {
+            return null;
+        }
+        $r = Net::json("https://api.rawg.io/api/games/$id?" . http_build_query(['key' => $key]), [], 7 * 86400);
+        return ($r && isset($r['id'])) ? self::rawgItem($r) : null;
+    }
+
+    private static function rawgItem(array $r): array
+    {
+        $platforms = array_filter(array_map(static fn($p) => $p['platform']['name'] ?? null, array_slice($r['platforms'] ?? [], 0, 3)));
+        return [
+            'source' => 'rawg', 'source_id' => (string) $r['id'],
+            'title' => (string) ($r['name'] ?? ''),
+            'subtitle' => $platforms ? implode(', ', $platforms) : null,
+            'year' => preg_match('/^\d{4}/', (string) ($r['released'] ?? ''), $m) ? (int) $m[0] : null,
+            'poster' => $r['background_image'] ?? null,
         ];
     }
 

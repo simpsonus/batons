@@ -474,3 +474,8 @@ form[role=search] label { margin-bottom: 0; }
 a.tap { text-decoration: none; }
 .tap .meta { display: block; width: 100%; min-width: 0; overflow: hidden; }
 .tile { min-width: 0; }
+
+.work-title { font-weight: 700; text-decoration: none; overflow-wrap: anywhere; line-height: 1.25; }
+.work-title:hover { text-decoration: underline; }
+.work-actions { margin: 0 0 1rem; }
+.work-actions form { margin: 0; }

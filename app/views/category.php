@@ -33,7 +33,7 @@ $events = array_slice($events, 0, 50);
             <a class="btn accent" href="<?= url('work_add', ['id' => $id]) ?>">+ Ajouter</a>
         </div>
         <?php if (!$works): ?>
-            <p class="muted">Rien pour l'instant : « + Ajouter » pour chercher <?= ['film' => 'un film', 'serie' => 'une série', 'livre' => 'un livre'][$c['kind']] ?>.</p>
+            <p class="muted">Rien pour l'instant : « + Ajouter » pour chercher <?= ['film' => 'un film', 'serie' => 'une série', 'livre' => 'un livre', 'jeu' => 'un jeu'][$c['kind']] ?>.</p>
         <?php else: ?>
             <ul class="work-list">
                 <?php foreach (array_slice($works, 0, 30) as $w):
@@ -42,7 +42,7 @@ $events = array_slice($events, 0, 50);
                     <li>
                         <span class="poster sm" aria-hidden="true"><?php if (poster_url($w)): ?><img src="<?= e(poster_url($w)) ?>" alt="" loading="lazy" width="46" height="69"><?php else: ?><?= icon($c['icon']) ?><?php endif; ?></span>
                         <span class="work-text">
-                            <strong><?= e($w['title']) ?></strong>
+                            <a class="work-title" href="<?= url('work', ['id' => $id, 'work' => $w['id']]) ?>"><?= e($w['title']) ?></a>
                             <span class="muted small"><?= e(implode(' · ', array_filter([
                                 Batons\Works::progress($lastW['season'] ?? null, $lastW['episode'] ?? null, $lastW['volume'] ?? null),
                                 Time::ago($w['last_at']),
@@ -54,16 +54,16 @@ $events = array_slice($events, 0, 50);
                             <form method="post" action="<?= url('work_next', ['id' => $id, 'work' => $w['id']]) ?>">
                                 <?= csrf() ?>
                                 <input type="hidden" name="back" value="<?= e(here()) ?>">
-                                <button class="btn ghost next-btn" aria-label="Ajouter <?= e($w['title']) ?>, <?= e(Batons\Works::progressLong($nextW['season'] ?? null, $nextW['episode'] ?? null, $nextW['volume'] ?? null)) ?>, maintenant">
-                                    <span aria-hidden="true">▶</span> <?= e(Batons\Works::progress($nextW['season'] ?? null, $nextW['episode'] ?? null, $nextW['volume'] ?? null)) ?>
+                                <button class="btn ghost next-btn" aria-label="Ajouter <?= e($w['title']) ?>, <?= e((Batons\Works::progressLong($nextW['season'] ?? null, $nextW['episode'] ?? null, $nextW['volume'] ?? null) ?: 'une partie')) ?>, maintenant">
+                                    <span aria-hidden="true">▶</span> <?= e((Batons\Works::progress($nextW['season'] ?? null, $nextW['episode'] ?? null, $nextW['volume'] ?? null) ?: 'Partie')) ?>
                                 </button>
                             </form>
                         <?php endif; ?>
-                        <a class="icon-btn" href="<?= url('work_log', ['id' => $id, 'work' => $w['id']]) ?>" aria-label="Ajouter un bâton pour <?= e($w['title']) ?> (épisode, date, note)" title="Ajouter avec détails"><?= ui_icon('pencil') ?></a>
                     </li>
                 <?php endforeach; ?>
             </ul>
         <?php endif; ?>
+        <?php if ($c['kind'] === 'jeu' && $works): ?><p class="muted small">Données de jeux : <a href="https://rawg.io" target="_blank" rel="noopener">RAWG<span class="sr"> (nouvel onglet)</span></a>.</p><?php endif; ?>
     </section>
 <?php else: ?>
 <form class="card add-form" method="post" action="<?= url('event_add') ?>" style="--c: <?= e($c['color']) ?>" aria-label="Ajouter un bâton avec date, valeur ou note">

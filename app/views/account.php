@@ -55,7 +55,8 @@
 <?php endif; ?>
 
 <section class="card">
-    <h2>Catalogues (films et séries)</h2>
+    <h2>Catalogues</h2>
+    <h3>Films et séries : TMDB</h3>
     <p>Pour rechercher des <strong>films</strong> (et des séries avec titres français), Bâtons utilise
         <a href="https://www.themoviedb.org/" target="_blank" rel="noopener">TMDB<span class="sr"> (nouvel onglet)</span></a>,
         qui demande une clé gratuite : crée un compte sur TMDB, puis Paramètres › API, et colle ici la
@@ -72,6 +73,21 @@
         <button class="btn ghost">Enregistrer la clé</button>
     </form>
     <p class="muted small">Ce produit utilise l'API TMDB mais n'est ni approuvé ni certifié par TMDB.</p>
+
+    <h3>Jeux vidéo : RAWG</h3>
+    <p>Pour rechercher des jeux, Bâtons utilise
+        <a href="https://rawg.io/apidocs" target="_blank" rel="noopener">RAWG<span class="sr"> (nouvel onglet)</span></a>
+        (clé gratuite pour un usage personnel : crée un compte, puis « Get API key »). Sans clé, les jeux se saisissent à la main.</p>
+    <p class="muted"><?= $rawgOwn ? 'Une clé personnelle est enregistrée.' : ($rawgGlobal ? 'Une clé commune est configurée sur le serveur.' : 'Aucune clé configurée.') ?></p>
+    <form method="post" action="<?= url('account') ?>" novalidate>
+        <?= csrf() ?>
+        <label>Clé RAWG <span class="muted">laisser vide pour retirer</span>
+            <input type="password" name="rawg_key" autocomplete="off" spellcheck="false"
+                   <?= isset($errors['rawg_key']) ? 'aria-invalid="true" aria-describedby="err-rawg"' : '' ?>>
+            <?php if (isset($errors['rawg_key'])): ?><span class="error" id="err-rawg"><?= e($errors['rawg_key']) ?></span><?php endif; ?>
+        </label>
+        <button class="btn ghost">Enregistrer la clé</button>
+    </form>
 </section>
 
 <?php if ($users !== null): ?>

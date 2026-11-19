@@ -20,6 +20,12 @@ final class Settings
         }
     }
 
+    /** Clé RAWG (jeux vidéo) : réglage de l'utilisateur, sinon BATONS_RAWG_KEY. */
+    public static function rawgKey(int $userId): string
+    {
+        return (string) (self::get($userId, 'rawg_key') ?? Config::get('rawg_key') ?? '');
+    }
+
     /** Clé TMDB : réglage de l'utilisateur, sinon BATONS_TMDB_KEY. */
     public static function tmdbKey(int $userId): string
     {

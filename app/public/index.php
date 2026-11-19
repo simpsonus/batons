@@ -196,7 +196,7 @@ switch ($route) {
     case 'category_new':
     case 'category_edit':
         $c = $route === 'category_edit' ? $category(Http::intInput('id'))
-            : ['id' => null, 'name' => '', 'icon' => '', 'color' => '#c2410c', 'unit' => '', 'group_name' => '', 'archived' => 0, 'hidden' => 0, 'kind' => in_array($_GET['kind'] ?? '', ['film', 'serie', 'livre'], true) ? $_GET['kind'] : 'simple'];
+            : ['id' => null, 'name' => '', 'icon' => '', 'color' => '#c2410c', 'unit' => '', 'group_name' => '', 'archived' => 0, 'hidden' => 0, 'kind' => in_array($_GET['kind'] ?? '', ['film', 'serie', 'livre', 'jeu'], true) ? $_GET['kind'] : 'simple'];
         Http::render('category_form', ['c' => $c, 'errors' => [], 'groups' => Categories::groupNames($uid)],
             $c['id'] ? 'Modifier « ' . $c['name'] . ' »' : 'Nouvelle catégorie');
 
@@ -261,6 +261,9 @@ switch ($route) {
         $continue = [];
         foreach (Batons\Works::inCategory($uid, (int) $c['id']) as $w) {
             $next = Batons\Works::next($uid, $w, Batons\Works::lastEvent((int) $w['id'], (int) $c['id']));
+            if ($w['kind'] === 'jeu' && strtotime($w['last_at'] . ' UTC') < time() - 90 * 86400) {
+                $next = null; // jeux pas joués depuis 3 mois : pas dans « Continuer »
+            }
             if ($next !== null) {
                 $continue[] = ['work' => $w, 'next' => $next];
             }
@@ -275,7 +278,7 @@ switch ($route) {
         $c = $category(Http::intInput('id'));
         $source = Http::input('source');
         $sid = Http::input('sid');
-        if (!in_array($source, ['tmdb', 'tvmaze', 'gbooks', 'openlibrary'], true) || $sid === '') {
+        if (!in_array($source, ['tmdb', 'tvmaze', 'gbooks', 'openlibrary', 'rawg'], true) || $sid === '') {
             Http::redirect('work_add', ['id' => $c['id']]);
         }
         $item = Batons\Catalog::details($source, $sid, $c['kind'], $uid) ?? [
@@ -309,10 +312,18 @@ switch ($route) {
             $ev = Events::find($uid, $evId);
             $label = trim($w['title'] . ' ' . Batons\Works::progress($ev['season'], $ev['episode'], $ev['volume']));
             Http::flash('« ' . $label . ' » ajouté.', $evId);
-            Http::redirect('category', ['id' => $c['id']]);
+            Http::redirect('work', ['id' => $c['id'], 'work' => $w['id']]);
         }
         Http::render('work_log', ['c' => $c, 'w' => $w, 'last' => $last,
             'next' => Batons\Works::next($uid, $w, $last), 'seasons' => Batons\Works::seasons($w)], $w['title']);
+
+    case 'work':
+        $c = $category(Http::intInput('id'));
+        $w = Batons\Works::find($uid, (int) Http::intInput('work')) ?? Http::notFound('Œuvre');
+        $evs = Events::forWork((int) $w['id'], (int) $c['id']);
+        $last = $evs[0] ?? null;
+        Http::render('work', ['c' => $c, 'w' => $w, 'events' => $evs,
+            'next' => Batons\Works::next($uid, $w, $last), 'last' => $last], $w['title']);
 
     case 'work_next':
         $c = $category(Http::intInput('id'));
@@ -323,7 +334,7 @@ switch ($route) {
         }
         $evId = Events::addWork((int) $c['id'], Time::nowUtc(), (int) $w['id'],
             $next['season'] ?? null, $next['episode'] ?? null, $next['volume'] ?? null, null, null);
-        Http::flash('« ' . $w['title'] . ' ' . Batons\Works::progress($next['season'] ?? null, $next['episode'] ?? null, $next['volume'] ?? null) . ' » ajouté.', $evId);
+        Http::flash('« ' . trim($w['title'] . ' ' . Batons\Works::progress($next['season'] ?? null, $next['episode'] ?? null, $next['volume'] ?? null)) . ' » ajouté.', $evId);
         Http::back('category', ['id' => $c['id']]);
 
     case 'thumb':
@@ -379,6 +390,15 @@ switch ($route) {
                     Http::flash($me['password_hash'] ? 'Mot de passe changé.' : 'Mot de passe défini : l\'accès direct est ouvert pour « ' . $me['username'] . ' ».');
                     Http::redirect('account');
                 }
+            } elseif ($route === 'account' && isset($_POST['rawg_key'])) {
+                $k = trim((string) $_POST['rawg_key']);
+                if ($k !== '' && !preg_match('/^[A-Za-z0-9]{20,64}$/', $k)) {
+                    $errors['rawg_key'] = 'Clé invalide : colle la clé d\'API fournie par RAWG.';
+                } else {
+                    Batons\Settings::set($uid, 'rawg_key', $k);
+                    Http::flash($k === '' ? 'Clé RAWG retirée.' : 'Clé RAWG enregistrée.');
+                    Http::redirect('account');
+                }
             } elseif ($route === 'account' && isset($_POST['tmdb_key'])) {
                 $k = trim((string) $_POST['tmdb_key']);
                 if ($k !== '' && !preg_match('/^[A-Za-z0-9._-]{20,400}$/', $k)) {
@@ -420,6 +440,7 @@ switch ($route) {
         }
         Http::render('account', [
             'me' => $me, 'method' => Auth::method(), 'errors' => $errors, 'newUsername' => $newUsername,
+            'rawgOwn' => Batons\Settings::get($uid, 'rawg_key') !== null, 'rawgGlobal' => (string) Batons\Config::get('rawg_key') !== '',
             'tmdbOwn' => Batons\Settings::get($uid, 'tmdb_key') !== null, 'tmdbGlobal' => (string) Batons\Config::get('tmdb_key') !== '',
             'users' => $isAdmin ? Batons\Db::all('SELECT id, username, is_admin, created_at FROM users WHERE password_hash IS NOT NULL ORDER BY username') : null,
         ], 'Compte');
