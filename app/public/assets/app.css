@@ -646,3 +646,14 @@ a.tap { text-decoration: none; }
     .poster.md { width: 56px; height: 84px; }
     .head-tools { gap: .2rem; }
 }
+
+/* --- Lien « Statistiques et historique » (écran d'une catégorie œuvre) ------------------- */
+.stats-link {
+    display: flex; align-items: center; gap: .7rem; min-height: 3.5rem; padding: .6rem .8rem .6rem 1rem; margin-bottom: 1rem;
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow);
+    text-decoration: none; color: var(--ink);
+}
+.stats-link:hover { border-color: var(--field); }
+.stats-link > svg.ui { color: var(--muted); }
+.stats-main { display: block; font-weight: 600; }
+.stats-sub { display: block; font-size: .875rem; color: var(--muted); }

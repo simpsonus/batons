@@ -34,7 +34,7 @@ if ($showNext) {
 if ($showFinish) {
     $finLabel = $c['kind'] === 'livre' ? ($volA ? 'Tome ' . $volA . ' lu' : 'Lu') : 'Terminé';
     $finTip = $c['kind'] === 'livre'
-        ? ($volA ? 'Marque le tome ' . $volA . ' comme lu aujourd\'hui ; le tome ' . ($volA + 1) . ' restera proposé (sinon : « J\'arrête là » dans la fiche)'
+        ? ($volA ? 'Marque le tome ' . $volA . ' comme lu aujourd\'hui ; le tome ' . ($volA + 1) . ' restera proposé (sinon : « J\'arrête là » dans la fiche du livre)'
                  : 'Marque le livre comme lu aujourd\'hui')
         : 'Marque le jeu comme terminé aujourd\'hui';
 }

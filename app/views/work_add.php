@@ -18,7 +18,7 @@ $kindLabel = ['film' => 'un film', 'serie' => 'une série', 'livre' => 'un livre
             'Une erreur ? « Annuler » dans le message qui s\'affiche en haut défait l\'action.',
         ])) ?>
     </div>
-    <a class="head-link" href="<?= url('category', ['id' => $c['id']]) ?>">Fiche<span class="sr"> de <?= e($c['name']) ?></span> <?= ui_icon('chevron') ?></a>
+    <div class="head-tools"><?= close_link(url(), 'Fermer (retour aux catégories)') ?></div>
 </div>
 
 <?php if ($continue): ?>
@@ -82,3 +82,10 @@ $kindLabel = ['film' => 'un film', 'serie' => 'une série', 'livre' => 'un livre
         </form>
     </details>
 </section>
+
+<a class="stats-link" href="<?= url('category', ['id' => $c['id']]) ?>">
+    <?= ui_icon('chart') ?>
+    <span class="grow"><span class="stats-main">Statistiques et historique</span>
+        <span class="stats-sub"><?= ['film' => 'tous les films', 'serie' => 'toutes les séries', 'livre' => 'tous les livres', 'jeu' => 'tous les jeux'][$c['kind']] ?>, calendrier</span></span>
+    <?= ui_icon('chevron') ?>
+</a>

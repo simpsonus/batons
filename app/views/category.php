@@ -24,7 +24,7 @@ $events = array_slice($events, 0, 50);
         </div>
     </div>
     <div class="head-tools">
-        <?= close_link($c['kind'] !== 'simple' ? url('work_add', ['id' => $id]) : url(), $c['kind'] !== 'simple' ? 'Fermer la fiche (retour à ' . $c['name'] . ')' : 'Fermer la fiche (retour aux catégories)') ?>
+        <?= close_link($c['kind'] !== 'simple' ? url('work_add', ['id' => $id]) : url(), $c['kind'] !== 'simple' ? 'Fermer (retour à ' . $c['name'] . ')' : 'Fermer (retour aux catégories)') ?>
     </div>
 </div>
 

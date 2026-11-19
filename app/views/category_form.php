@@ -34,7 +34,7 @@ $palette = ['#c2410c' => 'Orange', '#b91c1c' => 'Rouge', '#be185d' => 'Rose', '#
         <label for="f-periods">Suivre des périodes (début et fin)</label>
     </div>
     <p class="muted small field-help" id="f-periods-help">Pour les catégories simples : un tap commence la période (un rhume…),
-        le tap suivant la termine ; la fiche montre les durées. Une seule période à la fois.</p>
+        le tap suivant la termine ; la page de la catégorie montre les durées. Une seule période à la fois.</p>
 
     <div class="icon-field" style="--c: <?= e($c['color']) ?>">
         <span class="icon big" aria-hidden="true" data-icon-preview><?= icon($c['icon'] ?: '|') ?></span>

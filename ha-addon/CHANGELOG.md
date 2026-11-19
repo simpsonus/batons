@@ -1,5 +1,12 @@
 # Journal des modifications
 
+## 0.19.0
+- **Écran d'une catégorie films / séries / livres / jeux** (celui qui s'ouvre en touchant la tuile) :
+  une croix ✕ en haut à droite ramène à l'accueil.
+- **« Fiche » devient « Statistiques et historique »**, une ligne en bas de cet écran : tous les titres,
+  le graphique et le calendrier. Le mot « fiche » est réservé à la page d'une œuvre.
+- L'onglet **Catégories** reste en surbrillance sur toutes les pages qui en dépendent.
+
 ## 0.18.0
 - **Fiche d'une catégorie** : un crayon ✎ juste à côté du nom pour la modifier (à la place du bouton
   « Modifier ») et une croix ✕ en haut à droite pour fermer la fiche (retour à l'accueil, ou à l'écran

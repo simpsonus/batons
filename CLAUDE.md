@@ -62,7 +62,8 @@ Le nom vient des bâtons qu'on trace pour compter (IIII barrés). Slug technique
   depuis n'importe quel écran (Réorganiser est sur l'accueil, ligne `.home-actions` sous les groupes).
 - **Pages secondaires** (fiche catégorie, fiche œuvre, formulaires) : ✕ en haut à droite via `close_link()` dans
   `.head-tools`, vers un écran fixe (accueil, « Continuer » de la catégorie œuvre, fiche) — jamais « page précédente ».
-  Modifier la catégorie = ✎ (`.edit-btn`) collé au nom.
+  Modifier la catégorie = ✎ (`.edit-btn`) collé au nom. Vocabulaire : « fiche » = page d'une œuvre uniquement ; la page
+  d'une catégorie s'appelle « Statistiques et historique » (lien `.stats-link` en bas de `work_add`).
 - L'interface ne mentionne pas Home Assistant (l'app doit rester neutre).
 - **Éléments masqués** (`Privacy.php`, `WebAuthn.php`, `Cbor.php`) : `categories.hidden` / `groups.hidden`.
   Verrouillé = invisibles PARTOUT (accueil, chronologie, archives, export, réorganiser, liste des groupes,
@@ -163,6 +164,7 @@ docker build -f docker/Dockerfile -t batons . && docker run -p 8080:8080 -v $PWD
 - [x] v0.17 : ligne d'actions de l'accueil (Nouvelle catégorie, Réorganiser) sous les groupes, barre du haut
       alignée sur celle du bas, titres d'onglet masqués sur téléphone.
 - [x] v0.18 : ✎ à côté du nom de la catégorie, ✕ « fermer » en haut à droite des pages secondaires.
+- [x] v0.19 : ✕ sur l'écran d'une catégorie œuvre, « Fiche » -> ligne « Statistiques et historique » en bas.
 - [ ] Type de catégorie « Éléments » générique (éléments nommés sans catalogue, plusieurs en parallèle,
       début/fin/durée — mécanique des œuvres) : à faire si un cas concret apparaît (ex. « Traitements »).
 - [ ] Plus tard éventuellement : synchro BetaSeries / Trakt (pas SensCritique ni SerieBox : pas d'API

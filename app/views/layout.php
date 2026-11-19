@@ -2,6 +2,8 @@
 $r = $_GET['r'] ?? 'home';
 $authMethod = Batons\Auth::method();          // null sur les pages de connexion
 $unlocked = $authMethod !== null && Batons\Privacy::isUnlocked();
+// Écrans rattachés à l'onglet Catégories (pastille allumée).
+$catRoutes = ['home', 'category_order', 'category', 'category_new', 'category_edit', 'work_add', 'work', 'work_log'];
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -45,7 +47,7 @@ $unlocked = $authMethod !== null && Batons\Privacy::isUnlocked();
     <?php endif; ?>
     <?php if ($authMethod !== null): ?>
     <nav aria-label="Navigation principale">
-        <a href="<?= url() ?>" <?= in_array($r, ['home', 'category_order'], true) ? 'aria-current="page"' : '' ?>><?= ui_icon('grid') ?>Catégories</a>
+        <a href="<?= url() ?>" <?= in_array($r, $catRoutes, true) ? 'aria-current="page"' : '' ?>><?= ui_icon('grid') ?>Catégories</a>
         <a href="<?= url('timeline') ?>" <?= $r === 'timeline' ? 'aria-current="page"' : '' ?>><?= ui_icon('clock') ?>Chronologie</a>
     </nav>
     <?php endif; ?>
@@ -74,7 +76,7 @@ $unlocked = $authMethod !== null && Batons\Privacy::isUnlocked();
     $menuRoutes = ['menu', 'archives', 'import', 'account', 'privacy', 'unlock']; ?>
 <nav class="tabbar" aria-label="Navigation principale">
     <div class="tabbar-row">
-        <a href="<?= url() ?>" <?= in_array($r, ['home', 'category_order'], true) ? 'aria-current="page"' : '' ?>><span class="tab-ico"><?= ui_icon('grid') ?></span>Catégories</a>
+        <a href="<?= url() ?>" <?= in_array($r, $catRoutes, true) ? 'aria-current="page"' : '' ?>><span class="tab-ico"><?= ui_icon('grid') ?></span>Catégories</a>
         <a href="<?= url('timeline') ?>" <?= $r === 'timeline' ? 'aria-current="page"' : '' ?>><span class="tab-ico"><?= ui_icon('clock') ?></span>Chronologie</a>
         <a href="<?= url('menu') ?>" data-menu-open aria-haspopup="dialog" <?= in_array($r, $menuRoutes, true) ? 'aria-current="page"' : '' ?>><span class="tab-ico"><?= ui_icon('menu') ?><?php if ($unlocked): ?><span class="tab-dot" aria-hidden="true"></span><?php endif; ?></span>Menu<?php if ($unlocked): ?><span class="sr"> (éléments masqués visibles)</span><?php endif; ?></a>
     </div>
