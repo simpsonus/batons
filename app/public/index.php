@@ -283,18 +283,23 @@ switch ($route) {
         $continue = [];
         foreach (Batons\Works::inCategory($uid, (int) $c['id']) as $w) {
             $next = Batons\Works::next($uid, $w, Batons\Works::lastEvent((int) $w['id'], (int) $c['id']));
-            if ($w['kind'] === 'jeu' && (strtotime($w['last_at'] . ' UTC') < time() - 90 * 86400
-                    || Batons\Works::status((int) $w['id'], (int) $c['id'])['state'] === 'done')) {
-                $next = null; // jeux terminés ou pas joués depuis 3 mois : pas dans « Continuer »
-            }
-            if ($w['kind'] === 'livre' && $next === null
-                && Batons\Works::status((int) $w['id'], (int) $c['id'])['state'] === 'playing') {
-                $next = ['reading' => true]; // livre en cours de lecture (sans tomes) : reste dans « Continuer »
+            if (in_array($w['kind'], Batons\Works::TRACKED, true)) {
+                $st = Batons\Works::status((int) $w['id'], (int) $c['id']);
+                $explicitStart = (bool) Batons\Db::value("SELECT 1 FROM events WHERE work_id = ? AND category_id = ? AND milestone = 'start'",
+                    [$w['id'], $c['id']]);
+                if ($st['state'] === 'done' && !($w['kind'] === 'livre' && $next !== null)) {
+                    $next = null; // terminé (sauf livre avec un tome suivant)
+                } elseif ($st['state'] === 'playing' && !$explicitStart
+                    && strtotime($w['last_at'] . ' UTC') < time() - 90 * 86400) {
+                    $next = null; // jamais marqué « commencé » et rien depuis 3 mois : oublié
+                } elseif ($st['state'] === 'playing' && $next === null) {
+                    $next = ['reading' => true]; // en cours sans étape suivante (livre sans tome)
+                }
             }
             if ($next !== null) {
                 $continue[] = ['work' => $w, 'next' => $next];
             }
-            if (count($continue) >= 8) {
+            if (count($continue) >= 30) {
                 break;
             }
         }

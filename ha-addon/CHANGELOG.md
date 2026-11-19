@@ -1,5 +1,10 @@
 # Journal des modifications
 
+## 0.13.1
+- « Continuer » (jeux et livres) liste **tous** les titres en cours, même commencés il y a longtemps,
+  chacun avec ▶ et 🏁. Seuls disparaissent les titres terminés, et ceux jamais marqués « commencé »
+  sans activité depuis 3 mois.
+
 ## 0.13.0
 - Option **« Suivre des périodes »** sur les catégories simples (un rhume, une cure…) : un tap sur la tuile
   commence la période, le suivant la termine ; la tuile affiche « En cours depuis 3 jours ».
