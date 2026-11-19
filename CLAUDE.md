@@ -96,6 +96,9 @@ docker build -f docker/Dockerfile -t batons . && docker run -p 8080:8080 -v $PWD
       (`app/src/Importer.php` : SF Symbols -> MDI, couleurs iOS -> palette).
 - [x] v0.4 : boutons-icônes Modifier/Supprimer, passe responsive (320 px → desktop) et accessibilité ;
       la CI crée elle-même les releases.
+- [x] v0.5 : menu sur le logo (Archives, Importer, Exporter ; `<details>` sans JS requis),
+      réorganisation des groupes entre eux et des catégories dans leur groupe.
+- [ ] Catégories / groupes masqués, déverrouillage par code ou Face ID / Touch ID (WebAuthn) — en discussion.
 - [ ] Recherche / filtre dans la chronologie, vue calendrier (heatmap) par catégorie.
 - [ ] Rappels / objectifs (« au moins 3 par semaine »).
 - [ ] Mode d'authentification `builtin` (prérequis pour exposer l'app hors d'un proxy authentifiant, ex. port direct de l'add-on).

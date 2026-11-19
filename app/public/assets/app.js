@@ -66,6 +66,15 @@
         el.addEventListener('input', () => document.querySelector('.icon-field')?.style.setProperty('--c', el.value));
     });
 
+    // Menu du logo : fermeture par Échap ou clic à l'extérieur.
+    const menu = document.querySelector('[data-appmenu]');
+    if (menu) {
+        document.addEventListener('click', (ev) => { if (menu.open && !menu.contains(ev.target)) menu.open = false; });
+        document.addEventListener('keydown', (ev) => {
+            if (ev.key === 'Escape' && menu.open) { menu.open = false; menu.querySelector('summary').focus(); }
+        });
+    }
+
     // Retour haptique discret sur mobile lors d'un tap.
     document.querySelectorAll('.tap').forEach((btn) => {
         btn.addEventListener('click', () => navigator.vibrate?.(15));

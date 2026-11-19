@@ -159,8 +159,15 @@ switch ($route) {
         Categories::move($uid, (int) $c['id'], Http::input('dir') === 'up' ? -1 : 1);
         Http::back('category_order');
 
+    case 'group_move':
+        Categories::moveGroup($uid, (int) Http::intInput('id'), Http::input('dir') === 'up' ? -1 : 1);
+        Http::back('category_order');
+
     case 'category_order':
-        Http::render('category_order', ['categories' => Categories::listWithSummary($uid)], 'Réorganiser');
+        Http::render('category_order', [
+            'categories' => Categories::listWithSummary($uid),
+            'groups'     => Categories::groups($uid),
+        ], 'Réorganiser');
 
     case 'archives':
         Http::render('archives', ['categories' => Categories::listWithSummary($uid, true)], 'Archives');

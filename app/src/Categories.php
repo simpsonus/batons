@@ -109,19 +109,44 @@ final class Categories
         self::pruneGroups($userId);
     }
 
-    /** Déplace une catégorie d'un cran vers le haut (-1) ou le bas (+1) parmi toutes celles de l'utilisateur. */
+    /** Déplace une catégorie d'un cran vers le haut (-1) ou le bas (+1) à l'intérieur de son groupe. */
     public static function move(int $userId, int $id, int $dir): void
     {
-        $ids = array_column(Db::all(
-            'SELECT id FROM categories WHERE user_id = ? AND archived = 0 ORDER BY position, name', [$userId]), 'id');
-        $i = array_search($id, array_map('intval', $ids), true);
+        $c = self::find($userId, $id);
+        if ($c === null) {
+            return;
+        }
+        $ids = $c['group_id'] === null
+            ? Db::all('SELECT id FROM categories WHERE user_id = ? AND archived = 0 AND group_id IS NULL ORDER BY position, name', [$userId])
+            : Db::all('SELECT id FROM categories WHERE user_id = ? AND archived = 0 AND group_id = ? ORDER BY position, name', [$userId, $c['group_id']]);
+        self::swap('categories', array_map('intval', array_column($ids, 'id')), $id, $dir);
+    }
+
+    /** Déplace un groupe d'un cran vers le haut (-1) ou le bas (+1). */
+    public static function moveGroup(int $userId, int $groupId, int $dir): void
+    {
+        $ids = Db::all('SELECT id FROM groups WHERE user_id = ? ORDER BY position, name', [$userId]);
+        self::swap('groups', array_map('intval', array_column($ids, 'id')), $groupId, $dir);
+    }
+
+    /** Groupes de l'utilisateur, dans l'ordre. */
+    public static function groups(int $userId): array
+    {
+        return Db::all('SELECT * FROM groups WHERE user_id = ? ORDER BY position, name', [$userId]);
+    }
+
+    /** Échange un élément avec son voisin dans la liste ordonnée $ids, puis renumérote les positions. */
+    private static function swap(string $table, array $ids, int $id, int $dir): void
+    {
+        $i = array_search($id, $ids, true);
         $j = $i === false ? false : $i + $dir;
         if ($i === false || $j < 0 || $j >= count($ids)) {
             return;
         }
         [$ids[$i], $ids[$j]] = [$ids[$j], $ids[$i]];
-        foreach ($ids as $pos => $cid) {
-            Db::run('UPDATE categories SET position = ? WHERE id = ?', [$pos, $cid]);
+        $table = $table === 'groups' ? 'groups' : 'categories'; // liste blanche
+        foreach ($ids as $pos => $rowId) {
+            Db::run("UPDATE $table SET position = ? WHERE id = ?", [$pos + 1, $rowId]);
         }
     }
 

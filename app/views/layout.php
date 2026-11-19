@@ -13,10 +13,21 @@
 <body>
 <a class="skip" href="#contenu">Aller au contenu</a>
 <header class="topbar">
-    <a class="brand" href="<?= url() ?>" aria-label="Bâtons, accueil">
-        <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false"><g stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 7v18M12 7v18M17 7v18M22 7v18"/><path d="M4 21 26 11" class="slash"/></g></svg>
-        <span>Bâtons</span>
-    </a>
+    <details class="appmenu" data-appmenu>
+        <summary class="brand" aria-label="Menu Bâtons">
+            <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false"><g stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 7v18M12 7v18M17 7v18M22 7v18"/><path d="M4 21 26 11" class="slash"/></g></svg>
+            <span aria-hidden="true">Bâtons</span>
+            <svg class="ui caret" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z"/></svg>
+        </summary>
+        <nav class="appmenu-panel" aria-label="Menu Bâtons">
+            <ul>
+                <li><a href="<?= url('archives') ?>" <?= $r === 'archives' ? 'aria-current="page"' : '' ?>>Archives</a></li>
+                <li><a href="<?= url('import') ?>" <?= $r === 'import' ? 'aria-current="page"' : '' ?>>Importer</a></li>
+                <li><a href="<?= url('export') ?>">Exporter (CSV)</a></li>
+            </ul>
+            <p class="appmenu-version">Bâtons <?= Batons\VERSION ?></p>
+        </nav>
+    </details>
     <nav aria-label="Navigation principale">
         <a href="<?= url() ?>" <?= $r === 'home' ? 'aria-current="page"' : '' ?>>Catégories</a>
         <a href="<?= url('timeline') ?>" <?= $r === 'timeline' ? 'aria-current="page"' : '' ?>>Chronologie</a>
@@ -42,14 +53,7 @@
     <?= $content ?>
 </main>
 
-<footer class="foot">
-    <nav aria-label="Liens secondaires">
-        <a href="<?= url('archives') ?>">Archives</a>
-        <a href="<?= url('import') ?>">Importer</a>
-        <a href="<?= url('export') ?>">Exporter (CSV)</a>
-    </nav>
-    <p>Bâtons <?= Batons\VERSION ?></p>
-</footer>
+
 <script src="assets/app.js?v=<?= Batons\VERSION ?>" defer></script>
 </body>
 </html>
