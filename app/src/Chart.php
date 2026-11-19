@@ -73,7 +73,7 @@ final class Chart
      */
     public static function calendar(\DateTimeImmutable $start, array $counts, int $weeks = 52): string
     {
-        $cell = 12; $gap = 3; $step = $cell + $gap;
+        $cell = 11; $gap = 3; $step = $cell + $gap; // 52 semaines × 14 px = 728 px : tient dans la colonne sur ordinateur
         $left = 0; $top = 18;
         $w = $left + $weeks * $step; $h = $top + 7 * $step;
         $today = (new \DateTimeImmutable('now', $start->getTimezone()))->format('Y-m-d');
@@ -108,9 +108,9 @@ final class Chart
     /** Colonne fixe des initiales des jours, alignée sur calendar(). */
     public static function calendarDays(): string
     {
-        $svg = '<svg class="cal-days" viewBox="0 0 14 123" width="14" height="123" aria-hidden="true" focusable="false">';
+        $svg = '<svg class="cal-days" viewBox="0 0 14 116" width="14" height="116" aria-hidden="true" focusable="false">';
         foreach (['L', 'M', 'M', 'J', 'V', 'S', 'D'] as $row => $label) {
-            $svg .= sprintf('<text x="0" y="%d" class="cal-label">%s</text>', 18 + $row * 15 + 10, $label);
+            $svg .= sprintf('<text x="0" y="%d" class="cal-label">%s</text>', 18 + $row * 14 + 9, $label);
         }
         return $svg . '</svg>';
     }
