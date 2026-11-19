@@ -51,7 +51,8 @@ Le nom vient des bâtons qu'on trace pour compter (IIII barrés). Slug technique
   éclaircie en sombre) ; focus visible ; lien d'évitement ; boutons-icônes avec `aria-label` explicite
   (`ui_icon()` pour les pictos d'interface) ; icônes décoratives `aria-hidden` ; erreurs de formulaire liées par
   `aria-describedby` + `aria-invalid` ; graphique doublé d'un tableau pour lecteurs d'écran ; pas de message
-  qui disparaît tout seul ; `prefers-reduced-motion` respecté ; un seul `h1` et pas de saut de niveau de titre.
+  qui disparaît tout seul ; `prefers-reduced-motion` respecté ; un seul `h1` et pas de saut de niveau de titre
+  (sur Catégories et Chronologie, le `h1` est visuellement masqué `.sr` car il doublerait l'onglet actif).
 - L'interface ne mentionne pas Home Assistant (l'app doit rester neutre).
 - **Éléments masqués** (`Privacy.php`, `WebAuthn.php`, `Cbor.php`) : `categories.hidden` / `groups.hidden`.
   Verrouillé = invisibles PARTOUT (accueil, chronologie, archives, export, réorganiser, liste des groupes,

@@ -4,8 +4,8 @@ use Batons\Time;
 
 $currentGroup = false;
 ?>
-<div class="page-head">
-    <h1>Catégories</h1>
+<h1 class="sr">Catégories</h1>
+<div class="page-head end">
     <div class="actions">
         <?php if (count($categories) > 1): ?>
             <a class="btn ghost" href="<?= url('category_order') ?>">Réorganiser</a>
