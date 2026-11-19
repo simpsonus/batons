@@ -669,6 +669,9 @@ switch ($route) {
             'groups'     => Categories::groups($uid),
         ], 'Réorganiser');
 
+    case 'menu':
+        Http::render('menu', [], 'Menu');
+
     case 'archives':
         Http::render('archives', ['categories' => Categories::listWithSummary($uid, true)], 'Archives');
 

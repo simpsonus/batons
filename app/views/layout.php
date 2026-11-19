@@ -8,7 +8,8 @@ $unlocked = $authMethod !== null && Batons\Privacy::isUnlocked();
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <meta name="theme-color" content="#1c1917">
+    <meta name="theme-color" content="#f7f4ee" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#161412" media="(prefers-color-scheme: dark)">
     <title><?= e($title === 'Bâtons' ? 'Bâtons' : $title . ' · Bâtons') ?></title>
     <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
@@ -16,7 +17,7 @@ $unlocked = $authMethod !== null && Batons\Privacy::isUnlocked();
     <link rel="manifest" href="assets/manifest.webmanifest">
     <link rel="stylesheet" href="assets/app.css?v=<?= Batons\VERSION ?>">
 </head>
-<body<?= $unlocked ? ' data-relock="' . Batons\Privacy::remaining() . '"' : '' ?>>
+<body<?= $authMethod !== null ? ' class="tabbed"' : '' ?><?= $unlocked ? ' data-relock="' . Batons\Privacy::remaining() . '"' : '' ?>>
 <a class="skip" href="#contenu">Aller au contenu</a>
 <header class="topbar">
     <?php if ($authMethod === null): ?>
@@ -32,26 +33,7 @@ $unlocked = $authMethod !== null && Batons\Privacy::isUnlocked();
             <svg class="ui caret" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z"/></svg>
         </summary>
         <nav class="appmenu-panel" aria-label="Menu Bâtons">
-            <ul>
-                <li><a href="<?= url('archives') ?>" <?= $r === 'archives' ? 'aria-current="page"' : '' ?>>Archives</a></li>
-                <li><a href="<?= url('import') ?>" <?= $r === 'import' ? 'aria-current="page"' : '' ?>>Importer</a></li>
-                <li><a href="<?= url('export') ?>">Exporter (CSV)</a></li>
-            </ul>
-            <ul class="appmenu-private">
-                <?php if ($unlocked): ?>
-                    <li><a href="<?= url('privacy') ?>" <?= $r === 'privacy' ? 'aria-current="page"' : '' ?>><?= ui_icon('eye') ?> Confidentialité</a></li>
-                    <li><form method="post" action="<?= url('lock') ?>"><?= csrf() ?><button class="menu-btn"><?= ui_icon('lock') ?> Verrouiller les éléments masqués</button></form></li>
-                <?php else: ?>
-                    <li><a href="<?= url('unlock') ?>" <?= $r === 'unlock' ? 'aria-current="page"' : '' ?>><?= ui_icon('eye-off') ?> Afficher les éléments masqués</a></li>
-                <?php endif; ?>
-            </ul>
-            <ul class="appmenu-private">
-                <li><a href="<?= url('account') ?>" <?= $r === 'account' ? 'aria-current="page"' : '' ?>>Compte</a></li>
-                <?php if ($authMethod === 'builtin'): ?>
-                    <li><form method="post" action="<?= url('logout') ?>"><?= csrf() ?><button class="menu-btn">Se déconnecter</button></form></li>
-                <?php endif; ?>
-            </ul>
-            <p class="appmenu-version">Bâtons <?= Batons\VERSION ?></p>
+            <?php require __DIR__ . '/_menu.php'; ?>
         </nav>
     </details>
     <?php endif; ?>
@@ -87,6 +69,23 @@ $unlocked = $authMethod !== null && Batons\Privacy::isUnlocked();
 <main id="contenu" tabindex="-1">
     <?= $content ?>
 </main>
+
+<?php if ($authMethod !== null):
+    $menuRoutes = ['menu', 'category_order', 'archives', 'import', 'account', 'privacy', 'unlock']; ?>
+<nav class="tabbar" aria-label="Navigation principale">
+    <div class="tabbar-row">
+        <a href="<?= url() ?>" <?= $r === 'home' ? 'aria-current="page"' : '' ?>><span class="tab-ico"><?= ui_icon('grid') ?></span>Catégories</a>
+        <a href="<?= url('timeline') ?>" <?= $r === 'timeline' ? 'aria-current="page"' : '' ?>><span class="tab-ico"><?= ui_icon('clock') ?></span>Chronologie</a>
+        <a href="<?= url('menu') ?>" data-menu-open aria-haspopup="dialog" <?= in_array($r, $menuRoutes, true) ? 'aria-current="page"' : '' ?>><span class="tab-ico"><?= ui_icon('menu') ?><?php if ($unlocked): ?><span class="tab-dot" aria-hidden="true"></span><?php endif; ?></span>Menu<?php if ($unlocked): ?><span class="sr"> (éléments masqués visibles)</span><?php endif; ?></a>
+    </div>
+</nav>
+<dialog class="sheet" data-menu-sheet aria-label="Menu Bâtons">
+    <nav class="appmenu-panel" aria-label="Menu Bâtons">
+        <?php require __DIR__ . '/_menu.php'; ?>
+    </nav>
+    <form method="dialog"><button class="btn ghost sheet-close">Fermer</button></form>
+</dialog>
+<?php endif; ?>
 
 
 <script src="assets/app.js?v=<?= Batons\VERSION ?>" defer></script>

@@ -4,7 +4,7 @@ $events = array_slice($events, 0, 100);
 $showCategory = true;
 $dayLevel = 2;
 ?>
-<h1 class="sr">Chronologie</h1>
+<h1 class="tab-title">Chronologie</h1>
 
 <?php if (!$events): ?>
     <p class="muted">Aucun bâton pour l'instant. Touche une tuile sur l'écran <a href="<?= url() ?>">Catégories</a> pour commencer.</p>

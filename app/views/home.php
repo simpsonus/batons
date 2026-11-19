@@ -4,15 +4,7 @@ use Batons\Time;
 
 $currentGroup = false;
 ?>
-<h1 class="sr">Catégories</h1>
-<div class="page-head end">
-    <div class="actions">
-        <?php if (count($categories) > 1): ?>
-            <a class="btn ghost" href="<?= url('category_order') ?>">Réorganiser</a>
-        <?php endif; ?>
-        <a class="btn" href="<?= url('category_new') ?>">+ Catégorie</a>
-    </div>
-</div>
+<h1 class="tab-title">Catégories</h1>
 
 <?php if (!$categories): ?>
     <div class="empty">
@@ -74,7 +66,12 @@ $currentGroup = false;
         </a>
     </div>
 <?php endforeach; ?>
-<?php if ($currentGroup !== false): ?></div><?php endif; ?>
+<?php if ($currentGroup !== false): ?>
+    <?php if ($categories): ?>
+        <a class="tile add-tile" href="<?= url('category_new') ?>"><?= ui_icon('plus') ?><span>Nouvelle catégorie</span></a>
+    <?php endif; ?>
+</div>
+<?php endif; ?>
 
 <?php if ($archivedCount): ?>
     <p class="muted center"><a href="<?= url('archives') ?>"><?= $archivedCount ?> catégorie<?= $archivedCount > 1 ? 's' : '' ?> archivée<?= $archivedCount > 1 ? 's' : '' ?></a></p>

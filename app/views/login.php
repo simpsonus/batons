@@ -27,6 +27,6 @@
     </form>
     <?php if (!$setup && Batons\Auth::has('header')): ?>
         <p class="muted small">Pas encore de mot de passe ? Ouvre Bâtons depuis ton accès habituel, puis
-            menu du logo › Compte › « Mot de passe pour l'accès direct ».</p>
+            Menu › Compte › « Mot de passe pour l'accès direct ».</p>
     <?php endif; ?>
 </section>

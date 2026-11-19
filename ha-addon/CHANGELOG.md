@@ -1,5 +1,17 @@
 # Journal des modifications
 
+## 0.16.0
+- **Sur téléphone, la navigation passe en bas** : onglets Catégories, Chronologie et Menu, à portée
+  de pouce. Dans Safari, deux filets la séparent nettement de la barre du navigateur ; ajoutée à
+  l'écran d'accueil, elle descend jusqu'en bas comme dans une app. Sur ordinateur, rien ne change.
+- **Menu** : Réorganiser, Archives, Importer, Exporter, éléments masqués et Compte au même endroit
+  (onglet Menu sur téléphone, logo sur ordinateur).
+- **« + Nouvelle catégorie »** devient une tuile en pointillés à la fin de la grille : la ligne de
+  boutons en haut de l'accueil disparaît.
+- **Lisibilité sur iPhone** : l'aide « ? » ne sort plus de l'écran, les boutons ▶ / ✓ de « Continuer »
+  prennent toute la largeur avec un texte plus grand, le « ? » est à côté du titre et « Fiche » devient
+  un simple lien ; plus aucun texte en dessous de 13 px.
+
 ## 0.15.0
 - **Boutons explicites** : fini les icônes seules pour les actions qui enregistrent quelque chose.
   « ▶ Tome 4 · tome 3 lu », « Tome 3 lu ✓ · aujourd'hui », « ▶ S02E05 · vu », « Terminé ✓ »…

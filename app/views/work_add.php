@@ -8,8 +8,6 @@ $kindLabel = ['film' => 'un film', 'serie' => 'une série', 'livre' => 'un livre
     <div class="cat-title">
         <span class="icon big" aria-hidden="true"><?= icon($c['icon']) ?></span>
         <h1><?= e($c['name']) ?></h1>
-    </div>
-    <div class="actions">
         <?= help_box('Comment ça marche', array_merge([
     'serie' => ['<strong>▶ S02E05</strong> : ajoute cet épisode, vu maintenant.', 'Un autre épisode ou une autre date : touche le titre, puis « + Ajouter un épisode… ».'],
     'film' => ['Touche le titre pour revoir l\'historique ou ajouter un visionnage avec date et note.'],
@@ -19,8 +17,8 @@ $kindLabel = ['film' => 'un film', 'serie' => 'une série', 'livre' => 'un livre
             'Une autre date (hier, la semaine dernière) : touche le titre, puis « + Ajouter… » et choisis la date.',
             'Une erreur ? « Annuler » dans le message qui s\'affiche en haut défait l\'action.',
         ])) ?>
-        <a class="btn ghost" href="<?= url('category', ['id' => $c['id']]) ?>">Fiche</a>
     </div>
+    <a class="head-link" href="<?= url('category', ['id' => $c['id']]) ?>">Fiche<span class="sr"> de <?= e($c['name']) ?></span> <?= ui_icon('chevron') ?></a>
 </div>
 
 <?php if ($continue): ?>
@@ -49,7 +47,7 @@ $kindLabel = ['film' => 'un film', 'serie' => 'une série', 'livre' => 'un livre
     <h2 id="search-title" class="card-title">Ajouter <?= $kindLabel ?></h2>
     <?php if (!$sources): ?>
         <p class="muted">La recherche <?= $c['kind'] === 'jeu' ? 'de jeux demande une clé RAWG' : 'de films demande une clé TMDB' ?> gratuite :
-            <a href="<?= url('account') ?>">menu du logo › Compte › Catalogues</a>. En attendant, saisis le titre à la main.</p>
+            <a href="<?= url('account') ?>">Menu › Compte › Catalogues</a>. En attendant, saisis le titre à la main.</p>
     <?php else: ?>
         <form method="get" action="./" role="search" data-work-search>
             <input type="hidden" name="r" value="work_add">

@@ -75,6 +75,19 @@
         });
     }
 
+    // Onglet « Menu » (téléphone) : feuille modale ; sans <dialog>, le lien mène à la page Menu.
+    const sheet = document.querySelector('[data-menu-sheet]');
+    const sheetOpen = document.querySelector('[data-menu-open]');
+    if (sheet && sheetOpen && typeof sheet.showModal === 'function') {
+        sheetOpen.addEventListener('click', (ev) => {
+            ev.preventDefault();
+            sheet.showModal();
+            sheet.querySelector('a, button')?.focus();
+        });
+        sheet.addEventListener('click', (ev) => { if (ev.target === sheet) sheet.close(); });   // toucher à côté
+        sheet.addEventListener('close', () => sheetOpen.focus());
+    }
+
     // --- Éléments masqués -------------------------------------------------------------
 
     // Reverrouillage : recharge la page à l'expiration, pour ne pas laisser d'éléments masqués à l'écran.
