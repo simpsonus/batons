@@ -1,5 +1,14 @@
 # Journal des modifications
 
+## 0.17.0
+- **« Nouvelle catégorie » et « Réorganiser »** sont réunis sur une ligne à part, tout en bas de
+  l'accueil, sous un filet : on ne croit plus ajouter une catégorie dans le dernier groupe.
+- **Réorganiser** quitte le Menu (il n'avait pas de sens depuis la Chronologie).
+- **Barre du haut (ordinateur)** : même allure que la barre du bas du téléphone : fond clair,
+  icône à gauche du texte, pastille sur l'onglet actif.
+- Les titres « Catégories » et « Chronologie » ne s'affichent plus sur téléphone : l'onglet
+  en surbrillance suffit (ils restent annoncés aux lecteurs d'écran).
+
 ## 0.16.0
 - **Sur téléphone, la navigation passe en bas** : onglets Catégories, Chronologie et Menu, à portée
   de pouce. Dans Safari, deux filets la séparent nettement de la barre du navigateur ; ajoutée à

@@ -4,7 +4,6 @@
 $cur = fn(string $route): string => $r === $route ? ' aria-current="page"' : '';
 ?>
 <ul>
-    <li><a href="<?= url('category_order') ?>"<?= $cur('category_order') ?>><?= ui_icon('reorder') ?> Réorganiser</a></li>
     <li><a href="<?= url('archives') ?>"<?= $cur('archives') ?>><?= ui_icon('archive') ?> Archives</a></li>
     <li><a href="<?= url('import') ?>"<?= $cur('import') ?>><?= ui_icon('import') ?> Importer</a></li>
     <li><a href="<?= url('export') ?>"><?= ui_icon('export') ?> Exporter (CSV)</a></li>

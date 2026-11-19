@@ -52,12 +52,14 @@ Le nom vient des bâtons qu'on trace pour compter (IIII barrés). Slug technique
   (`ui_icon()` pour les pictos d'interface) ; icônes décoratives `aria-hidden` ; erreurs de formulaire liées par
   `aria-describedby` + `aria-invalid` ; graphique doublé d'un tableau pour lecteurs d'écran ; pas de message
   qui disparaît tout seul ; `prefers-reduced-motion` respecté ; un seul `h1` et pas de saut de niveau de titre
-  (sur Catégories et Chronologie, le `h1` a la classe `.tab-title` : masqué sur grand écran car il doublerait l'onglet actif,
-  visible sur téléphone). Texte jamais sous 13 px (11 px dans les SVG).
-- **Navigation** : en haut sur grand écran (logo = menu) ; sur téléphone (≤ 640 px) barre d'onglets en bas
+  (sur Catégories et Chronologie, le `h1` a la classe `.tab-title` : visuellement masqué partout car l'onglet actif
+  le montre déjà). Texte jamais sous 13 px (11 px dans les SVG).
+- **Navigation** : en haut sur grand écran (logo = menu ; barre claire au même style que celle du bas : icône + texte,
+  pastille sur l'onglet actif) ; sur téléphone (≤ 640 px) barre d'onglets en bas
   (Catégories, Chronologie, Menu), délimitée par deux filets dans le navigateur, un seul en mode écran d'accueil
   (`display-mode: standalone`). Le menu est un seul partiel `views/_menu.php` (panneau du logo, `<dialog>` sur
-  téléphone, route `menu` sans JS). Ajouter une entrée de menu = l'ajouter là.
+  téléphone, route `menu` sans JS). Ajouter une entrée de menu = l'ajouter là ; le menu ne contient que des entrées valables
+  depuis n'importe quel écran (Réorganiser est sur l'accueil, ligne `.home-actions` sous les groupes).
 - L'interface ne mentionne pas Home Assistant (l'app doit rester neutre).
 - **Éléments masqués** (`Privacy.php`, `WebAuthn.php`, `Cbor.php`) : `categories.hidden` / `groups.hidden`.
   Verrouillé = invisibles PARTOUT (accueil, chronologie, archives, export, réorganiser, liste des groupes,
@@ -155,6 +157,8 @@ docker build -f docker/Dockerfile -t batons . && docker run -p 8080:8080 -v $PWD
       (details/summary) ; `works.stopped_at` (« J'arrête là », effacé par tout nouveau bâton de l'œuvre).
 - [x] v0.16 : barre d'onglets en bas sur téléphone, menu unique (`_menu.php`), tuile « + Nouvelle catégorie »,
       corrections de lisibilité iPhone (aide « ? » pleine largeur, boutons d'action, tailles de texte).
+- [x] v0.17 : ligne d'actions de l'accueil (Nouvelle catégorie, Réorganiser) sous les groupes, barre du haut
+      alignée sur celle du bas, titres d'onglet masqués sur téléphone.
 - [ ] Type de catégorie « Éléments » générique (éléments nommés sans catalogue, plusieurs en parallèle,
       début/fin/durée — mécanique des œuvres) : à faire si un cas concret apparaît (ex. « Traitements »).
 - [ ] Plus tard éventuellement : synchro BetaSeries / Trakt (pas SensCritique ni SerieBox : pas d'API

@@ -66,11 +66,15 @@ $currentGroup = false;
         </a>
     </div>
 <?php endforeach; ?>
-<?php if ($currentGroup !== false): ?>
-    <?php if ($categories): ?>
-        <a class="tile add-tile" href="<?= url('category_new') ?>"><?= ui_icon('plus') ?><span>Nouvelle catégorie</span></a>
-    <?php endif; ?>
-</div>
+<?php if ($currentGroup !== false): ?></div><?php endif; ?>
+
+<?php if ($categories): ?>
+    <div class="home-actions">
+        <a class="act-btn" href="<?= url('category_new') ?>"><?= ui_icon('plus') ?>Nouvelle catégorie</a>
+        <?php if (count($categories) > 1): ?>
+            <a class="act-btn" href="<?= url('category_order') ?>"><?= ui_icon('reorder') ?>Réorganiser</a>
+        <?php endif; ?>
+    </div>
 <?php endif; ?>
 
 <?php if ($archivedCount): ?>
