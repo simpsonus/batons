@@ -53,7 +53,7 @@ $moveButton = static function (string $route, int $id, string $dir, string $labe
                 <form class="rename-form" method="post" action="<?= url('group_rename', ['id' => $sec['id']]) ?>" hidden>
                     <?= csrf() ?>
                     <input type="hidden" name="back" value="<?= e(here()) ?>">
-                    <input type="text" name="name" value="<?= e($label) ?>" maxlength="80" required autocomplete="off" aria-label="Nouveau nom du groupe <?= e($label) ?>">
+                    <input type="text" name="label" value="<?= e($label) ?>" maxlength="80" required autocomplete="off" autocorrect="off" autocapitalize="sentences" spellcheck="false" data-1p-ignore data-lpignore="true" aria-label="Nouvel intitulé du groupe <?= e($label) ?>">
                     <button class="btn accent">OK</button>
                     <button type="button" class="btn ghost" data-rename-cancel>Annuler</button>
                 </form>

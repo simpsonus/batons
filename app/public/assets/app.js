@@ -446,12 +446,18 @@
             drag.el = el;
             drag.isGroup = isGroup;
             drag.origin = { parent: el.parentElement, next: el.nextElementSibling };
+            // Écart doigt / haut de l'élément mesuré AVANT tout repli : le doigt est sur la poignée, en haut de
+            // l'élément, et cet écart reste valable une fois le groupe replié.
+            const before = el.getBoundingClientRect();
+            drag.offY = ev.clientY - before.top;
             if (isGroup) {                    // tous les groupes repliés pendant le déplacement
                 drag.foldBefore = groupSections().filter((s) => s.classList.contains('folded'));
                 groupSections().forEach((s) => s.classList.add('folded'));
+                // Le repli fait remonter la page : on la fait défiler pour que le groupe revienne sous le doigt.
+                const shift = el.getBoundingClientRect().top - before.top;
+                if (shift) scrollBy(0, shift);
             }
             const r = el.getBoundingClientRect();
-            drag.offY = ev.clientY - r.top;
             const ph = document.createElement(isGroup ? 'section' : 'li');
             ph.className = 'drop-ph';
             ph.style.height = r.height + 'px';
@@ -459,7 +465,7 @@
             el.parentElement.insertBefore(ph, el);
             drag.ph = ph;
             el.classList.add('is-dragging');
-            Object.assign(el.style, { left: r.left + 'px', top: r.top + 'px', width: r.width + 'px' });
+            Object.assign(el.style, { left: r.left + 'px', top: (ev.clientY - drag.offY) + 'px', width: r.width + 'px' });
             document.body.classList.add('dragging');
             drag.raf = requestAnimationFrame(autoScroll);
         };

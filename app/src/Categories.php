@@ -46,7 +46,7 @@ final class Categories
     public static function validate(array $in): array
     {
         $errors = [];
-        $name = trim((string) ($in['name'] ?? ''));
+        $name = trim((string) ($in['label'] ?? $in['name'] ?? ''));   // « label » : évite le remplissage auto de contact de Safari
         if ($name === '') {
             $errors['name'] = 'Le nom est obligatoire.';
         } elseif (mb_strlen($name) > 80) {

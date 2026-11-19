@@ -1,5 +1,12 @@
 # Journal des modifications
 
+## 0.21.1
+- **Réorganiser sur iPhone** : en déplaçant un groupe alors que d'autres étaient dépliés, le groupe
+  n'était plus sous le doigt (il se retrouvait plus haut ou plus bas). Il reste maintenant sous le doigt,
+  et la page se recale pour garder les groupes voisins en vue.
+- **Safari ne propose plus de remplir une fiche Contact** quand on renomme un groupe ou qu'on nomme une
+  catégorie (le champ s'appelle désormais « Intitulé du groupe » pour les groupes).
+
 ## 0.21.0
 - **Réorganiser par glisser-déposer** : la poignée ⠿ de chaque catégorie ou groupe se glisse au doigt
   comme à la souris. Une catégorie peut changer de groupe (ou aller dans « Sans groupe ») de la même façon.

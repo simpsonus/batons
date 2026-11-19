@@ -16,8 +16,8 @@ $palette = ['#c2410c' => 'Orange', '#b91c1c' => 'Rouge', '#be185d' => 'Rose', '#
 
     <div class="row">
         <label class="grow">Nom
-            <input type="text" name="name" value="<?= e($c['name']) ?>" maxlength="80" required <?= $isEdit ? '' : 'autofocus' ?> <?= isset($errors['name']) ? 'aria-invalid="true" aria-describedby="err-name"' : '' ?> placeholder="ex. Café, Arrosage du ficus, Migraine">
-            <?php if (isset($errors['name'])): ?><span class="error" id="err-name"><?= e($errors['name']) ?></span><?php endif; ?>
+            <input type="text" name="label" value="<?= e($c['name']) ?>" maxlength="80" required autocomplete="off" autocorrect="off" autocapitalize="sentences" spellcheck="false" data-1p-ignore data-lpignore="true" <?= $isEdit ? '' : 'autofocus' ?> <?= isset($errors['name']) ? 'aria-invalid="true" aria-describedby="err-label"' : '' ?> placeholder="ex. Café, Arrosage du ficus, Migraine">
+            <?php if (isset($errors['name'])): ?><span class="error" id="err-label"><?= e($errors['name']) ?></span><?php endif; ?>
         </label>
     </div>
 
@@ -72,7 +72,7 @@ $palette = ['#c2410c' => 'Orange', '#b91c1c' => 'Rouge', '#be185d' => 'Rose', '#
 
     <div class="row">
         <label class="grow">Groupe <span class="muted">facultatif</span>
-            <input type="text" name="group" value="<?= e($c['group_name']) ?>" list="groups" maxlength="60" placeholder="ex. Santé, Maison">
+            <input type="text" name="group" value="<?= e($c['group_name']) ?>" list="groups" maxlength="60" autocomplete="off" autocorrect="off" autocapitalize="sentences" spellcheck="false" data-1p-ignore data-lpignore="true" placeholder="ex. Santé, Maison">
             <datalist id="groups"><?php foreach ($groups as $g): ?><option value="<?= e($g) ?>"><?php endforeach; ?></datalist>
         </label>
         <label class="narrow">Unité <span class="muted">facultatif</span>

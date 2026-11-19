@@ -12,7 +12,7 @@ $back = safe_from($_POST['back'] ?? null) ?? from_url(url('category_order'));
     <form class="card" method="post" action="<?= url('group_rename', ['id' => $g['id']]) ?>">
         <?= csrf() ?>
         <input type="hidden" name="back" value="<?= e($back) ?>">
-        <input type="hidden" name="name" value="<?= e($name) ?>">
+        <input type="hidden" name="label" value="<?= e($name) ?>">
         <input type="hidden" name="merge" value="1">
         <p>Le groupe <strong><?= e($conflict['name']) ?></strong> existe déjà.
             Y réunir les catégories de <strong><?= e($g['name']) ?></strong> ? Elles se placeront à la suite des siennes,
@@ -31,11 +31,11 @@ $back = safe_from($_POST['back'] ?? null) ?? from_url(url('category_order'));
     <form class="card" method="post" action="<?= url('group_rename', ['id' => $g['id']]) ?>">
         <?= csrf() ?>
         <input type="hidden" name="back" value="<?= e($back) ?>">
-        <label for="g-name">Nom du groupe</label>
-        <input type="text" id="g-name" name="name" value="<?= e($name) ?>" maxlength="80" required autocomplete="off"
-            <?= $error ? 'aria-invalid="true" aria-describedby="g-name-err"' : '' ?> autofocus>
-        <?php if ($error): ?><p class="error" id="g-name-err"><?= e($error) ?></p><?php endif; ?>
-        <p class="muted small">Si ce nom est déjà celui d'un autre groupe, on te proposera de réunir les deux.</p>
+        <label for="g-label">Intitulé du groupe</label>
+        <input type="text" id="g-label" name="label" value="<?= e($name) ?>" maxlength="80" required autocomplete="off" autocorrect="off" autocapitalize="sentences" spellcheck="false" data-1p-ignore data-lpignore="true"
+            <?= $error ? 'aria-invalid="true" aria-describedby="g-label-err"' : '' ?> autofocus>
+        <?php if ($error): ?><p class="error" id="g-label-err"><?= e($error) ?></p><?php endif; ?>
+        <p class="muted small">Si cet intitulé est déjà celui d'un autre groupe, on te proposera de réunir les deux.</p>
         <div class="form-actions">
             <button class="btn accent">Renommer</button>
             <a class="btn ghost" href="<?= e($back) ?>">Annuler</a>

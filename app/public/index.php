@@ -684,18 +684,18 @@ switch ($route) {
         if ($g === null) {
             Http::notFound();
         }
-        $name = trim(preg_replace('/\s+/u', ' ', Http::input('name')));
+        $name = trim(preg_replace('/\s+/u', ' ', Http::input('label')));
         $error = null;
         $conflict = null;
-        if (Http::isPost() || isset($_GET['name'])) {
+        if (Http::isPost() || isset($_GET['label'])) {
             if ($name === '') {
-                $error = 'Le nom est obligatoire.';
+                $error = 'L\'intitulé est obligatoire.';
             } elseif (mb_strlen($name) > 80) {
                 $error = '80 caractères maximum.';
             } elseif ($name !== $g['name']) {
                 $conflict = Categories::groupNamed($uid, $name, (int) $g['id']);
                 if ($conflict && $conflict['hidden'] && !Privacy::isUnlocked()) {
-                    $error = 'Ce nom n\'est pas disponible.';
+                    $error = 'Cet intitulé n\'est pas disponible.';
                     $conflict = null;
                 }
             }
