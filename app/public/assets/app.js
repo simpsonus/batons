@@ -183,6 +183,28 @@
     // Calendrier : afficher d'emblée les semaines les plus récentes (à droite).
     document.querySelectorAll('[data-scroll-end]').forEach((el) => { el.scrollLeft = el.scrollWidth; });
 
+    // Œuvres : suggestions pendant la frappe (le formulaire marche aussi sans JS).
+    const workSearch = document.querySelector('[data-work-search]');
+    const workResults = document.querySelector('[data-work-results]');
+    if (workSearch && workResults) {
+        const input = workSearch.querySelector('input[name="q"]');
+        let t, seqW = 0;
+        input.addEventListener('input', () => {
+            clearTimeout(t);
+            t = setTimeout(async () => {
+                const q = input.value.trim();
+                if (q.length < 2) return;
+                const mine = ++seqW;
+                const params = new URLSearchParams(new FormData(workSearch));
+                params.set('partial', '1');
+                try {
+                    const res = await fetch('./?' + params.toString(), { credentials: 'same-origin' });
+                    if (mine === seqW && res.ok) workResults.innerHTML = await res.text();
+                } catch (e) { /* hors ligne : le bouton Chercher reste disponible */ }
+            }, 350);
+        });
+    }
+
     // Retour haptique discret sur mobile lors d'un tap.
     document.querySelectorAll('.tap').forEach((btn) => {
         btn.addEventListener('click', () => navigator.vibrate?.(15));

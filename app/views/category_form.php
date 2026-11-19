@@ -18,6 +18,16 @@ $palette = ['#c2410c' => 'Orange', '#b91c1c' => 'Rouge', '#be185d' => 'Rose', '#
         </label>
     </div>
 
+    <fieldset>
+        <legend>Type</legend>
+        <div class="kind-choice">
+            <?php foreach (['simple' => 'Simple (un tap = un bâton)', 'serie' => 'Séries', 'film' => 'Films', 'livre' => 'Livres'] as $k => $label): ?>
+                <label class="chip wide"><input type="radio" name="kind" value="<?= $k ?>" <?= ($c['kind'] ?? 'simple') === $k ? 'checked' : '' ?>><span><?= $label ?></span></label>
+            <?php endforeach; ?>
+        </div>
+        <p class="muted small field-help">Séries, films et livres : chaque bâton dit <em>quoi</em> (titre, épisode, tome, note), avec recherche dans un catalogue.</p>
+    </fieldset>
+
     <div class="icon-field" style="--c: <?= e($c['color']) ?>">
         <span class="icon big" aria-hidden="true" data-icon-preview><?= icon($c['icon'] ?: '|') ?></span>
         <label class="grow">Icône <span class="muted">un émoji, ou une icône Material Design notée <code>mdi:nom</code></span>

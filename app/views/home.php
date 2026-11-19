@@ -33,6 +33,21 @@ $currentGroup = false;
     <?php endif; ?>
 
     <div class="tile" style="--c: <?= e($c['color']) ?>">
+        <?php if ($c['kind'] !== 'simple'):
+            $lastEv = $c['last_event_id'] ? Batons\Events::find($uid, (int) $c['last_event_id']) : null; ?>
+        <a class="tap" href="<?= url('work_add', ['id' => $c['id']]) ?>">
+            <span class="icon" aria-hidden="true"><?= icon($c['icon']) ?></span>
+            <span class="name"><span class="sr">Ajouter à </span><?= e($c['name']) ?><?php if ($c['hidden']): ?> <span class="hidden-mark" title="Catégorie masquée"><?= ui_icon('eye-off') ?><span class="sr">(masquée)</span></span><?php endif; ?></span>
+            <span class="meta">
+                <?php if ($lastEv && $lastEv['work_title']): ?>
+                    <span class="sr">dernier : </span><span class="meta-work"><?= e(trim($lastEv['work_title'] . ' ' . Batons\Works::progress($lastEv['season'], $lastEv['episode'], $lastEv['volume']))) ?></span>
+                    <?= e(Time::ago($lastEv['occurred_at'])) ?>
+                <?php else: ?>
+                    <?= e(Time::ago($c['last_at'])) ?>
+                <?php endif; ?>
+            </span>
+        </a>
+        <?php else: ?>
         <form method="post" action="<?= url('tap') ?>">
             <?= csrf() ?>
             <input type="hidden" name="id" value="<?= (int) $c['id'] ?>">
@@ -48,6 +63,7 @@ $currentGroup = false;
                 </span>
             </button>
         </form>
+        <?php endif; ?>
         <a class="more" href="<?= url('category', ['id' => $c['id']]) ?>" title="Détails, saisie avec date, valeur ou note">
             <?= ui_icon('chevron') ?><span class="sr">Détails de <?= e($c['name']) ?></span>
         </a>

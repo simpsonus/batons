@@ -16,7 +16,9 @@ final class Categories
                     (SELECT COUNT(*) FROM events e WHERE e.category_id = c.id
                         AND e.occurred_at >= ? AND e.occurred_at < ?) AS today_count,
                     (SELECT SUM(e.value) FROM events e WHERE e.category_id = c.id
-                        AND e.occurred_at >= ? AND e.occurred_at < ?) AS today_sum
+                        AND e.occurred_at >= ? AND e.occurred_at < ?) AS today_sum,
+                    (SELECT e.id FROM events e WHERE e.category_id = c.id
+                      ORDER BY e.occurred_at DESC, e.id DESC LIMIT 1) AS last_event_id
                FROM categories c
                LEFT JOIN groups g ON g.id = c.group_id
               WHERE c.user_id = ? AND c.archived = ?' . Privacy::visibleSql() . '
@@ -75,6 +77,7 @@ final class Categories
             'unit'  => $unit === '' ? null : mb_substr($unit, 0, 20),
             'group' => trim((string) ($in['group'] ?? '')),
             'hidden'=> !empty($in['hidden']),
+            'kind'  => in_array($in['kind'] ?? 'simple', ['simple', 'film', 'serie', 'livre'], true) ? $in['kind'] : 'simple',
         ], $errors];
     }
 
@@ -82,10 +85,10 @@ final class Categories
     {
         $pos = (int) Db::value('SELECT COALESCE(MAX(position), 0) + 1 FROM categories WHERE user_id = ?', [$userId]);
         Db::run(
-            'INSERT INTO categories (user_id, group_id, name, icon, color, unit, position, hidden, created_at)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            'INSERT INTO categories (user_id, group_id, name, icon, color, unit, position, hidden, kind, created_at)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
             [$userId, self::groupId($userId, $d['group']), $d['name'], $d['icon'], $d['color'], $d['unit'], $pos,
-             !empty($d['hidden']) ? 1 : 0, Time::nowUtc()]
+             !empty($d['hidden']) ? 1 : 0, $d['kind'] ?? 'simple', Time::nowUtc()]
         );
         return Db::lastId();
     }
@@ -93,10 +96,10 @@ final class Categories
     public static function update(int $userId, int $id, array $d): void
     {
         Db::run(
-            'UPDATE categories SET group_id = ?, name = ?, icon = ?, color = ?, unit = ?, hidden = ?
+            'UPDATE categories SET group_id = ?, name = ?, icon = ?, color = ?, unit = ?, hidden = ?, kind = ?
               WHERE id = ? AND user_id = ?',
             [self::groupId($userId, $d['group']), $d['name'], $d['icon'], $d['color'], $d['unit'],
-             !empty($d['hidden']) ? 1 : 0, $id, $userId]
+             !empty($d['hidden']) ? 1 : 0, $d['kind'] ?? 'simple', $id, $userId]
         );
         self::pruneGroups($userId);
     }

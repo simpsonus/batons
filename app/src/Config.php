@@ -24,7 +24,8 @@ final class Config
         'trusted_proxies' => '',            // en mode header : IP autorisées, séparées par des virgules (vide = toutes)
         'timezone'        => null,          // ex. Europe/Paris ; par défaut celui de PHP / TZ
         'default_user'    => 'local',       // nom de l'utilisateur unique en mode none
-        'hidden_timeout'  => 300,           // secondes d'inactivité avant reverrouillage des éléments masqués
+        'hidden_timeout'  => 300,
+        'tmdb_key'        => '',            // clé API TMDB (films/séries) par défaut ; chaque utilisateur peut la sienne           // secondes d'inactivité avant reverrouillage des éléments masqués
     ];
 
     public static function get(string $key): mixed

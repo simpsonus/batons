@@ -53,3 +53,30 @@ function ui_icon(string $name): string
     ];
     return '<svg class="ui" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="' . $paths[$name] . '"/></svg>';
 }
+
+/** Note affichée : « ★ 7/10 » (avec texte lisible par les lecteurs d'écran). */
+function rating_badge(?int $r): string
+{
+    if (!$r) {
+        return '';
+    }
+    return '<span class="rating" title="Note : ' . $r . ' sur 10"><span aria-hidden="true">★ ' . $r . '</span><span class="sr">Note : ' . $r . ' sur 10</span><span aria-hidden="true" class="rating-max">/10</span></span>';
+}
+
+/** Choix de la note : pastilles 1 à 10 + « aucune » (boutons radio, utilisable sans JS). */
+function rating_input(?int $current, string $legend = 'Note (facultatif)'): string
+{
+    $html = '<fieldset class="rating-input"><legend>' . e($legend) . '</legend><div class="rating-chips">';
+    $html .= '<label class="chip"><input type="radio" name="rating" value=""' . (!$current ? ' checked' : '') . '><span>–<span class="sr">aucune</span></span></label>';
+    for ($i = 1; $i <= 10; $i++) {
+        $html .= '<label class="chip"><input type="radio" name="rating" value="' . $i . '"' . ($current === $i ? ' checked' : '')
+            . '><span>' . $i . '<span class="sr"> sur 10</span></span></label>';
+    }
+    return $html . '</div></fieldset>';
+}
+
+/** URL de l'affiche d'une œuvre (ou null). */
+function poster_url(array $w): ?string
+{
+    return !empty($w['has_poster']) ? url('poster', ['id' => $w['id']]) : null;
+}

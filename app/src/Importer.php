@@ -166,7 +166,26 @@ final class Importer
                 $this->report['errors'][] = 'Ligne ' . ($i + 2) . ' ignorée (date ou catégorie manquante).';
                 continue;
             }
-            $id = $this->category($name, ['group' => trim($r['groupe'] ?? ''), 'unit' => trim($r['unite'] ?? '')]);
+            $kind = in_array($r['type'] ?? '', ['film', 'serie', 'livre'], true) ? $r['type'] : 'simple';
+            $id = $this->category($name, ['group' => trim($r['groupe'] ?? ''), 'unit' => trim($r['unite'] ?? ''), 'kind' => $kind]);
+            $work = trim((string) ($r['oeuvre'] ?? ''));
+            if ($work !== '' && $kind !== 'simple') {
+                $int = static fn($v) => ctype_digit((string) $v) && (int) $v > 0 ? (int) $v : null;
+                $src = (string) ($r['source'] ?? '');
+                $workId = ($src !== '' && $src !== 'manual' && ($r['source_id'] ?? '') !== '')
+                    ? Works::fromCatalog($this->userId, $kind, ['source' => $src, 'source_id' => (string) $r['source_id'],
+                        'title' => $work, 'subtitle' => ($r['oeuvre_detail'] ?? '') ?: null, 'year' => $int($r['annee'] ?? null), 'poster' => null])
+                    : Works::manual($this->userId, $kind, $work, ($r['oeuvre_detail'] ?? '') ?: null, $int($r['annee'] ?? null));
+                if (Db::value('SELECT 1 FROM events WHERE category_id = ? AND occurred_at = ?', [$id, $at])) {
+                    $this->report['events_skipped']++;
+                } else {
+                    $rt = $int($r['note_sur_10'] ?? null);
+                    Events::addWork($id, $at, $workId, $int($r['saison'] ?? null), $int($r['episode'] ?? null),
+                        $int($r['tome'] ?? null), $rt !== null && $rt <= 10 ? $rt : null, trim($r['note'] ?? ''));
+                    $this->report['events_imported']++;
+                }
+                continue;
+            }
             $value = trim((string) ($r['valeur'] ?? ''));
             $this->event($id, $at, $value === '' ? null : (float) str_replace(',', '.', $value), trim($r['note'] ?? ''));
         }
@@ -196,6 +215,7 @@ final class Importer
             'color' => $attrs['color'] ?? '#c2410c',
             'unit'  => ($attrs['unit'] ?? '') === '' ? null : $attrs['unit'],
             'group' => $attrs['group'] ?? '',
+            'kind'  => $attrs['kind'] ?? 'simple',
         ]);
         $this->report['categories_created'][] = $name;
         return $this->categoryIds[$key] = $id;

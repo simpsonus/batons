@@ -96,6 +96,16 @@ $parseValue = static function (string $raw): ?float {
     return is_numeric($raw) ? (float) $raw : null;
 };
 
+/** Entier positif saisi, ou null. */
+$posInt = static function (string $raw): ?int {
+    return ctype_digit($raw) && (int) $raw > 0 && (int) $raw < 100000 ? (int) $raw : null;
+};
+
+/** Note 1 à 10, ou null. */
+$rating = static function (string $raw): ?int {
+    return ctype_digit($raw) && (int) $raw >= 1 && (int) $raw <= 10 ? (int) $raw : null;
+};
+
 /** Catégorie de l'utilisateur ou 404. */
 $category = static function (?int $id) use ($uid): array {
     return ($id !== null ? Categories::find($uid, $id) : null) ?? Http::notFound('Catégorie');
@@ -111,6 +121,7 @@ switch ($route) {
     // --- Accueil : grille des catégories ---------------------------------------
     case 'home':
         Http::render('home', [
+            'uid' => $uid,
             'categories' => Categories::listWithSummary($uid),
             'archivedCount' => count(Categories::listWithSummary($uid, true)),
         ]);
@@ -118,6 +129,9 @@ switch ($route) {
     // --- Ajout éclair : un tap = un bâton maintenant ----------------------------
     case 'tap':
         $c = $category(Http::intInput('id'));
+        if ($c['kind'] !== 'simple') {
+            Http::redirect('work_add', ['id' => $c['id']]); // une œuvre se choisit
+        }
         $id = Events::add((int) $c['id']);
         Http::flash('Bâton ajouté à « ' . $c['name'] . ' ».', $id);
         Http::back();
@@ -146,6 +160,7 @@ switch ($route) {
             'metric' => $metric,
             'events' => Events::forCategory((int) $c['id'], 51, $page * 50),
             'page'   => $page,
+            'uid'    => $uid,
         ], $c['name']);
 
     // --- Bâtons : ajout détaillé, édition, suppression ----------------------------
@@ -164,6 +179,10 @@ switch ($route) {
         $ev = $event(Http::intInput('id'));
         $at = Time::fromLocalInput(Http::input('occurred_at')) ?? $ev['occurred_at'];
         Events::update((int) $ev['id'], $at, $parseValue(Http::input('value')), Http::input('note'));
+        if ($ev['work_id']) {
+            Events::updateWork((int) $ev['id'], $posInt(Http::input('season')), $posInt(Http::input('episode')),
+                $posInt(Http::input('volume')), $rating(Http::input('rating')));
+        }
         Http::flash('Bâton modifié.');
         Http::redirect('category', ['id' => $ev['category_id']]);
 
@@ -177,7 +196,7 @@ switch ($route) {
     case 'category_new':
     case 'category_edit':
         $c = $route === 'category_edit' ? $category(Http::intInput('id'))
-            : ['id' => null, 'name' => '', 'icon' => '', 'color' => '#c2410c', 'unit' => '', 'group_name' => '', 'archived' => 0, 'hidden' => 0];
+            : ['id' => null, 'name' => '', 'icon' => '', 'color' => '#c2410c', 'unit' => '', 'group_name' => '', 'archived' => 0, 'hidden' => 0, 'kind' => in_array($_GET['kind'] ?? '', ['film', 'serie', 'livre'], true) ? $_GET['kind'] : 'simple'];
         Http::render('category_form', ['c' => $c, 'errors' => [], 'groups' => Categories::groupNames($uid)],
             $c['id'] ? 'Modifier « ' . $c['name'] . ' »' : 'Nouvelle catégorie');
 
@@ -192,7 +211,7 @@ switch ($route) {
         }
         if ($errors) {
             $c = ['id' => $id, 'name' => $data['name'], 'icon' => $data['icon'], 'color' => $data['color'],
-                  'unit' => $data['unit'], 'group_name' => $data['group'], 'archived' => 0, 'hidden' => $data['hidden'] ? 1 : 0];
+                  'unit' => $data['unit'], 'group_name' => $data['group'], 'archived' => 0, 'hidden' => $data['hidden'] ? 1 : 0, 'kind' => $data['kind']];
             Http::render('category_form', ['c' => $c, 'errors' => $errors, 'groups' => Categories::groupNames($uid)], 'Catégorie');
         }
         if ($id !== null) {
@@ -226,6 +245,119 @@ switch ($route) {
         Categories::move($uid, (int) $c['id'], Http::input('dir') === 'up' ? -1 : 1);
         Http::back('category_order');
 
+    // --- Œuvres (catégories films / séries / livres) ------------------------------------
+    case 'work_add':
+        $c = $category(Http::intInput('id'));
+        if ($c['kind'] === 'simple') {
+            Http::redirect('category', ['id' => $c['id']]);
+        }
+        $q = Http::input('q');
+        $results = $q !== '' ? Batons\Catalog::search($c['kind'], $q, $uid) : [];
+        if (($_GET['partial'] ?? '') === '1') {
+            $partial = true;
+            require dirname(__DIR__) . '/views/_work_results.php';
+            exit;
+        }
+        $continue = [];
+        foreach (Batons\Works::inCategory($uid, (int) $c['id']) as $w) {
+            $next = Batons\Works::next($uid, $w, Batons\Works::lastEvent((int) $w['id'], (int) $c['id']));
+            if ($next !== null) {
+                $continue[] = ['work' => $w, 'next' => $next];
+            }
+            if (count($continue) >= 8) {
+                break;
+            }
+        }
+        Http::render('work_add', ['c' => $c, 'q' => $q, 'results' => $results, 'continue' => $continue,
+            'sources' => Batons\Catalog::sources($c['kind'], $uid)], Batons\Catalog::KINDS[$c['kind']] . ' : ajouter');
+
+    case 'work_pick':
+        $c = $category(Http::intInput('id'));
+        $source = Http::input('source');
+        $sid = Http::input('sid');
+        if (!in_array($source, ['tmdb', 'tvmaze', 'gbooks', 'openlibrary'], true) || $sid === '') {
+            Http::redirect('work_add', ['id' => $c['id']]);
+        }
+        $item = Batons\Catalog::details($source, $sid, $c['kind'], $uid) ?? [
+            // Catalogue injoignable : on garde ce que la recherche avait renvoyé.
+            'source' => $source, 'source_id' => $sid, 'title' => Http::input('title') ?: '(sans titre)',
+            'subtitle' => Http::input('subtitle') ?: null, 'year' => $posInt(Http::input('year')), 'poster' => Http::input('poster') ?: null,
+        ];
+        $workId = Batons\Works::fromCatalog($uid, $c['kind'], $item);
+        Http::redirect('work_log', ['id' => $c['id'], 'work' => $workId]);
+
+    case 'work_manual':
+        $c = $category(Http::intInput('id'));
+        $title = Http::input('title');
+        if ($title === '') {
+            Http::redirect('work_add', ['id' => $c['id']]);
+        }
+        $workId = Batons\Works::manual($uid, $c['kind'], $title, Http::input('subtitle') ?: null);
+        Http::redirect('work_log', ['id' => $c['id'], 'work' => $workId]);
+
+    case 'work_log':
+        $c = $category(Http::intInput('id'));
+        $w = Batons\Works::find($uid, (int) Http::intInput('work')) ?? Http::notFound('Œuvre');
+        $last = Batons\Works::lastEvent((int) $w['id'], (int) $c['id']);
+        if (Http::isPost()) {
+            $at = Time::fromLocalInput(Http::input('occurred_at')) ?? Time::nowUtc();
+            $evId = Events::addWork((int) $c['id'], $at, (int) $w['id'],
+                $c['kind'] === 'serie' ? $posInt(Http::input('season')) : null,
+                $c['kind'] === 'serie' ? $posInt(Http::input('episode')) : null,
+                $c['kind'] === 'livre' ? $posInt(Http::input('volume')) : null,
+                $rating(Http::input('rating')), Http::input('note'));
+            $ev = Events::find($uid, $evId);
+            $label = trim($w['title'] . ' ' . Batons\Works::progress($ev['season'], $ev['episode'], $ev['volume']));
+            Http::flash('« ' . $label . ' » ajouté.', $evId);
+            Http::redirect('category', ['id' => $c['id']]);
+        }
+        Http::render('work_log', ['c' => $c, 'w' => $w, 'last' => $last,
+            'next' => Batons\Works::next($uid, $w, $last), 'seasons' => Batons\Works::seasons($w)], $w['title']);
+
+    case 'work_next':
+        $c = $category(Http::intInput('id'));
+        $w = Batons\Works::find($uid, (int) Http::intInput('work')) ?? Http::notFound('Œuvre');
+        $next = Batons\Works::next($uid, $w, Batons\Works::lastEvent((int) $w['id'], (int) $c['id']));
+        if ($next === null) {
+            Http::redirect('work_log', ['id' => $c['id'], 'work' => $w['id']]);
+        }
+        $evId = Events::addWork((int) $c['id'], Time::nowUtc(), (int) $w['id'],
+            $next['season'] ?? null, $next['episode'] ?? null, $next['volume'] ?? null, null, null);
+        Http::flash('« ' . $w['title'] . ' ' . Batons\Works::progress($next['season'] ?? null, $next['episode'] ?? null, $next['volume'] ?? null) . ' » ajouté.', $evId);
+        Http::back('category', ['id' => $c['id']]);
+
+    case 'thumb':
+        $u = (string) ($_GET['u'] ?? '');
+        $bin = Batons\Works::thumb($u);
+        if ($bin === null) {
+            http_response_code(404);
+            exit;
+        }
+        $mime = getimagesizefromstring($bin)['mime'] ?? 'image/jpeg';
+        header('Content-Type: ' . $mime);
+        header('Cache-Control: private, max-age=604800');
+        header('X-Content-Type-Options: nosniff');
+        echo $bin;
+        exit;
+
+    case 'poster':
+        $w = Batons\Works::find($uid, (int) Http::intInput('id'));
+        // Pas d'affiche d'une œuvre qui n'apparaît que dans des catégories masquées (verrouillé).
+        $visible = $w && (!Batons\Db::value('SELECT 1 FROM events WHERE work_id = ?', [$w['id']])
+            || Batons\Db::value('SELECT 1 FROM events e JOIN categories c ON c.id = e.category_id
+                LEFT JOIN groups g ON g.id = c.group_id WHERE e.work_id = ?' . Privacy::visibleSql(), [$w['id']]));
+        $file = $w ? Batons\Works::posterFile((int) $w['id']) : '';
+        if (!$visible || !$w['has_poster'] || !is_file($file)) {
+            http_response_code(404);
+            exit;
+        }
+        $mime = (getimagesize($file)['mime'] ?? 'image/jpeg');
+        header('Content-Type: ' . (in_array($mime, ['image/jpeg', 'image/png', 'image/webp'], true) ? $mime : 'image/jpeg'));
+        header('Cache-Control: private, max-age=604800');
+        header('X-Content-Type-Options: nosniff');
+        readfile($file);
+        exit;
+
     // --- Compte ----------------------------------------------------------------------
     case 'account':
     case 'account_password':
@@ -245,6 +377,15 @@ switch ($route) {
                 } else {
                     Auth::setPassword($uid, (string) $_POST['password']);
                     Http::flash($me['password_hash'] ? 'Mot de passe changé.' : 'Mot de passe défini : l\'accès direct est ouvert pour « ' . $me['username'] . ' ».');
+                    Http::redirect('account');
+                }
+            } elseif ($route === 'account' && isset($_POST['tmdb_key'])) {
+                $k = trim((string) $_POST['tmdb_key']);
+                if ($k !== '' && !preg_match('/^[A-Za-z0-9._-]{20,400}$/', $k)) {
+                    $errors['tmdb_key'] = 'Clé invalide : colle la « clé d\'API » ou le « jeton d\'accès en lecture » TMDB.';
+                } else {
+                    Batons\Settings::set($uid, 'tmdb_key', $k);
+                    Http::flash($k === '' ? 'Clé TMDB retirée.' : 'Clé TMDB enregistrée.');
                     Http::redirect('account');
                 }
             } elseif ($route === 'account_password_remove' && Auth::method() === 'header') {
@@ -279,6 +420,7 @@ switch ($route) {
         }
         Http::render('account', [
             'me' => $me, 'method' => Auth::method(), 'errors' => $errors, 'newUsername' => $newUsername,
+            'tmdbOwn' => Batons\Settings::get($uid, 'tmdb_key') !== null, 'tmdbGlobal' => (string) Batons\Config::get('tmdb_key') !== '',
             'users' => $isAdmin ? Batons\Db::all('SELECT id, username, is_admin, created_at FROM users WHERE password_hash IS NOT NULL ORDER BY username') : null,
         ], 'Compte');
 
@@ -456,11 +598,13 @@ switch ($route) {
         header('Content-Disposition: attachment; filename="batons-' . date('Y-m-d') . '.csv"');
         $out = fopen('php://output', 'w');
         fwrite($out, "\xEF\xBB\xBF"); // BOM pour Excel
-        fputcsv($out, ['date_locale', 'date_utc', 'categorie', 'groupe', 'valeur', 'unite', 'note'], ';');
+        fputcsv($out, ['date_locale', 'date_utc', 'categorie', 'groupe', 'valeur', 'unite', 'note',
+            'type', 'oeuvre', 'oeuvre_detail', 'annee', 'source', 'source_id', 'saison', 'episode', 'tome', 'note_sur_10'], ';');
         $stmt = Events::allForExport($uid);
         while ($r = $stmt->fetch()) {
             fputcsv($out, [Time::local($r['occurred_at'])->format('Y-m-d H:i'), $r['occurred_at'], $r['category'],
-                $r['grp'], $r['value'], $r['unit'], $r['note']], ';');
+                $r['grp'], $r['value'], $r['unit'], $r['note'], $r['kind'], $r['work'], $r['work_subtitle'], $r['work_year'],
+                $r['work_source'], $r['work_source_id'], $r['season'], $r['episode'], $r['volume'], $r['rating']], ';');
         }
         exit;
 

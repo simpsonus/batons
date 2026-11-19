@@ -18,11 +18,30 @@ final class Events
         return Db::lastId();
     }
 
+    /** Bâton d'une catégorie « œuvre ». */
+    public static function addWork(int $categoryId, string $atUtc, int $workId, ?int $season, ?int $episode,
+                                   ?int $volume, ?int $rating, ?string $note): int
+    {
+        Db::run(
+            'INSERT INTO events (category_id, occurred_at, work_id, season, episode, volume, rating, note, created_at)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            [$categoryId, $atUtc, $workId, $season, $episode, $volume, $rating, $note === '' ? null : $note, Time::nowUtc()]
+        );
+        return Db::lastId();
+    }
+
+    public static function updateWork(int $id, ?int $season, ?int $episode, ?int $volume, ?int $rating): void
+    {
+        Db::run('UPDATE events SET season = ?, episode = ?, volume = ?, rating = ? WHERE id = ?', [$season, $episode, $volume, $rating, $id]);
+    }
+
     public static function find(int $userId, int $id): ?array
     {
         return Db::one(
-            'SELECT e.*, c.name AS category_name, c.icon, c.color, c.unit
+            'SELECT e.*, c.name AS category_name, c.icon, c.color, c.unit, c.kind,
+                    w.title AS work_title, w.kind AS work_kind
                FROM events e JOIN categories c ON c.id = e.category_id
+               LEFT JOIN works w ON w.id = e.work_id
                LEFT JOIN groups g ON g.id = c.group_id
               WHERE e.id = ? AND c.user_id = ?' . Privacy::visibleSql(),
             [$id, $userId]
@@ -43,7 +62,8 @@ final class Events
     public static function forCategory(int $categoryId, int $limit = 50, int $offset = 0): array
     {
         return Db::all(
-            'SELECT * FROM events WHERE category_id = ? ORDER BY occurred_at DESC, id DESC LIMIT ? OFFSET ?',
+            'SELECT e.*, w.title AS work_title, w.id AS work_ref FROM events e LEFT JOIN works w ON w.id = e.work_id
+              WHERE e.category_id = ? ORDER BY e.occurred_at DESC, e.id DESC LIMIT ? OFFSET ?',
             [$categoryId, $limit, $offset]
         );
     }
@@ -52,10 +72,11 @@ final class Events
     public static function timeline(int $userId, int $limit = 100, int $offset = 0): array
     {
         return Db::all(
-            'SELECT e.*, c.name AS category_name, c.icon, c.color, c.unit,
+            'SELECT e.*, c.name AS category_name, c.icon, c.color, c.unit, w.title AS work_title,
                     CASE WHEN c.hidden = 1 OR g.hidden = 1 THEN 1 ELSE 0 END AS is_hidden
                FROM events e JOIN categories c ON c.id = e.category_id
                LEFT JOIN groups g ON g.id = c.group_id
+               LEFT JOIN works w ON w.id = e.work_id
               WHERE c.user_id = ?' . Privacy::visibleSql() . '
               ORDER BY e.occurred_at DESC, e.id DESC LIMIT ? OFFSET ?',
             [$userId, $limit, $offset]
@@ -66,9 +87,12 @@ final class Events
     public static function allForExport(int $userId): \PDOStatement
     {
         return Db::run(
-            'SELECT e.occurred_at, c.name AS category, g.name AS grp, e.value, c.unit, e.note
+            'SELECT e.occurred_at, c.name AS category, g.name AS grp, e.value, c.unit, e.note, c.kind,
+                    w.title AS work, w.subtitle AS work_subtitle, w.year AS work_year, w.source AS work_source,
+                    w.source_id AS work_source_id, e.season, e.episode, e.volume, e.rating
                FROM events e JOIN categories c ON c.id = e.category_id
                LEFT JOIN groups g ON g.id = c.group_id
+               LEFT JOIN works w ON w.id = e.work_id
               WHERE c.user_id = ?' . Privacy::visibleSql() . ' ORDER BY e.occurred_at',
             [$userId]
         );

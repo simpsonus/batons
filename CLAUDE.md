@@ -62,6 +62,15 @@ Le nom vient des bâtons qu'on trace pour compter (IIII barrés). Slug technique
   bibliothèque (ES256/RS256, attestation « none », vérification utilisateur requise, rpId enregistré avec la clé).
   État en session, expiration après `BATONS_HIDDEN_TIMEOUT` s d'inactivité (300). Masquer exige un code défini.
   Ce n'est pas du chiffrement (le dire dans l'interface).
+- **Catégories « œuvre »** (`categories.kind` = `serie` | `film` | `livre`, sinon `simple`) : chaque bâton
+  pointe vers une œuvre (`works`) avec saison/épisode (séries), tome (livres) et note 1–10 facultative.
+  La tuile ouvre `work_add` (« Continuer » = épisode/tome suivant en un tap, puis recherche). Catalogues
+  interrogés **côté serveur** (`Catalog.php`, `Net.php` avec cache `http_cache`) : TMDB (clé, réglage par
+  utilisateur dans Compte ou `BATONS_TMDB_KEY`), TVmaze (séries sans clé), Google Books puis Open Library.
+  Affiches copiées dans `data_dir/posters`, vignettes de recherche relayées via `thumb` (liste blanche
+  d'hôtes) : le navigateur ne contacte jamais les catalogues. Saisie manuelle toujours possible.
+  Mention TMDB obligatoire (« utilise l'API TMDB mais n'est ni approuvé ni certifié par TMDB »).
+  Tests hors ligne : `BATONS_HTTP_FIXTURES=fichier.php` (tableau regex => JSON) remplace le réseau.
 - Interface en français pour l'instant (i18n prévue plus tard).
 
 ## Arborescence
@@ -70,7 +79,7 @@ Le nom vient des bâtons qu'on trace pour compter (IIII barrés). Slug technique
 app/                    l'application, autonome
   public/               racine web : index.php (routeur), assets/
   src/                  Config, Db (+ migrations), Auth, Http, Time, Categories, Events, Chart, Icons, Importer,
-                        Privacy, WebAuthn, Cbor
+                        Privacy, WebAuthn, Cbor, Catalog, Net, Works, Settings
   views/                templates PHP natifs (layout.php + une vue par page)
   migrations/           NNN_nom.sql, appliqués automatiquement au démarrage
 docker/                 image générique nginx + php-fpm (Alpine), port 8080, données dans /data
@@ -81,8 +90,10 @@ repository.yaml         pour ajouter le dépôt comme source d'add-ons dans HA
 
 ## Modèle de données
 
-`users` → `groups` (facultatifs) → `categories` (nom, icône émoji, couleur, unité, position, archivée)
-→ `events` (occurred_at UTC, value REAL facultative, note facultative).
+`users` → `groups` (facultatifs) → `categories` (nom, icône, couleur, unité, position, archivée, masquée, kind)
+→ `events` (occurred_at UTC, value, note, + work_id, season, episode, volume, rating pour les œuvres).
+`works` (par utilisateur : kind, source, source_id, titre, sous-titre, année, affiche, saisons en JSON).
+Autres : `passkeys`, `user_settings`, `login_failures`, `http_cache`.
 Nouvelle évolution de schéma = nouveau fichier `app/migrations/00N_xxx.sql`, jamais modifier un ancien.
 
 ## Lancer en local
@@ -118,9 +129,10 @@ docker build -f docker/Dockerfile -t batons . && docker run -p 8080:8080 -v $PWD
       l'add-on (doc Nginx Proxy Manager dans `ha-addon/DOCS.md`).
 - [x] v0.8 : vue calendrier par catégorie (grille 52 semaines × 7 jours, lundi en haut, intensité 1→4+,
       `Chart::calendar()` + tableau mensuel pour lecteurs d'écran).
-- [ ] Type de catégorie « œuvre » (film / série / livre) : saisie prédictive (TMDB, Open Library), épisode ou
-      tome suivant proposé, note facultative. Plus tard éventuellement : synchro BetaSeries / Trakt
-      (pas SensCritique ni SerieBox : pas d'API publique). Jamais de synchro pour une catégorie masquée.
+- [x] v0.9 : catégories « œuvre » (séries, films, livres) : recherche catalogue, épisode/tome suivant,
+      note sur 10, affiches, export/réimport.
+- [ ] Plus tard éventuellement : synchro BetaSeries / Trakt (pas SensCritique ni SerieBox : pas d'API
+      publique). Jamais de synchro pour une catégorie masquée.
 - [ ] Recherche / filtre dans la chronologie.
 - [ ] Rappels / objectifs (« au moins 3 par semaine »).
 - [ ] i18n (anglais).

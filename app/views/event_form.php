@@ -15,7 +15,19 @@
             <input type="text" name="value" inputmode="decimal" value="<?= e($ev['value'] !== null ? str_replace('.', ',', (string) (float) $ev['value']) : '') ?>" autocomplete="off">
         </label>
     </div>
-    <label>Note
+    <?php if ($ev['work_id']): ?>
+        <p><strong><?= e($ev['work_title']) ?></strong></p>
+        <?php if ($ev['kind'] === 'serie'): ?>
+            <div class="row">
+                <label class="narrow">Saison <input type="number" name="season" min="1" inputmode="numeric" value="<?= e($ev['season']) ?>"></label>
+                <label class="narrow">Épisode <input type="number" name="episode" min="1" inputmode="numeric" value="<?= e($ev['episode']) ?>"></label>
+            </div>
+        <?php elseif ($ev['kind'] === 'livre'): ?>
+            <label class="narrow">Tome <input type="number" name="volume" min="1" inputmode="numeric" value="<?= e($ev['volume']) ?>"></label>
+        <?php endif; ?>
+        <?= rating_input($ev['rating'] !== null ? (int) $ev['rating'] : null) ?>
+    <?php endif; ?>
+    <label>Note<?= $ev['work_id'] ? ' écrite' : '' ?>
         <input type="text" name="note" maxlength="500" value="<?= e($ev['note']) ?>" autocomplete="off">
     </label>
     <div class="form-actions">

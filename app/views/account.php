@@ -54,6 +54,26 @@
     </section>
 <?php endif; ?>
 
+<section class="card">
+    <h2>Catalogues (films et séries)</h2>
+    <p>Pour rechercher des <strong>films</strong> (et des séries avec titres français), Bâtons utilise
+        <a href="https://www.themoviedb.org/" target="_blank" rel="noopener">TMDB<span class="sr"> (nouvel onglet)</span></a>,
+        qui demande une clé gratuite : crée un compte sur TMDB, puis Paramètres › API, et colle ici la
+        « clé d'API » ou le « jeton d'accès en lecture ». Sans clé, les séries sont cherchées sur TVmaze
+        (titres surtout anglais) et les films se saisissent à la main. Les livres n'ont pas besoin de clé.</p>
+    <p class="muted"><?= $tmdbOwn ? 'Une clé personnelle est enregistrée.' : ($tmdbGlobal ? 'Une clé commune est configurée sur le serveur.' : 'Aucune clé configurée.') ?></p>
+    <form method="post" action="<?= url('account') ?>" novalidate>
+        <?= csrf() ?>
+        <label>Clé TMDB <span class="muted">laisser vide pour retirer</span>
+            <input type="password" name="tmdb_key" autocomplete="off" spellcheck="false"
+                   <?= isset($errors['tmdb_key']) ? 'aria-invalid="true" aria-describedby="err-tmdb"' : '' ?>>
+            <?php if (isset($errors['tmdb_key'])): ?><span class="error" id="err-tmdb"><?= e($errors['tmdb_key']) ?></span><?php endif; ?>
+        </label>
+        <button class="btn ghost">Enregistrer la clé</button>
+    </form>
+    <p class="muted small">Ce produit utilise l'API TMDB mais n'est ni approuvé ni certifié par TMDB.</p>
+</section>
+
 <?php if ($users !== null): ?>
     <section class="card">
         <h2>Comptes</h2>

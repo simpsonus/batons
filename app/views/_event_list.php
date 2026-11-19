@@ -26,6 +26,11 @@ $day = null;
             <?php if ($showCategory): ?>
                 <a class="cat" href="<?= url('category', ['id' => $ev['category_id']]) ?>"><span class="icon sm" aria-hidden="true"><?= icon($ev['icon']) ?></span><?= e($ev['category_name']) ?><?php if (!empty($ev['is_hidden'])): ?> <span class="hidden-mark" title="Masquée"><?= ui_icon('eye-off') ?><span class="sr">(masquée)</span></span><?php endif; ?></a>
             <?php endif; ?>
+            <?php if (!empty($ev['work_title'])): ?>
+                <span class="work-line"><strong><?= e($ev['work_title']) ?></strong>
+                    <?php if ($p = Batons\Works::progress($ev['season'], $ev['episode'], $ev['volume'])): ?><span class="progress"><?= e($p) ?></span><?php endif; ?>
+                    <?= rating_badge($ev['rating'] !== null ? (int) $ev['rating'] : null) ?></span>
+            <?php endif; ?>
             <?php if ($ev['value'] !== null): ?>
                 <span class="value"><?= e(Chart::num($ev['value'])) ?><?= ($u = $ev['unit'] ?? $c['unit'] ?? null) ? ' ' . e($u) : '' ?></span>
             <?php endif; ?>
