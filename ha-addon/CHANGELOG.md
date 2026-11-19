@@ -1,5 +1,13 @@
 # Journal des modifications
 
+## 0.13.0
+- Option **« Suivre des périodes »** sur les catégories simples (un rhume, une cure…) : un tap sur la tuile
+  commence la période, le suivant la termine ; la tuile affiche « En cours depuis 3 jours ».
+- Fiche de la catégorie : liste des périodes avec leur durée, durée moyenne et la plus longue ;
+  le calendrier colore tous les jours couverts. Dates passées : « Le début » / « La fin » à l'ajout ou à la modification.
+- Jeux et livres : bouton **🏁** directement dans « Continuer » pour marquer la fin sans ouvrir la fiche.
+- Dates courtes corrigées (« 14 nov. » au lieu de « 14 nove. »).
+
 ## 0.12.0
 - Livres : **date de début et de fin de lecture**, comme pour les jeux. « Commencé aujourd'hui » /
   « 🏁 Lu aujourd'hui » sur la fiche du livre, ou n'importe quelle date à l'ajout ou en modifiant le bâton.

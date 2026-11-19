@@ -55,7 +55,12 @@ $currentGroup = false;
                 <span class="icon" aria-hidden="true"><?= icon($c['icon']) ?></span>
                 <span class="name"><span class="sr">Ajouter un bâton : </span><?= e($c['name']) ?><?php if ($c['hidden']): ?> <span class="hidden-mark" title="Catégorie masquée"><?= ui_icon('eye-off') ?><span class="sr">(masquée)</span></span><?php endif; ?></span>
                 <span class="meta">
-                    <?php if ((int) $c['today_count'] > 0): ?>
+                    <?php $openP = $c['periods'] ? Batons\Periods::open((int) $c['id']) : null; ?>
+                    <?php if ($openP): ?>
+                        <b>En cours</b> depuis <?= e(Batons\Works::daysLabel((int) $openP['days'])) ?><span class="sr"> ; toucher pour terminer</span>
+                    <?php elseif ($c['periods'] && !$openP && (int) $c['today_count'] === 0): ?>
+                        <?php if ($c['last_at']): ?><span class="sr">dernier bâton </span><?php endif; ?><?= e(Time::ago($c['last_at'])) ?><span class="sr"> ; toucher pour commencer</span>
+                    <?php elseif ((int) $c['today_count'] > 0): ?>
                         <b><?= (int) $c['today_count'] ?></b> aujourd'hui<?php if ($c['unit'] && $c['today_sum'] !== null): ?> · <?= e(Chart::num($c['today_sum']) . ' ' . $c['unit']) ?><?php endif; ?>
                     <?php else: ?>
                         <?php if ($c['last_at']): ?><span class="sr">dernier bâton </span><?php endif; ?><?= e(Time::ago($c['last_at'])) ?>

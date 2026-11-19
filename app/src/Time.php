@@ -115,7 +115,7 @@ final class Time
     /** « 19 nov. » */
     public static function shortDate(DateTimeImmutable $d): string
     {
-        $m = self::MONTHS[(int) $d->format('n') - 1];
-        return $d->format('j') . ' ' . (mb_strlen($m) > 4 ? mb_substr($m, 0, 4) . '.' : $m);
+        $short = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'];
+        return $d->format('j') . ' ' . $short[(int) $d->format('n') - 1];
     }
 }

@@ -137,6 +137,18 @@ switch ($route) {
         if ($c['kind'] !== 'simple') {
             Http::redirect('work_add', ['id' => $c['id']]); // une œuvre se choisit
         }
+        if ($c['periods']) {
+            // Option « périodes » : un tap commence la période, le suivant la termine.
+            $open = Batons\Periods::open((int) $c['id']);
+            $id = Events::add((int) $c['id'], null, null, null, $open ? 'finish' : 'start');
+            if ($open) {
+                $p = Batons\Periods::open((int) $c['id']) ?? Batons\Periods::list((int) $c['id'])[0];
+                Http::flash('« ' . $c['name'] . ' » terminé : ' . Batons\Works::daysLabel((int) $p['days']) . '.', $id);
+            } else {
+                Http::flash('« ' . $c['name'] . ' » commencé.', $id);
+            }
+            Http::back();
+        }
         $id = Events::add((int) $c['id']);
         Http::flash('Bâton ajouté à « ' . $c['name'] . ' ».', $id);
         Http::back();
@@ -172,7 +184,8 @@ switch ($route) {
     case 'event_add':
         $c = $category(Http::intInput('category_id'));
         $at = Time::fromLocalInput(Http::input('occurred_at')) ?? Time::nowUtc();
-        $id = Events::add((int) $c['id'], $at, $parseValue(Http::input('value')), Http::input('note'));
+        $id = Events::add((int) $c['id'], $at, $parseValue(Http::input('value')), Http::input('note'),
+            $c['periods'] ? $milestone(Http::input('milestone')) : null);
         Http::flash('Bâton ajouté.', $id);
         Http::redirect('category', ['id' => $c['id']]);
 
@@ -184,6 +197,9 @@ switch ($route) {
         $ev = $event(Http::intInput('id'));
         $at = Time::fromLocalInput(Http::input('occurred_at')) ?? $ev['occurred_at'];
         Events::update((int) $ev['id'], $at, $parseValue(Http::input('value')), Http::input('note'));
+        if (!$ev['work_id'] && $ev['periods']) {
+            Batons\Db::run('UPDATE events SET milestone = ? WHERE id = ?', [$milestone(Http::input('milestone')), $ev['id']]);
+        }
         if ($ev['work_id']) {
             Events::updateWork((int) $ev['id'], $posInt(Http::input('season')), $posInt(Http::input('episode')),
                 $posInt(Http::input('volume')), $rating(Http::input('rating')),
@@ -202,7 +218,7 @@ switch ($route) {
     case 'category_new':
     case 'category_edit':
         $c = $route === 'category_edit' ? $category(Http::intInput('id'))
-            : ['id' => null, 'name' => '', 'icon' => '', 'color' => '#c2410c', 'unit' => '', 'group_name' => '', 'archived' => 0, 'hidden' => 0, 'kind' => in_array($_GET['kind'] ?? '', ['film', 'serie', 'livre', 'jeu'], true) ? $_GET['kind'] : 'simple'];
+            : ['id' => null, 'name' => '', 'icon' => '', 'color' => '#c2410c', 'unit' => '', 'group_name' => '', 'archived' => 0, 'hidden' => 0, 'periods' => 0, 'kind' => in_array($_GET['kind'] ?? '', ['film', 'serie', 'livre', 'jeu'], true) ? $_GET['kind'] : 'simple'];
         Http::render('category_form', ['c' => $c, 'errors' => [], 'groups' => Categories::groupNames($uid)],
             $c['id'] ? 'Modifier « ' . $c['name'] . ' »' : 'Nouvelle catégorie');
 
@@ -217,7 +233,7 @@ switch ($route) {
         }
         if ($errors) {
             $c = ['id' => $id, 'name' => $data['name'], 'icon' => $data['icon'], 'color' => $data['color'],
-                  'unit' => $data['unit'], 'group_name' => $data['group'], 'archived' => 0, 'hidden' => $data['hidden'] ? 1 : 0, 'kind' => $data['kind']];
+                  'unit' => $data['unit'], 'group_name' => $data['group'], 'archived' => 0, 'hidden' => $data['hidden'] ? 1 : 0, 'kind' => $data['kind'], 'periods' => $data['periods'] ? 1 : 0];
             Http::render('category_form', ['c' => $c, 'errors' => $errors, 'groups' => Categories::groupNames($uid)], 'Catégorie');
         }
         if ($id !== null) {
@@ -350,7 +366,7 @@ switch ($route) {
         Http::flash($m === 'finish'
             ? '« ' . $w['title'] . ' » ' . ($c['kind'] === 'livre' ? 'lu' : 'terminé') . ' en ' . Batons\Works::daysLabel((int) $st['days']) . '. Bravo !'
             : '« ' . $w['title'] . ' » commencé aujourd\'hui.', $evId);
-        Http::redirect('work', ['id' => $c['id'], 'work' => $w['id']]);
+        Http::back('work', ['id' => $c['id'], 'work' => $w['id']]);
 
     case 'work_next':
         $c = $category(Http::intInput('id'));

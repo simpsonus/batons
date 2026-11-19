@@ -34,6 +34,14 @@ $kindLabel = ['film' => 'un film', 'serie' => 'une série', 'livre' => 'un livre
                         </button>
                     </form>
                     <?php endif; ?>
+                    <?php if (in_array($c['kind'], Works::TRACKED, true) && Works::status((int) $w['id'], (int) $c['id'])['state'] === 'playing'): ?>
+                        <form method="post" action="<?= url('work_mark', ['id' => $c['id'], 'work' => $w['id']]) ?>">
+                            <?= csrf() ?>
+                            <input type="hidden" name="milestone" value="finish">
+                            <input type="hidden" name="back" value="<?= e(here()) ?>">
+                            <button class="icon-btn finish-btn" aria-label="<?= e($w['title']) ?> : <?= $c['kind'] === 'livre' ? 'lu' : 'terminé' ?> aujourd'hui" title="<?= $c['kind'] === 'livre' ? 'Lu' : 'Terminé' ?> aujourd'hui"><span aria-hidden="true">🏁</span></button>
+                        </form>
+                    <?php endif; ?>
                 </li>
             <?php endforeach; ?>
         </ul>

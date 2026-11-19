@@ -140,6 +140,11 @@ docker build -f docker/Dockerfile -t batons . && docker run -p 8080:8080 -v $PWD
 - [x] v0.11 : jeux : bâtons-étapes `events.milestone` (start / finish), durée pour finir (`Works::status()`),
       moyenne des jeux terminés.
 - [x] v0.12 : idem pour les livres (`Works::TRACKED` = jeu, livre ; libellés via `Works::milestoneLabels()`).
+- [x] v0.13 : option `categories.periods` sur les catégories simples (`Periods.php`) : bâtons début/fin anonymes,
+      **une seule période ouverte à la fois** (choix assumé : périodes sans nom), tap = début puis fin ;
+      🏁 dans « Continuer » pour jeux/livres.
+- [ ] Type de catégorie « Éléments » générique (éléments nommés sans catalogue, plusieurs en parallèle,
+      début/fin/durée — mécanique des œuvres) : à faire si un cas concret apparaît (ex. « Traitements »).
 - [ ] Plus tard éventuellement : synchro BetaSeries / Trakt (pas SensCritique ni SerieBox : pas d'API
       publique). Jamais de synchro pour une catégorie masquée.
 - [ ] Recherche / filtre dans la chronologie.

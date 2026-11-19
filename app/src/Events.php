@@ -9,11 +9,13 @@ use DateTimeZone;
 /** Dépôt des bâtons (événements). Toutes les requêtes vérifient l'appartenance via la catégorie. */
 final class Events
 {
-    public static function add(int $categoryId, ?string $occurredAtUtc = null, ?float $value = null, ?string $note = null): int
+    public static function add(int $categoryId, ?string $occurredAtUtc = null, ?float $value = null, ?string $note = null,
+                               ?string $milestone = null): int
     {
         Db::run(
-            'INSERT INTO events (category_id, occurred_at, value, note, created_at) VALUES (?, ?, ?, ?, ?)',
-            [$categoryId, $occurredAtUtc ?? Time::nowUtc(), $value, $note === '' ? null : $note, Time::nowUtc()]
+            'INSERT INTO events (category_id, occurred_at, value, note, milestone, created_at) VALUES (?, ?, ?, ?, ?, ?)',
+            [$categoryId, $occurredAtUtc ?? Time::nowUtc(), $value, $note === '' ? null : $note,
+             in_array($milestone, ['start', 'finish'], true) ? $milestone : null, Time::nowUtc()]
         );
         return Db::lastId();
     }
@@ -40,7 +42,7 @@ final class Events
     public static function find(int $userId, int $id): ?array
     {
         return Db::one(
-            'SELECT e.*, c.name AS category_name, c.icon, c.color, c.unit, c.kind,
+            'SELECT e.*, c.name AS category_name, c.icon, c.color, c.unit, c.kind, c.periods,
                     w.title AS work_title, w.kind AS work_kind
                FROM events e JOIN categories c ON c.id = e.category_id
                LEFT JOIN works w ON w.id = e.work_id

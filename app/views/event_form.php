@@ -15,6 +15,16 @@
             <input type="text" name="value" inputmode="decimal" value="<?= e($ev['value'] !== null ? str_replace('.', ',', (string) (float) $ev['value']) : '') ?>" autocomplete="off">
         </label>
     </div>
+    <?php if (!$ev['work_id'] && $ev['periods']): ?>
+        <fieldset>
+            <legend>Ce bâton marque</legend>
+            <div class="kind-choice">
+                <?php foreach (['' => 'Un bâton simple', 'start' => 'Le début', 'finish' => 'La fin'] as $k => $label): ?>
+                    <label class="chip wide"><input type="radio" name="milestone" value="<?= $k ?>" <?= (string) $ev['milestone'] === $k ? 'checked' : '' ?>><span><?= $label ?></span></label>
+                <?php endforeach; ?>
+            </div>
+        </fieldset>
+    <?php endif; ?>
     <?php if ($ev['work_id']): ?>
         <p><strong><?= e($ev['work_title']) ?></strong></p>
         <?php if ($ev['kind'] === 'serie'): ?>

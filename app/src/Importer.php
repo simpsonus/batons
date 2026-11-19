@@ -188,7 +188,8 @@ final class Importer
                 continue;
             }
             $value = trim((string) ($r['valeur'] ?? ''));
-            $this->event($id, $at, $value === '' ? null : (float) str_replace(',', '.', $value), trim($r['note'] ?? ''));
+            $this->event($id, $at, $value === '' ? null : (float) str_replace(',', '.', $value), trim($r['note'] ?? ''),
+                ['debut' => 'start', 'fin' => 'finish'][$r['etape'] ?? ''] ?? null);
         }
     }
 
@@ -222,14 +223,17 @@ final class Importer
         return $this->categoryIds[$key] = $id;
     }
 
-    private function event(int $categoryId, string $at, ?float $value, string $note): void
+    private function event(int $categoryId, string $at, ?float $value, string $note, ?string $milestone = null): void
     {
         $exists = Db::value('SELECT 1 FROM events WHERE category_id = ? AND occurred_at = ?', [$categoryId, $at]);
         if ($exists) {
             $this->report['events_skipped']++;
             return;
         }
-        Events::add($categoryId, $at, $value, $note);
+        Events::add($categoryId, $at, $value, $note, $milestone);
+        if ($milestone !== null) {
+            Db::run('UPDATE categories SET periods = 1 WHERE id = ? AND kind = ?', [$categoryId, 'simple']);
+        }
         $this->report['events_imported']++;
     }
 

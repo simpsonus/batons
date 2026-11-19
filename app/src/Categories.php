@@ -77,6 +77,7 @@ final class Categories
             'unit'  => $unit === '' ? null : mb_substr($unit, 0, 20),
             'group' => trim((string) ($in['group'] ?? '')),
             'hidden'=> !empty($in['hidden']),
+            'periods' => !empty($in['periods']) && ($in['kind'] ?? 'simple') === 'simple',
             'kind'  => in_array($in['kind'] ?? 'simple', ['simple', 'film', 'serie', 'livre', 'jeu'], true) ? $in['kind'] : 'simple',
         ], $errors];
     }
@@ -85,10 +86,10 @@ final class Categories
     {
         $pos = (int) Db::value('SELECT COALESCE(MAX(position), 0) + 1 FROM categories WHERE user_id = ?', [$userId]);
         Db::run(
-            'INSERT INTO categories (user_id, group_id, name, icon, color, unit, position, hidden, kind, created_at)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            'INSERT INTO categories (user_id, group_id, name, icon, color, unit, position, hidden, kind, periods, created_at)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
             [$userId, self::groupId($userId, $d['group']), $d['name'], $d['icon'], $d['color'], $d['unit'], $pos,
-             !empty($d['hidden']) ? 1 : 0, $d['kind'] ?? 'simple', Time::nowUtc()]
+             !empty($d['hidden']) ? 1 : 0, $d['kind'] ?? 'simple', !empty($d['periods']) ? 1 : 0, Time::nowUtc()]
         );
         return Db::lastId();
     }
@@ -96,10 +97,10 @@ final class Categories
     public static function update(int $userId, int $id, array $d): void
     {
         Db::run(
-            'UPDATE categories SET group_id = ?, name = ?, icon = ?, color = ?, unit = ?, hidden = ?, kind = ?
+            'UPDATE categories SET group_id = ?, name = ?, icon = ?, color = ?, unit = ?, hidden = ?, kind = ?, periods = ?
               WHERE id = ? AND user_id = ?',
             [self::groupId($userId, $d['group']), $d['name'], $d['icon'], $d['color'], $d['unit'],
-             !empty($d['hidden']) ? 1 : 0, $d['kind'] ?? 'simple', $id, $userId]
+             !empty($d['hidden']) ? 1 : 0, $d['kind'] ?? 'simple', !empty($d['periods']) ? 1 : 0, $id, $userId]
         );
         self::pruneGroups($userId);
     }

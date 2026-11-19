@@ -82,6 +82,46 @@ $events = array_slice($events, 0, 50);
         <?php if ($c['kind'] === 'jeu' && $works): ?><p class="muted small">Données de jeux : <a href="https://rawg.io" target="_blank" rel="noopener">RAWG<span class="sr"> (nouvel onglet)</span></a>.</p><?php endif; ?>
     </section>
 <?php else: ?>
+<?php if ($c['periods']):
+    $periods = Batons\Periods::list($id);
+    $openP = ($periods && $periods[0]['finish'] === null) ? $periods[0] : null;
+    $pStats = Batons\Periods::stats($periods); ?>
+    <section class="card game-status" style="--c: <?= e($c['color']) ?>" aria-labelledby="per-title">
+        <h2 id="per-title" class="card-title">Périodes</h2>
+        <?php if ($openP): ?>
+            <p><strong>En cours</strong> depuis le <?= e(Time::longDate(Time::local($openP['start']))) ?>
+                (<?= e(Batons\Works::daysLabel((int) $openP['days'])) ?>).</p>
+        <?php endif; ?>
+        <form method="post" action="<?= url('tap') ?>">
+            <?= csrf() ?>
+            <input type="hidden" name="id" value="<?= $id ?>">
+            <input type="hidden" name="back" value="<?= e(here()) ?>">
+            <button class="btn <?= $openP ? 'accent' : 'ghost' ?>"><?= $openP ? '🏁 Terminer aujourd\'hui' : 'Commencer aujourd\'hui' ?></button>
+        </form>
+        <?php if ($pStats['count']): ?>
+            <dl class="dates">
+                <div><dt>Périodes terminées</dt><dd class="big"><?= $pStats['count'] ?></dd></div>
+                <div><dt>Durée moyenne</dt><dd class="big"><?= e(Batons\Works::daysLabel($pStats['avg'])) ?></dd></div>
+                <div><dt>La plus longue</dt><dd class="big"><?= e(Batons\Works::daysLabel($pStats['max'])) ?></dd></div>
+            </dl>
+        <?php endif; ?>
+        <?php if ($periods): ?>
+            <ul class="period-list">
+                <?php foreach (array_slice($periods, 0, 20) as $p): ?>
+                    <li>
+                        <span><?= e(Time::shortDate(Time::local($p['start']))) ?> <?= Time::local($p['start'])->format('Y') ?>
+                            → <?= $p['finish'] ? e(Time::shortDate(Time::local($p['finish']))) . ' ' . Time::local($p['finish'])->format('Y') : '<em>en cours</em>' ?></span>
+                        <strong><?= e(Batons\Works::daysLabel((int) $p['days'])) ?></strong>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+        <?php else: ?>
+            <p class="muted">Aucune période pour l'instant. Un tap sur la tuile, ou « Commencer aujourd'hui », en ouvre une.</p>
+        <?php endif; ?>
+        <p class="muted small">Autre date ? Ajoute un bâton ci-dessous en choisissant « Le début » ou « La fin », ou modifie un bâton de l'historique.</p>
+    </section>
+<?php endif; ?>
+
 <form class="card add-form" method="post" action="<?= url('event_add') ?>" style="--c: <?= e($c['color']) ?>" aria-label="Ajouter un bâton avec date, valeur ou note">
     <?= csrf() ?>
     <input type="hidden" name="category_id" value="<?= $id ?>">
@@ -93,6 +133,16 @@ $events = array_slice($events, 0, 50);
             <input type="text" name="value" inputmode="decimal" placeholder="ex. 2,5" autocomplete="off">
         </label>
     </div>
+    <?php if ($c['periods']): ?>
+        <fieldset>
+            <legend>Ce bâton marque</legend>
+            <div class="kind-choice">
+                <?php foreach (['' => 'Un bâton simple', 'start' => 'Le début', 'finish' => 'La fin'] as $k => $label): ?>
+                    <label class="chip wide"><input type="radio" name="milestone" value="<?= $k ?>" <?= $k === '' ? 'checked' : '' ?>><span><?= $label ?></span></label>
+                <?php endforeach; ?>
+            </div>
+        </fieldset>
+    <?php endif; ?>
     <label>Note <span class="muted">facultatif</span>
         <input type="text" name="note" maxlength="500" autocomplete="off">
     </label>
@@ -117,6 +167,12 @@ $events = array_slice($events, 0, 50);
 
 <?php
 [$calStart, $calCounts] = Batons\Events::daily($id);
+if ($c['periods']) {
+    // Jours couverts par une période : au moins le premier niveau de couleur.
+    foreach (Batons\Periods::coveredDays(Batons\Periods::list($id)) as $d => $_) {
+        $calCounts[$d] = max(1, $calCounts[$d] ?? 0);
+    }
+}
 $calDays = count($calCounts);
 $byMonth = [];
 foreach ($calCounts as $d => $n) {
@@ -126,7 +182,7 @@ foreach ($calCounts as $d => $n) {
 krsort($byMonth);
 ?>
 <section class="card" aria-labelledby="cal-title" style="--c: <?= e($c['color']) ?>">
-    <h2 id="cal-title" class="card-title">Calendrier <span class="muted small"><?= $calDays ?> jour<?= $calDays > 1 ? 's' : '' ?> avec bâton sur 12 mois</span></h2>
+    <h2 id="cal-title" class="card-title">Calendrier <span class="muted small"><?= $calDays ?> jour<?= $calDays > 1 ? 's' : '' ?> <?= $c['periods'] ? 'avec bâton ou en période' : 'avec bâton' ?> sur 12 mois</span></h2>
     <div class="cal-wrap">
         <?= Chart::calendarDays() ?>
         <div class="cal-scroll" data-scroll-end tabindex="0" role="group" aria-label="Calendrier des 12 derniers mois (défilement horizontal)">

@@ -28,6 +28,13 @@ $palette = ['#c2410c' => 'Orange', '#b91c1c' => 'Rouge', '#be185d' => 'Rose', '#
         <p class="muted small field-help">Séries, films, livres et jeux : chaque bâton dit <em>quoi</em> (titre, épisode, tome, note), avec recherche dans un catalogue.</p>
     </fieldset>
 
+    <div class="check">
+        <input type="checkbox" name="periods" value="1" id="f-periods" <?= !empty($c['periods']) ? 'checked' : '' ?> aria-describedby="f-periods-help">
+        <label for="f-periods">Suivre des périodes (début et fin)</label>
+    </div>
+    <p class="muted small field-help" id="f-periods-help">Pour les catégories simples : un tap commence la période (un rhume…),
+        le tap suivant la termine ; la fiche montre les durées. Une seule période à la fois.</p>
+
     <div class="icon-field" style="--c: <?= e($c['color']) ?>">
         <span class="icon big" aria-hidden="true" data-icon-preview><?= icon($c['icon'] ?: '|') ?></span>
         <label class="grow">Icône <span class="muted">un émoji, ou une icône Material Design notée <code>mdi:nom</code></span>

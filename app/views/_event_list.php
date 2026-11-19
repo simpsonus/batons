@@ -35,6 +35,9 @@ $day = null;
                     <?php if (!empty($ev['milestone'])): ?><span class="milestone"><?= $ev['milestone'] === 'finish' ? (($ev['kind'] ?? $c['kind'] ?? '') === 'livre' ? 'Lu' : 'Terminé') : 'Commencé' ?></span><?php endif; ?>
                     <?= rating_badge($ev['rating'] !== null ? (int) $ev['rating'] : null) ?></span>
             <?php endif; ?>
+            <?php if (empty($ev['work_title']) && !empty($ev['milestone'])): ?>
+                <span class="milestone"><?= $ev['milestone'] === 'finish' ? 'Fin' : 'Début' ?></span>
+            <?php endif; ?>
             <?php if ($ev['value'] !== null): ?>
                 <span class="value"><?= e(Chart::num($ev['value'])) ?><?= ($u = $ev['unit'] ?? $c['unit'] ?? null) ? ' ' . e($u) : '' ?></span>
             <?php endif; ?>
