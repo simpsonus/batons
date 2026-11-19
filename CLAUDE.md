@@ -111,6 +111,8 @@ docker build -f docker/Dockerfile -t batons . && docker run -p 8080:8080 -v $PWD
 ## Publier une version (pour l'add-on HA)
 
 1. Mettre à jour `VERSION` dans `app/src/bootstrap.php` et `version` dans `ha-addon/config.yaml` (les deux identiques).
+   **Ajouter aussi une entrée en tête de `ha-addon/CHANGELOG.md`** (en français, orientée utilisateur) :
+   c'est ce que Home Assistant affiche lors de la mise à jour.
 2. Pousser sur `main`. La CI voit qu'il n'existe pas encore de tag `vX.Y.Z` : elle publie
    `ghcr.io/simpsonus/batons:X.Y.Z` (+ `latest`), puis crée elle-même le tag et la release GitHub.
    Sans changement de version, elle ne publie que l'image `edge`. Pas besoin de créer de release à la main.
