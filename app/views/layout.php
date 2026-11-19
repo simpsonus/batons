@@ -19,7 +19,7 @@ $catRoutes = ['home', 'category_order', 'category', 'category_new', 'category_ed
     <link rel="manifest" href="assets/manifest.webmanifest">
     <link rel="stylesheet" href="assets/app.css?v=<?= Batons\VERSION ?>">
 </head>
-<body<?= $authMethod !== null ? ' class="tabbed"' : '' ?><?= $unlocked ? ' data-relock="' . Batons\Privacy::remaining() . '"' : '' ?>>
+<body<?= $authMethod !== null ? ' class="tabbed ' . Batons\Theme::bodyClasses(Batons\Theme::current(Batons\Auth::id())) . '"' : '' ?><?= $unlocked ? ' data-relock="' . Batons\Privacy::remaining() . '"' : '' ?>>
 <a class="skip" href="#contenu">Aller au contenu</a>
 <header class="topbar">
     <?php if ($authMethod === null): ?>

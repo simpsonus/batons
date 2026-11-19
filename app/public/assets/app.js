@@ -528,6 +528,19 @@
         };
     }
 
+    // Compte › Apparence : aperçu en direct (on change les classes de <body>, comme le fera l'enregistrement).
+    const appear = document.querySelector('[data-appearance]');
+    if (appear) {
+        const apply = () => {
+            const v = (n) => appear.querySelector('input[name="' + n + '"]:checked')?.value;
+            const cls = [...document.body.classList].filter((c) => !/^(tiles|grad|shape)-/.test(c));
+            document.body.className = [...cls, 'tiles-' + v('tile_style'), 'grad-' + v('tile_grad'), 'shape-' + v('tile_shape')].join(' ');
+            appear.querySelector('[data-grad-field]').hidden = v('tile_style') !== 'degrade';
+        };
+        appear.addEventListener('change', apply);
+        apply();
+    }
+
     // Aides « ? » : fermeture par Échap ou clic à l'extérieur.
     document.addEventListener('click', (ev) => {
         document.querySelectorAll('details.help-box[open]').forEach((d) => { if (!d.contains(ev.target)) d.open = false; });

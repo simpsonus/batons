@@ -1,5 +1,16 @@
 # Journal des modifications
 
+## 0.22.0
+- **Apparence des tuiles** (Compte › Apparence, avec aperçu de tes catégories) : 6 styles — Liseré (l'actuel),
+  Plein, Dégradé, Coin, Teinté, Pastille —, 6 dégradés (Diagonal, Vertical, Lumière, Deux teintes, Pastel,
+  Voile latéral) et 5 formes (Arrondie, Carrée, Très arrondie, Un coin arrondi, Coin cassé). Le réglage suit
+  ton compte sur tous tes appareils. Le texte reste lisible quelle que soit la couleur d'une catégorie
+  (texte clair ou foncé, ou couleur légèrement assombrie, calculé automatiquement), en mode clair comme sombre.
+- **Calendrier plus lisible** : les couleurs s'adaptent à chaque catégorie (une catégorie à un bâton par jour
+  affiche ses jours en couleur pleine ; une journée exceptionnelle n'éteint plus les autres), premier niveau
+  plus lumineux, couleurs éclaircies en mode sombre, et légende avec les vraies valeurs (« 1 bâton »,
+  « 1–2 · 3–5 · 6–8 · 9+ »…).
+
 ## 0.21.1
 - **Réorganiser sur iPhone** : en déplaçant un groupe alors que d'autres étaient dépliés, le groupe
   n'était plus sous le doigt (il se retrouvait plus haut ou plus bas). Il reste maintenant sous le doigt,

@@ -480,6 +480,10 @@ switch ($route) {
                     Http::flash($me['password_hash'] ? 'Mot de passe changé.' : 'Mot de passe défini : l\'accès direct est ouvert pour « ' . $me['username'] . ' ».');
                     Http::redirect('account');
                 }
+            } elseif ($route === 'account' && isset($_POST['tile_style'])) {
+                Batons\Theme::save($uid, Http::input('tile_style'), Http::input('tile_grad'), Http::input('tile_shape'));
+                Http::flash('Apparence enregistrée.');
+                Http::redirect('account');
             } elseif ($route === 'account' && isset($_POST['rawg_key'])) {
                 $k = trim((string) $_POST['rawg_key']);
                 if ($k !== '' && !preg_match('/^[A-Za-z0-9]{20,64}$/', $k)) {

@@ -71,6 +71,9 @@ Le nom vient des bâtons qu'on trace pour compter (IIII barrés). Slug technique
   place les éléments non affichés : masqués verrouillés). Alternative sans glisser (WCAG 2.5.7) : appui = menu
   `<dialog>`, flèches au clavier. Sans JS : flèches `.nojs-move`. Plier/déplier en `localStorage`. Renommer un groupe
   (`group_rename`, fusion confirmée si le nom existe ; nom d'un groupe masqué verrouillé = « pas disponible »).
+- **Apparence** : réglages `tile_style`, `tile_grad`, `tile_shape` (user_settings). Toute nouvelle couleur de texte sur
+  un fond de catégorie passe par les variables de `Theme::tileVars()` (--c-solid / --c-on / --c-deep…), jamais du blanc
+  en dur. Le calendrier colore avec `--c-cal` (éclairci en sombre).
 - **Champs de saisie libre** (intitulés) : jamais `name="name"` ni d'id/libellé « name » — Safari y propose une
   fiche Contact malgré `autocomplete="off"`. Utiliser `name="label"` + autocomplete/autocorrect/spellcheck désactivés.
 - L'interface ne mentionne pas Home Assistant (l'app doit rester neutre).
@@ -103,7 +106,7 @@ Le nom vient des bâtons qu'on trace pour compter (IIII barrés). Slug technique
 app/                    l'application, autonome
   public/               racine web : index.php (routeur), assets/
   src/                  Config, Db (+ migrations), Auth, Http, Time, Categories, Events, Chart, Icons, Importer,
-                        Privacy, WebAuthn, Cbor, Catalog, Net, Works, Settings
+                        Privacy, WebAuthn, Cbor, Catalog, Net, Works, Settings, Periods, Theme
   views/                templates PHP natifs (layout.php + une vue par page)
   migrations/           NNN_nom.sql, appliqués automatiquement au démarrage
 docker/                 image générique nginx + php-fpm (Alpine), port 8080, données dans /data
@@ -179,11 +182,8 @@ docker build -f docker/Dockerfile -t batons . && docker run -p 8080:8080 -v $PWD
 - [x] v0.20.1 : ✕ / Annuler / Enregistrer ramènent à la page d'origine (`from`).
 - [x] v0.21 : Réorganiser par glisser-déposer (catégories entre groupes), plier/déplier, renommer/fusionner les groupes.
 - [x] v0.21.1 : groupe sous le doigt pendant le glisser (écart mesuré avant repli), pas de remplissage Contact Safari.
-- [ ] Calendrier : couleurs trop sombres pour 1 bâton/jour (cas le plus fréquent), surtout en mode sombre
-      (`.cal-1` = 40 % de la couleur mêlée à `--surface` ; niveau fixe `min(4, n)` dans `Chart::calendar()`).
-      Pistes proposées (pas encore validées) : échelle relative au maximum de la catégorie sur la période
-      (si le max est 1, chaque jour coché = couleur pleine), niveau 1 plus lumineux (≈ 60–65 %), légende
-      avec les vraies valeurs.
+- [x] v0.22 : apparence des tuiles (`Theme.php` : 6 styles, 6 dégradés, 5 formes, couleurs dérivées AA calculées en PHP,
+      classes `tiles-*/grad-*/shape-*` sur `<body>`) ; calendrier à échelle relative (`Chart::calendarScale()`, 90e centile).
 - [ ] Type de catégorie « Éléments » générique (éléments nommés sans catalogue, plusieurs en parallèle,
       début/fin/durée — mécanique des œuvres) : à faire si un cas concret apparaît (ex. « Traitements »).
 - [ ] Plus tard éventuellement : synchro BetaSeries / Trakt (pas SensCritique ni SerieBox : pas d'API

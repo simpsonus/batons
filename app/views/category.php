@@ -194,7 +194,8 @@ krsort($byMonth);
         </div>
     </div>
     <div class="cal-legend" aria-hidden="true">
-        <span>Moins</span><i class="cal-0"></i><i class="cal-1"></i><i class="cal-2"></i><i class="cal-3"></i><i class="cal-4"></i><span>Plus</span>
+        <i class="cal-0"></i><span>aucun</span>
+        <?php foreach (Chart::calendarScale($calCounts)['legend'] as $lvl => $lbl): ?><i class="cal-<?= (int) $lvl ?>"></i><span><?= e($lbl) ?></span><?php endforeach; ?>
     </div>
     <div class="sr"><table>
         <caption>Jours avec au moins un bâton, par mois, sur les 12 derniers mois</caption>

@@ -406,14 +406,17 @@ main > h1.sr + .day { margin-top: .2rem; }
 .cal-scroll { flex: 1; min-width: 0; }
 .cal-label { fill: var(--muted); font-size: 11px; font-family: inherit; }
 .cal-0 { fill: var(--line); background: var(--line); }
-.cal-1 { fill: color-mix(in srgb, var(--c) 40%, var(--surface)); background: color-mix(in srgb, var(--c) 40%, var(--surface)); }
-.cal-2 { fill: color-mix(in srgb, var(--c) 62%, var(--surface)); background: color-mix(in srgb, var(--c) 62%, var(--surface)); }
-.cal-3 { fill: color-mix(in srgb, var(--c) 82%, var(--surface)); background: color-mix(in srgb, var(--c) 82%, var(--surface)); }
-.cal-4 { fill: var(--c); background: var(--c); }
+/* Niveaux du calendrier : 1er niveau déjà bien visible ; en sombre, la couleur est éclaircie (pas noyée dans le fond). */
+.cal-wrap, .cal-legend { --c-cal: var(--c); }
+@media (prefers-color-scheme: dark) { .cal-wrap, .cal-legend { --c-cal: color-mix(in srgb, var(--c) 70%, white); } }
+.cal-1 { fill: color-mix(in srgb, var(--c-cal) 62%, var(--surface)); background: color-mix(in srgb, var(--c-cal) 62%, var(--surface)); }
+.cal-2 { fill: color-mix(in srgb, var(--c-cal) 76%, var(--surface)); background: color-mix(in srgb, var(--c-cal) 76%, var(--surface)); }
+.cal-3 { fill: color-mix(in srgb, var(--c-cal) 88%, var(--surface)); background: color-mix(in srgb, var(--c-cal) 88%, var(--surface)); }
+.cal-4 { fill: var(--c-cal); background: var(--c-cal); }
 .cal-today { stroke: var(--ink); stroke-width: 1.5; }
 .cal-legend { display: flex; align-items: center; justify-content: flex-end; gap: 3px; font-size: .8125rem; color: var(--muted); margin-top: .3rem; }
 .cal-legend i { display: inline-block; width: 11px; height: 11px; border-radius: 2.5px; }
-.cal-legend span { margin: 0 .3rem; }
+.cal-legend span { margin: 0 .5rem 0 .15rem; }
 @media (forced-colors: active) { .cal rect { forced-color-adjust: none; } }
 
 /* --- Œuvres ------------------------------------------------------------------------- */
@@ -700,3 +703,103 @@ section.drop-ph { margin: 0 0 .6rem; }
 .move-menu-actions .btn { justify-content: flex-start; width: 100%; }
 .move-menu-close { width: 100%; margin-top: .8rem; }
 @media (prefers-reduced-motion: reduce) { .fold-btn svg.ui { transition: none; } }
+
+/* --- Apparence des tuiles (Compte › Apparence) -------------------------------------------
+   Classes sur <body> : tiles-<style> grad-<dégradé> shape-<forme>. Les couleurs dérivées (--c-solid, --c-on…)
+   sont calculées en PHP (Theme::tileVars) pour garder 4,5:1 entre texte et fond quelle que soit la couleur. */
+body { --tile-r: var(--radius); --tile-r-tr: var(--radius); }
+body.shape-car   { --tile-r: 3px;  --tile-r-tr: 3px; }
+body.shape-tres  { --tile-r: 26px; --tile-r-tr: 26px; }
+body.shape-un    { --tile-r: 3px 3px 30px 3px; --tile-r-tr: 3px; }
+body.shape-casse { --tile-r: 3px;  --tile-r-tr: 3px; }
+.tile { border-radius: var(--tile-r); }
+.tile .tap:focus-visible { border-radius: var(--tile-r); }
+.tile .more { border-radius: 0 var(--tile-r-tr) 0 10px; }
+.shape-casse .tile { clip-path: polygon(0 0, 100% 0, 100% calc(100% - 24px), calc(100% - 24px) 100%, 0 100%); }
+.shape-casse .tile .tap:focus-visible { outline-offset: -5px; }
+
+/* Styles « pleins » : fond de couleur, texte --c-on (blanc ou foncé selon la couleur). */
+.tiles-plein .tile, .tiles-degrade:not(.grad-pastel):not(.grad-voile) .tile {
+    background: var(--c-solid); color: var(--c-on); border-color: transparent; box-shadow: none;
+}
+.tiles-plein .tile .tap, .tiles-degrade:not(.grad-pastel):not(.grad-voile) .tile .tap { color: var(--c-on); }
+.tiles-plein .tile .tap .meta, .tiles-plein .tile .tap .meta b, .tiles-plein .tile .more,
+.tiles-degrade:not(.grad-pastel):not(.grad-voile) .tile .tap .meta,
+.tiles-degrade:not(.grad-pastel):not(.grad-voile) .tile .tap .meta b,
+.tiles-degrade:not(.grad-pastel):not(.grad-voile) .tile .more { color: var(--c-on); }
+.tiles-plein .tile .hidden-mark, .tiles-degrade:not(.grad-pastel):not(.grad-voile) .tile .hidden-mark { color: inherit; }
+.tiles-plein .tile .icon, .tiles-degrade:not(.grad-pastel):not(.grad-voile) .tile .icon {
+    background: color-mix(in srgb, var(--c-on) 18%, transparent); color: var(--c-on);
+}
+.tiles-plein .tile .tap:hover, .tiles-degrade:not(.grad-pastel):not(.grad-voile) .tile .tap:hover { background: color-mix(in srgb, var(--c-on) 10%, transparent); }
+.tiles-plein .tile .tap:active, .tiles-degrade:not(.grad-pastel):not(.grad-voile) .tile .tap:active { background: color-mix(in srgb, var(--c-on) 18%, transparent); }
+.tiles-plein .tile .more:hover, .tiles-degrade:not(.grad-pastel):not(.grad-voile) .tile .more:hover { background: color-mix(in srgb, var(--c-on) 15%, transparent); }
+.tiles-plein .tile::before, .tiles-degrade .tile::before, .tiles-coin .tile::before,
+.tiles-teinte .tile::before, .tiles-pastille .tile::before { display: none; }
+
+/* Dégradés */
+.tiles-degrade.grad-diag .tile { background: linear-gradient(135deg, var(--c-solid), var(--c-deep)); }
+.tiles-degrade.grad-vert .tile { background: linear-gradient(180deg, var(--c-glow), var(--c-deep)); }
+.tiles-degrade.grad-lum  .tile { background: radial-gradient(circle at 18% 22%, var(--c-glow), var(--c-solid) 45%, var(--c-deep)); }
+.tiles-degrade.grad-deux .tile { background: linear-gradient(135deg, var(--c-solid), var(--c-hue2)); }
+.tiles-degrade.grad-pastel .tile { background: linear-gradient(135deg, var(--c-pastel), var(--c-pastel2)); border-color: transparent; }
+.tiles-degrade.grad-pastel .tile .tap, .tiles-degrade.grad-pastel .tile .tap .meta,
+.tiles-degrade.grad-pastel .tile .tap .meta b, .tiles-degrade.grad-pastel .tile .more { color: var(--c-pastel-ink); }
+.tiles-degrade.grad-pastel .tile .icon { background: rgb(255 255 255 / .6); color: var(--c-pastel-ink); }
+.tiles-degrade.grad-voile .tile { background: linear-gradient(90deg, color-mix(in srgb, var(--c) 34%, transparent), transparent 70%), var(--surface); }
+@media (prefers-color-scheme: dark) {
+    .tiles-degrade.grad-pastel .tile { background: linear-gradient(135deg, color-mix(in srgb, var(--c) 32%, var(--surface)), var(--surface)); border-color: var(--line); }
+    .tiles-degrade.grad-pastel .tile .tap, .tiles-degrade.grad-pastel .tile .more { color: var(--ink); }
+    .tiles-degrade.grad-pastel .tile .tap .meta { color: var(--muted); }
+    .tiles-degrade.grad-pastel .tile .tap .meta b { color: var(--c-ink); }
+    .tiles-degrade.grad-pastel .tile .icon { background: color-mix(in srgb, var(--c) 30%, transparent); color: var(--c-ink); }
+    .tiles-degrade.grad-voile .tile { background: linear-gradient(90deg, color-mix(in srgb, var(--c) 30%, transparent), transparent 70%), var(--surface); }
+}
+
+/* Coin : triangle de couleur en haut à droite, sous la flèche des détails. */
+.tiles-coin .tile::after {
+    content: ""; position: absolute; top: 0; right: 0; width: 0; height: 0; pointer-events: none;
+    border-top: var(--tap) solid var(--c-solid); border-left: var(--tap) solid transparent;
+}
+.tiles-coin .tile .more { z-index: 1; color: var(--c-on); place-items: start end; padding: .2rem .25rem 0 0; }
+.tiles-coin .tile .more svg.ui { width: 1.15rem; height: 1.15rem; }
+.tiles-coin .tile .more:hover { background: none; color: var(--c-on); }
+
+/* Teinté : fond légèrement coloré, contour de la couleur. */
+.tiles-teinte .tile { background: color-mix(in srgb, var(--c) 12%, var(--surface)); border: 2px solid var(--c-ink); box-shadow: none; }
+.tiles-teinte .tile .tap .meta, .tiles-teinte .tile .tap .meta b { color: var(--c-tint-ink); }
+.tiles-teinte .tile .icon { background: var(--c-solid); color: var(--c-on); }
+@media (prefers-color-scheme: dark) {
+    .tiles-teinte .tile { background: color-mix(in srgb, var(--c) 22%, var(--surface)); }
+    .tiles-teinte .tile .tap .meta, .tiles-teinte .tile .tap .meta b { color: var(--c-ink); }
+}
+
+/* Pastille : grande icône ronde colorée à gauche du texte. */
+.tiles-pastille .tile .tap {
+    display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-rows: 1fr auto auto 1fr;
+    column-gap: .75rem; align-items: center; padding-left: .9rem;
+}
+.tiles-pastille .tile .icon {
+    grid-row: 1 / -1; width: 3.1rem; height: 3.1rem; border-radius: 50%; font-size: 1.45rem;
+    background: var(--c-solid); color: var(--c-on);
+}
+.tiles-pastille .tile .icon svg { width: 1.6rem; height: 1.6rem; }
+.tiles-pastille .tile .name { grid-column: 2; grid-row: 2; }
+.tiles-pastille .tile .meta { grid-column: 2; grid-row: 3; margin-top: .15rem; }
+@media (max-width: 379px) {
+    .tiles-pastille .tile .icon { width: 2.5rem; height: 2.5rem; font-size: 1.2rem; }
+}
+
+/* Contrastes forcés : on revient à l'affichage système. */
+@media (forced-colors: active) {
+    .tile { background: Canvas !important; border: 1px solid CanvasText !important; }
+    .tiles-coin .tile::after { display: none; }
+}
+
+/* --- Compte › Apparence ------------------------------------------------------------------- */
+.appearance fieldset { border: 0; padding: 0; margin: 0 0 1rem; }
+.appearance .chips { display: flex; flex-wrap: wrap; gap: .4rem; }
+.appearance .chip span { min-width: auto; padding: 0 .9rem; }
+.appearance-preview { margin: .4rem 0 1rem; padding: .8rem; border-radius: 12px; background: var(--bg); }
+.appearance-preview .tap { cursor: default; }
+.legend-like { font-size: .9rem; font-weight: 600; margin: 0 0 .2rem; }

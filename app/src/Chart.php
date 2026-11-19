@@ -71,8 +71,47 @@ final class Chart
      * @param \DateTimeImmutable $start  lundi de la première semaine (fuseau local)
      * @param array<string,int>  $counts 'Y-m-d' => nombre de bâtons
      */
+    /**
+     * Échelle du calendrier, propre à la catégorie : la référence est une valeur « haute mais habituelle »
+     * (90e centile des jours non vides), pas le record, pour qu'une journée exceptionnelle n'éteigne pas les autres.
+     * Une catégorie à un bâton par jour a donc ses jours cochés en couleur pleine.
+     * Renvoie ['ref' => int, 'legend' => [niveau => libellé]].
+     */
+    public static function calendarScale(array $counts): array
+    {
+        $vals = array_values(array_filter(array_map('intval', $counts)));
+        if (!$vals) {
+            return ['ref' => 1, 'legend' => [4 => '1 bâton']];
+        }
+        sort($vals);
+        $ref = max(1, $vals[(int) floor(0.9 * (count($vals) - 1))]);
+        $max = end($vals);
+        $ranges = [];
+        for ($n = 1; $n <= $max; $n++) {
+            $l = self::calendarLevel($n, $ref);
+            $ranges[$l][0] ??= $n;
+            $ranges[$l][1] = $n;
+        }
+        $legend = [];
+        foreach ($ranges as $l => [$a, $b]) {
+            $legend[$l] = $l === 4 && $b > $a && $b > $ref ? $a . '+' : ($a === $b ? (string) $a : $a . '–' . $b);
+        }
+        if (count($legend) === 1) {
+            [$a, $b] = reset($ranges);
+            $legend = [array_key_first($legend) => $max === 1 ? '1 bâton' : ($a === $b ? $a . ' bâtons' : $a . ' et plus')];
+        }
+        ksort($legend);
+        return ['ref' => $ref, 'legend' => $legend];
+    }
+
+    public static function calendarLevel(int $n, int $ref): int
+    {
+        return $n <= 0 ? 0 : ($ref <= 1 ? 4 : min(4, max(1, (int) ceil($n * 4 / $ref))));
+    }
+
     public static function calendar(\DateTimeImmutable $start, array $counts, int $weeks = 52): string
     {
+        $ref = self::calendarScale($counts)['ref'];
         $cell = 11; $gap = 3; $step = $cell + $gap; // 52 semaines × 14 px = 728 px : tient dans la colonne sur ordinateur
         $left = 0; $top = 18;
         $w = $left + $weeks * $step; $h = $top + 7 * $step;
@@ -96,7 +135,7 @@ final class Chart
                     continue; // pas de jours futurs
                 }
                 $n = $counts[$key] ?? 0;
-                $level = min(4, $n);
+                $level = self::calendarLevel($n, $ref);
                 $title = Time::longDate($day) . ' : ' . ($n === 0 ? 'aucun bâton' : $n . ' bâton' . ($n > 1 ? 's' : ''));
                 $svg .= sprintf('<rect x="%d" y="%d" width="%d" height="%d" rx="2.5" class="cal-%d%s"><title>%s</title></rect>',
                     $left + $col * $step, $top + $row * $step, $cell, $cell, $level, $key === $today ? ' cal-today' : '', e(ucfirst($title)));
