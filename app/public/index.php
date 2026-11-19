@@ -663,6 +663,60 @@ switch ($route) {
         Categories::moveGroup($uid, (int) Http::intInput('id'), Http::input('dir') === 'up' ? -1 : 1);
         Http::back('category_order');
 
+    case 'reorder':
+        // Glisser-déposer : nouvel ordre complet (groupes, puis catégories par groupe). Réponse JSON.
+        $groupOrder = array_filter(explode(',', Http::input('groups')), 'ctype_digit');
+        $catOrder = [];
+        foreach ((array) ($_POST['cats'] ?? []) as $gid => $list) {
+            if (ctype_digit((string) $gid) && is_string($list)) {
+                $catOrder[(int) $gid] = array_filter(explode(',', $list), 'ctype_digit');
+            }
+        }
+        $ok = Categories::reorder($uid, $groupOrder, $catOrder);
+        header('Content-Type: application/json; charset=utf-8');
+        header('Cache-Control: no-store');
+        http_response_code($ok ? 200 : 409);
+        echo json_encode(['ok' => $ok]);
+        exit;
+
+    case 'group_rename':
+        $g = Categories::group($uid, (int) Http::intInput('id'));
+        if ($g === null) {
+            Http::notFound();
+        }
+        $name = trim(preg_replace('/\s+/u', ' ', Http::input('name')));
+        $error = null;
+        $conflict = null;
+        if (Http::isPost() || isset($_GET['name'])) {
+            if ($name === '') {
+                $error = 'Le nom est obligatoire.';
+            } elseif (mb_strlen($name) > 80) {
+                $error = '80 caractères maximum.';
+            } elseif ($name !== $g['name']) {
+                $conflict = Categories::groupNamed($uid, $name, (int) $g['id']);
+                if ($conflict && $conflict['hidden'] && !Privacy::isUnlocked()) {
+                    $error = 'Ce nom n\'est pas disponible.';
+                    $conflict = null;
+                }
+            }
+        }
+        if (Http::isPost() && $error === null) {
+            if ($conflict && Http::input('merge') === '1') {
+                Categories::mergeGroups($uid, (int) $g['id'], (int) $conflict['id']);
+                Http::flash('Groupes réunis dans « ' . $conflict['name'] . ' ».');
+                Http::back('category_order');
+            }
+            if (!$conflict) {
+                if ($name !== $g['name']) {
+                    Categories::renameGroup($uid, (int) $g['id'], $name);
+                    Http::flash('Groupe renommé en « ' . $name . ' ».');
+                }
+                Http::back('category_order');
+            }
+        }
+        Http::render('group_rename', ['g' => $g, 'name' => $name !== '' ? $name : $g['name'],
+            'error' => $error, 'conflict' => $conflict], 'Renommer le groupe');
+
     case 'category_order':
         Http::render('category_order', [
             'categories' => Categories::listWithSummary($uid),

@@ -1,5 +1,17 @@
 # Journal des modifications
 
+## 0.21.0
+- **Réorganiser par glisser-déposer** : la poignée ⠿ de chaque catégorie ou groupe se glisse au doigt
+  comme à la souris. Une catégorie peut changer de groupe (ou aller dans « Sans groupe ») de la même façon.
+  L'ordre est enregistré aussitôt. Les flèches disparaissent ; un simple appui sur la poignée propose
+  Monter, Descendre, Tout en haut / en bas et « Vers le groupe… » (au clavier : flèches haut et bas).
+- **Plier / déplier les groupes** (mémorisé sur l'appareil), avec « Tout replier » ; pendant qu'on
+  déplace un groupe, tous se replient pour tenir à l'écran.
+- **Renommer un groupe** avec le crayon ✎ à côté de son nom. Si le nom existe déjà, Bâtons propose
+  de réunir les deux groupes.
+- « Terminé » devient la croix ✕, comme sur les autres pages.
+- Un groupe vidé de ses catégories disparaît, comme avant.
+
 ## 0.20.1
 - **Correctif : la croix ✕ ramène là d'où l'on vient.** Par exemple : accueil › Statistiques et historique
   › fiche d'un film, puis ✕ revient à la liste, et ✕ encore revient à l'accueil. Idem depuis la

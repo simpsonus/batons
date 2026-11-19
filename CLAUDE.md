@@ -66,6 +66,11 @@ Le nom vient des bâtons qu'on trace pour compter (IIII barrés). Slug technique
   un écran fixe par défaut — jamais `history.back()`. Les formulaires renvoient `back` = cette origine (`Http::back()`).
   Modifier la catégorie = ✎ (`.edit-btn`) collé au nom. Vocabulaire : « fiche » = page d'une œuvre uniquement ; la page
   d'une catégorie s'appelle « Statistiques et historique » (lien `.stats-link` en bas de `work_add`).
+- **Réorganiser** : glisser-déposer maison en Pointer Events (poignée `[data-handle]`, `touch-action: none` sur la
+  poignée seule), enregistrement immédiat (route `reorder`, JSON, ordre complet ; `Categories::reorder()` laisse en
+  place les éléments non affichés : masqués verrouillés). Alternative sans glisser (WCAG 2.5.7) : appui = menu
+  `<dialog>`, flèches au clavier. Sans JS : flèches `.nojs-move`. Plier/déplier en `localStorage`. Renommer un groupe
+  (`group_rename`, fusion confirmée si le nom existe ; nom d'un groupe masqué verrouillé = « pas disponible »).
 - L'interface ne mentionne pas Home Assistant (l'app doit rester neutre).
 - **Éléments masqués** (`Privacy.php`, `WebAuthn.php`, `Cbor.php`) : `categories.hidden` / `groups.hidden`.
   Verrouillé = invisibles PARTOUT (accueil, chronologie, archives, export, réorganiser, liste des groupes,
@@ -170,6 +175,7 @@ docker build -f docker/Dockerfile -t batons . && docker run -p 8080:8080 -v $PWD
 - [x] v0.19 : ✕ sur l'écran d'une catégorie œuvre, « Fiche » -> ligne « Statistiques et historique » en bas.
 - [x] v0.20 : aides réécrites (ajouter un titre d'abord), vocabulaire neutre doigt/souris, insécables dans `help_box()`.
 - [x] v0.20.1 : ✕ / Annuler / Enregistrer ramènent à la page d'origine (`from`).
+- [x] v0.21 : Réorganiser par glisser-déposer (catégories entre groupes), plier/déplier, renommer/fusionner les groupes.
 - [ ] Type de catégorie « Éléments » générique (éléments nommés sans catalogue, plusieurs en parallèle,
       début/fin/durée — mécanique des œuvres) : à faire si un cas concret apparaît (ex. « Traitements »).
 - [ ] Plus tard éventuellement : synchro BetaSeries / Trakt (pas SensCritique ni SerieBox : pas d'API

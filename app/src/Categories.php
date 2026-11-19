@@ -136,6 +136,105 @@ final class Categories
         self::swap('groups', array_map('intval', array_column($ids, 'id')), $groupId, $dir);
     }
 
+    /**
+     * Nouvel ordre complet issu du glisser-déposer : $groupOrder = ids de groupes dans l'ordre affiché,
+     * $catOrder = [id de groupe (0 = sans groupe) => ids de catégories dans l'ordre affiché].
+     * Les éléments non affichés (masqués et verrouillés, archivés) gardent leur place relative.
+     * Renvoie false si la demande ne correspond pas aux éléments visibles (page périmée).
+     */
+    public static function reorder(int $userId, array $groupOrder, array $catOrder): bool
+    {
+        $visGroups = array_map('intval', array_column(self::groups($userId), 'id'));
+        $visCats = array_map('intval', array_column(Db::all(
+            'SELECT c.id FROM categories c LEFT JOIN groups g ON g.id = c.group_id
+              WHERE c.user_id = ? AND c.archived = 0' . Privacy::visibleSql(), [$userId]), 'id'));
+        $groupOrder = array_values(array_map('intval', $groupOrder));
+        $sentCats = [];
+        foreach ($catOrder as $gid => $ids) {
+            if ((int) $gid !== 0 && !in_array((int) $gid, $visGroups, true)) {
+                return false;
+            }
+            foreach ($ids as $id) {
+                $sentCats[] = (int) $id;
+            }
+        }
+        $sorted = static function (array $a): array { sort($a); return $a; };
+        if ($sorted($groupOrder) !== $sorted($visGroups) || $sorted($sentCats) !== $sorted($visCats)) {
+            return false;
+        }
+
+        Db::pdo()->beginTransaction();
+        // Groupes : les visibles prennent, dans le nouvel ordre, les places des visibles.
+        $all = array_map('intval', array_column(Db::all('SELECT id FROM groups WHERE user_id = ? ORDER BY position, name', [$userId]), 'id'));
+        self::renumber('groups', self::merge($all, $visGroups, $groupOrder));
+        // Catégories : groupe par groupe (y compris « sans groupe »).
+        foreach ($catOrder as $gid => $ids) {
+            $gid = (int) $gid;
+            $ids = array_map('intval', $ids);
+            foreach ($ids as $id) {
+                Db::run('UPDATE categories SET group_id = ? WHERE id = ? AND user_id = ?', [$gid ?: null, $id, $userId]);
+            }
+            $members = array_map('intval', array_column($gid
+                ? Db::all('SELECT id FROM categories WHERE user_id = ? AND group_id = ? ORDER BY position, name', [$userId, $gid])
+                : Db::all('SELECT id FROM categories WHERE user_id = ? AND group_id IS NULL ORDER BY position, name', [$userId]), 'id'));
+            self::renumber('categories', self::merge($members, array_values(array_intersect($members, $visCats)), $ids));
+        }
+        Db::pdo()->commit();
+        self::pruneGroups($userId);
+        return true;
+    }
+
+    /** Place $newOrder sur les emplacements de $visible dans $all ; les autres éléments ne bougent pas. */
+    private static function merge(array $all, array $visible, array $newOrder): array
+    {
+        $out = [];
+        $queue = $newOrder;
+        foreach ($all as $id) {
+            if (in_array($id, $visible, true) || in_array($id, $newOrder, true)) {
+                if ($queue) {
+                    $out[] = array_shift($queue);
+                }
+            } else {
+                $out[] = $id;
+            }
+        }
+        return array_values(array_unique(array_merge($out, $queue)));
+    }
+
+    private static function renumber(string $table, array $ids): void
+    {
+        $table = $table === 'groups' ? 'groups' : 'categories'; // liste blanche
+        foreach ($ids as $pos => $id) {
+            Db::run("UPDATE $table SET position = ? WHERE id = ?", [$pos + 1, $id]);
+        }
+    }
+
+    public static function group(int $userId, int $id): ?array
+    {
+        return Db::one('SELECT * FROM groups WHERE id = ? AND user_id = ?' . self::hiddenGroupSql(), [$id, $userId]);
+    }
+
+    /** Autre groupe portant exactement ce nom (y compris masqué), ou null. */
+    public static function groupNamed(int $userId, string $name, int $exceptId): ?array
+    {
+        return Db::one('SELECT * FROM groups WHERE user_id = ? AND name = ? AND id <> ?', [$userId, $name, $exceptId]);
+    }
+
+    public static function renameGroup(int $userId, int $id, string $name): void
+    {
+        Db::run('UPDATE groups SET name = ? WHERE id = ? AND user_id = ?', [$name, $id, $userId]);
+    }
+
+    /** Réunit les catégories du groupe $from dans le groupe $into (à la suite), puis supprime $from. */
+    public static function mergeGroups(int $userId, int $from, int $into): void
+    {
+        $pos = (int) Db::value('SELECT COALESCE(MAX(position), 0) FROM categories WHERE user_id = ? AND group_id = ?', [$userId, $into]);
+        foreach (Db::all('SELECT id FROM categories WHERE user_id = ? AND group_id = ? ORDER BY position, name', [$userId, $from]) as $r) {
+            Db::run('UPDATE categories SET group_id = ?, position = ? WHERE id = ?', [$into, ++$pos, $r['id']]);
+        }
+        Db::run('DELETE FROM groups WHERE id = ? AND user_id = ?', [$from, $userId]);
+    }
+
     /** Groupes de l'utilisateur, dans l'ordre. */
     public static function groups(int $userId): array
     {

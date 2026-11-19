@@ -39,6 +39,7 @@
 }
 
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }   /* l'attribut hidden l'emporte toujours sur les display des classes */
 html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 body {
     margin: 0;
@@ -657,3 +658,45 @@ a.tap { text-decoration: none; }
 .stats-link > svg.ui { color: var(--muted); }
 .stats-main { display: block; font-weight: 600; }
 .stats-sub { display: block; font-size: .875rem; color: var(--muted); }
+
+/* --- Réorganiser : glisser-déposer, plier / déplier, renommer --------------------------- */
+.dnd-on .nojs-move { display: none; }
+.order-status:empty { display: none; }
+.order-status { margin: 0 0 1rem; padding: .6rem .9rem; border-radius: 10px; background: var(--surface); border-left: 4px solid var(--accent); }
+.order-group-head { justify-content: flex-start; flex-wrap: wrap; }
+.order-group-head h2 { min-width: 0; overflow-wrap: anywhere; }
+.order-group-head .order-buttons { margin-left: auto; }
+.rename-btn svg.ui { width: 1.15rem; height: 1.15rem; }
+.rename-form { display: flex; flex-wrap: wrap; gap: .4rem; align-items: center; flex: 1 1 14rem; margin: 0; }
+.rename-form input[type=text] { flex: 1 1 10rem; width: auto; min-width: 0; }
+.fold-btn svg.ui { transition: transform .15s; }
+.order-group.folded .fold-btn svg.ui { transform: rotate(-90deg); }
+.order-group.folded .order-list { display: none; }
+.order-group.folded { margin-bottom: .6rem; }
+.order-empty { padding: .8rem; justify-content: center; }
+.order-list .order-empty { min-height: 2.8rem; }
+.order-list:has(li[data-id]) .order-empty, .order-list:has(.drop-ph) .order-empty { display: none; }
+.drag-handle { cursor: grab; touch-action: none; color: var(--muted); }
+.drag-handle:active { cursor: grabbing; }
+.drag-handle svg.ui { width: 1.45rem; height: 1.45rem; }
+body.dragging { -webkit-user-select: none; user-select: none; cursor: grabbing; }
+.is-dragging {
+    position: fixed !important; z-index: 60; margin: 0 !important; pointer-events: none;
+    background: var(--surface); border: 1px solid var(--field) !important; border-radius: 12px;
+    box-shadow: 0 10px 30px rgb(0 0 0 / .25); opacity: .96;
+}
+section.is-dragging { padding: .3rem .6rem; }
+.drop-ph {
+    list-style: none; border: 2px dashed var(--accent); border-radius: 12px; margin: .2rem;
+    background: color-mix(in srgb, var(--accent) 8%, transparent);
+}
+section.drop-ph { margin: 0 0 .6rem; }
+.order-group.drop-into > .order-group-head { outline: 2px dashed var(--accent); outline-offset: 2px; border-radius: 10px; }
+.move-menu { border: 1px solid var(--line); border-radius: 16px; background: var(--surface); color: var(--ink); padding: 1rem; width: min(22rem, calc(100vw - 2rem)); }
+.move-menu::backdrop { background: rgb(0 0 0 / .4); }
+.move-menu-title { font-size: 1.05rem; margin: 0 0 .8rem; }
+.move-menu-actions { display: flex; flex-direction: column; gap: .4rem; }
+.move-menu-actions p { margin: .6rem 0 .1rem; font-size: .875rem; color: var(--muted); font-weight: 600; }
+.move-menu-actions .btn { justify-content: flex-start; width: 100%; }
+.move-menu-close { width: 100%; margin-top: .8rem; }
+@media (prefers-reduced-motion: reduce) { .fold-btn svg.ui { transition: none; } }

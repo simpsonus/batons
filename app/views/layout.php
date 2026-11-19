@@ -3,7 +3,7 @@ $r = $_GET['r'] ?? 'home';
 $authMethod = Batons\Auth::method();          // null sur les pages de connexion
 $unlocked = $authMethod !== null && Batons\Privacy::isUnlocked();
 // Écrans rattachés à l'onglet Catégories (pastille allumée).
-$catRoutes = ['home', 'category_order', 'category', 'category_new', 'category_edit', 'work_add', 'work', 'work_log'];
+$catRoutes = ['home', 'category_order', 'category', 'category_new', 'category_edit', 'work_add', 'work', 'work_log', 'group_rename'];
 ?>
 <!DOCTYPE html>
 <html lang="fr">
