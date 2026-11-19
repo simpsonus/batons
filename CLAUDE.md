@@ -71,9 +71,13 @@ Le nom vient des bâtons qu'on trace pour compter (IIII barrés). Slug technique
   place les éléments non affichés : masqués verrouillés). Alternative sans glisser (WCAG 2.5.7) : appui = menu
   `<dialog>`, flèches au clavier. Sans JS : flèches `.nojs-move`. Plier/déplier en `localStorage`. Renommer un groupe
   (`group_rename`, fusion confirmée si le nom existe ; nom d'un groupe masqué verrouillé = « pas disponible »).
-- **Apparence** : réglages `tile_style`, `tile_grad`, `tile_shape` (user_settings). Toute nouvelle couleur de texte sur
-  un fond de catégorie passe par les variables de `Theme::tileVars()` (--c-solid / --c-on / --c-deep…), jamais du blanc
-  en dur. Le calendrier colore avec `--c-cal` (éclairci en sombre).
+- **Apparence** (page `appearance`, entrée du Menu) : réglages `theme` (auto | clair | sombre -> `html[data-theme]`),
+  `tile_style`, `tile_grad`, `tile_shape` (user_settings). Le mode sombre CSS s'écrit TOUJOURS en double :
+  `@media (prefers-color-scheme: dark) { html:not([data-theme=light]) … }` + `html[data-theme=dark] …`.
+  Toute zone colorée par une catégorie reçoit `style="<?= cvars($couleur) ?>"` (--c, --c-ink-l, --c-solid, --c-on) :
+  texte coloré = `var(--c-ink)`, bouton coloré = `--c-solid` + `--c-on`, jamais la couleur brute ni du blanc en dur.
+  Tuiles : `Theme::tileVars()` en plus. Palette : `Theme::palette()` (couleurs vives permises grâce à ces variantes).
+  Le calendrier colore avec `--c-cal` (éclairci en sombre).
 - **Champs de saisie libre** (intitulés) : jamais `name="name"` ni d'id/libellé « name » — Safari y propose une
   fiche Contact malgré `autocomplete="off"`. Utiliser `name="label"` + autocomplete/autocorrect/spellcheck désactivés.
 - L'interface ne mentionne pas Home Assistant (l'app doit rester neutre).
@@ -185,6 +189,8 @@ docker build -f docker/Dockerfile -t batons . && docker run -p 8080:8080 -v $PWD
 - [x] v0.22 : apparence des tuiles (`Theme.php` : 6 styles, 6 dégradés, 5 formes, couleurs dérivées AA calculées en PHP,
       classes `tiles-*/grad-*/shape-*` sur `<body>`) ; calendrier à échelle relative (`Chart::calendarScale()`, 90e centile).
 - [x] v0.22.1 : dégradés réellement appliqués (fond uni en `background-color`, dégradé en `background-image`).
+- [x] v0.23 : page Apparence (Menu) avec thème clair/sombre forcé, palette de 64 couleurs, textes colorés toujours
+      contrastés (`cvars()`), focus du menu sur son titre.
 - [ ] Type de catégorie « Éléments » générique (éléments nommés sans catalogue, plusieurs en parallèle,
       début/fin/durée — mécanique des œuvres) : à faire si un cas concret apparaît (ex. « Traitements »).
 - [ ] Plus tard éventuellement : synchro BetaSeries / Trakt (pas SensCritique ni SerieBox : pas d'API

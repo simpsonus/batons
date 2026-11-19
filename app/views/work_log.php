@@ -7,7 +7,7 @@ $defEpisode = $next['episode'] ?? ($last['episode'] ?? 1);
 $defVolume = $next['volume'] ?? null;
 $maxSeason = $seasons ? max(array_keys($seasons)) : null;
 ?>
-<div class="page-head work-head" style="--c: <?= e($c['color']) ?>">
+<div class="page-head work-head" style="<?= cvars($c['color']) ?>">
     <div class="cat-title">
         <span class="poster md" aria-hidden="true"><?php if (poster_url($w)): ?><img src="<?= e(poster_url($w)) ?>" alt="" width="80" height="120"><?php else: ?><?= icon($c['icon']) ?><?php endif; ?></span>
         <div>
@@ -23,7 +23,7 @@ $maxSeason = $seasons ? max(array_keys($seasons)) : null;
 </div>
 
 <h2 class="card-title">Nouveau bâton</h2>
-<form class="card" method="post" action="<?= url('work_log', ['id' => $c['id'], 'work' => $w['id']]) ?>" style="--c: <?= e($c['color']) ?>" aria-label="Nouveau bâton pour <?= e($w['title']) ?>">
+<form class="card" method="post" action="<?= url('work_log', ['id' => $c['id'], 'work' => $w['id']]) ?>" style="<?= cvars($c['color']) ?>" aria-label="Nouveau bâton pour <?= e($w['title']) ?>">
     <?= csrf() ?>
     <?php if ($c['kind'] === 'serie'): ?>
         <div class="row">

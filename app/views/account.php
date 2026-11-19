@@ -54,49 +54,6 @@
     </section>
 <?php endif; ?>
 
-<?php
-$theme = Batons\Theme::current(Auth::id());
-$previewCats = array_slice(Batons\Categories::listWithSummary(Auth::id()), 0, 4);
-if (!$previewCats) {
-    $previewCats = [['name' => 'Café', 'icon' => '☕', 'color' => '#c2410c'], ['name' => 'Arrosage', 'icon' => '🪴', 'color' => '#047857']];
-}
-$choice = static function (string $field, array $options, string $current): string {
-    $h = '<div class="chips">';
-    foreach ($options as $v => $label) {
-        $h .= '<label class="chip wide"><input type="radio" name="' . $field . '" value="' . e($v) . '"' . ($v === $current ? ' checked' : '') . '><span>' . e($label) . '</span></label>';
-    }
-    return $h . '</div>';
-};
-?>
-<section class="card appearance" id="apparence" aria-labelledby="app-title">
-    <h2 id="app-title">Apparence</h2>
-    <p class="muted">Style des tuiles de l'écran Catégories. Le réglage suit ton compte, sur tous tes appareils.</p>
-    <form method="post" action="<?= url('account') ?>" data-appearance>
-        <?= csrf() ?>
-        <fieldset><legend>Style</legend><?= $choice('tile_style', Batons\Theme::STYLES, $theme['style']) ?></fieldset>
-        <fieldset data-grad-field><legend>Dégradé <span class="muted">(style « Dégradé »)</span></legend><?= $choice('tile_grad', Batons\Theme::GRADS, $theme['grad']) ?></fieldset>
-        <fieldset><legend>Forme</legend><?= $choice('tile_shape', Batons\Theme::SHAPES, $theme['shape']) ?></fieldset>
-        <p class="legend-like">Aperçu</p>
-        <div class="appearance-preview" aria-hidden="true">
-            <div class="grid">
-                <?php foreach ($previewCats as $pc): ?>
-                    <div class="tile" style="--c: <?= e($pc['color']) ?>; <?= e(Batons\Theme::tileVars($pc['color'])) ?>">
-                        <span class="tap">
-                            <span class="icon"><?= icon($pc['icon']) ?></span>
-                            <span class="name"><?= e($pc['name']) ?></span>
-                            <span class="meta"><b>2</b> aujourd'hui</span>
-                        </span>
-                        <span class="more"><?= ui_icon('chevron') ?></span>
-                    </div>
-                <?php endforeach; ?>
-            </div>
-        </div>
-        <div class="form-actions">
-            <button class="btn accent">Enregistrer l'apparence</button>
-        </div>
-    </form>
-</section>
-
 <section class="card">
     <h2>Catalogues</h2>
     <h3>Films et séries : TMDB</h3>

@@ -4,7 +4,7 @@ $closeTo = from_url(url('category', ['id' => $ev['category_id']])); ?>
     <h1>Modifier le bâton</h1>
     <div class="head-tools"><?= close_link($closeTo, 'Fermer sans enregistrer') ?></div>
 </div>
-<p class="muted"><span class="icon sm" aria-hidden="true" style="--c: <?= e($ev['color']) ?>"><?= icon($ev['icon']) ?></span> <?= e($ev['category_name']) ?></p>
+<p class="muted"><span class="icon sm" aria-hidden="true" style="<?= cvars($ev['color']) ?>"><?= icon($ev['icon']) ?></span> <?= e($ev['category_name']) ?></p>
 
 <form class="card" method="post" action="<?= url('event_save') ?>">
     <?= csrf() ?>

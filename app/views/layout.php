@@ -3,15 +3,20 @@ $r = $_GET['r'] ?? 'home';
 $authMethod = Batons\Auth::method();          // null sur les pages de connexion
 $unlocked = $authMethod !== null && Batons\Privacy::isUnlocked();
 // Écrans rattachés à l'onglet Catégories (pastille allumée).
+$themeAttr = $authMethod !== null ? Batons\Theme::htmlAttr(Batons\Theme::current(Batons\Auth::id())) : '';
 $catRoutes = ['home', 'category_order', 'category', 'category_new', 'category_edit', 'work_add', 'work', 'work_log', 'group_rename'];
 ?>
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr"<?= $themeAttr ?>>
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <?php if ($themeAttr === ''): ?>
     <meta name="theme-color" content="#f7f4ee" media="(prefers-color-scheme: light)">
     <meta name="theme-color" content="#161412" media="(prefers-color-scheme: dark)">
+    <?php else: ?>
+    <meta name="theme-color" content="<?= str_contains($themeAttr, 'dark') ? '#161412' : '#f7f4ee' ?>">
+    <?php endif; ?>
     <title><?= e($title === 'Bâtons' ? 'Bâtons' : $title . ' · Bâtons') ?></title>
     <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
@@ -73,7 +78,7 @@ $catRoutes = ['home', 'category_order', 'category', 'category_new', 'category_ed
 </main>
 
 <?php if ($authMethod !== null):
-    $menuRoutes = ['menu', 'archives', 'import', 'account', 'privacy', 'unlock']; ?>
+    $menuRoutes = ['menu', 'appearance', 'archives', 'import', 'account', 'privacy', 'unlock']; ?>
 <nav class="tabbar" aria-label="Navigation principale">
     <div class="tabbar-row">
         <a href="<?= url() ?>" <?= in_array($r, $catRoutes, true) ? 'aria-current="page"' : '' ?>><span class="tab-ico"><?= ui_icon('grid') ?></span>Catégories</a>
@@ -81,7 +86,8 @@ $catRoutes = ['home', 'category_order', 'category', 'category_new', 'category_ed
         <a href="<?= url('menu') ?>" data-menu-open aria-haspopup="dialog" <?= in_array($r, $menuRoutes, true) ? 'aria-current="page"' : '' ?>><span class="tab-ico"><?= ui_icon('menu') ?><?php if ($unlocked): ?><span class="tab-dot" aria-hidden="true"></span><?php endif; ?></span>Menu<?php if ($unlocked): ?><span class="sr"> (éléments masqués visibles)</span><?php endif; ?></a>
     </div>
 </nav>
-<dialog class="sheet" data-menu-sheet aria-label="Menu Bâtons">
+<dialog class="sheet" data-menu-sheet aria-labelledby="sheet-title">
+    <h2 id="sheet-title" class="sr" tabindex="-1" data-sheet-title>Menu Bâtons</h2>
     <nav class="appmenu-panel" aria-label="Menu Bâtons">
         <?php require __DIR__ . '/_menu.php'; ?>
     </nav>

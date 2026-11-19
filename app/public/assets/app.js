@@ -82,7 +82,8 @@
         sheetOpen.addEventListener('click', (ev) => {
             ev.preventDefault();
             sheet.showModal();
-            sheet.querySelector('a, button')?.focus();
+            // Focus sur le titre (invisible) : annoncé par les lecteurs d'écran, sans encadrer la 1re entrée.
+            sheet.querySelector('[data-sheet-title]')?.focus();
         });
         sheet.addEventListener('click', (ev) => { if (ev.target === sheet) sheet.close(); });   // toucher à côté
         sheet.addEventListener('close', () => sheetOpen.focus());
@@ -535,6 +536,10 @@
             const v = (n) => appear.querySelector('input[name="' + n + '"]:checked')?.value;
             const cls = [...document.body.classList].filter((c) => !/^(tiles|grad|shape)-/.test(c));
             document.body.className = [...cls, 'tiles-' + v('tile_style'), 'grad-' + v('tile_grad'), 'shape-' + v('tile_shape')].join(' ');
+            const th = v('theme');
+            if (th === 'clair') document.documentElement.dataset.theme = 'light';
+            else if (th === 'sombre') document.documentElement.dataset.theme = 'dark';
+            else delete document.documentElement.dataset.theme;
             appear.querySelector('[data-grad-field]').hidden = v('tile_style') !== 'degrade';
         };
         appear.addEventListener('change', apply);

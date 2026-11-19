@@ -6,7 +6,7 @@
 <?php else: ?>
     <ul class="order-list">
         <?php foreach ($categories as $c): ?>
-            <li style="--c: <?= e($c['color']) ?>">
+            <li style="<?= cvars($c['color']) ?>">
                 <span class="icon sm" aria-hidden="true"><?= icon($c['icon']) ?></span>
                 <a class="grow" href="<?= url('category', from_here(['id' => $c['id']])) ?>"><?= e($c['name']) ?></a>
                 <span class="muted"><?= e(Time::ago($c['last_at'])) ?></span>

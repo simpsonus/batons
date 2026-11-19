@@ -24,7 +24,7 @@ $currentGroup = false;
         <div class="grid">
     <?php endif; ?>
 
-    <div class="tile" style="--c: <?= e($c['color']) ?>; <?= e(Batons\Theme::tileVars($c['color'])) ?>">
+    <div class="tile" style="<?= cvars($c['color']) ?>; <?= e(Batons\Theme::tileVars($c['color'])) ?>">
         <?php if ($c['kind'] !== 'simple'):
             $lastEv = $c['last_event_id'] ? Batons\Events::find($uid, (int) $c['last_event_id']) : null; ?>
         <a class="tap" href="<?= url('work_add', ['id' => $c['id']]) ?>">

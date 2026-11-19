@@ -10,7 +10,7 @@ $fmt = static fn($p) => $metric === 'sum' && $hasValues
 $hasMore = count($events) > 50;
 $events = array_slice($events, 0, 50);
 ?>
-<div class="page-head cat-head" style="--c: <?= e($c['color']) ?>">
+<div class="page-head cat-head" style="<?= cvars($c['color']) ?>">
     <div class="cat-title">
         <span class="icon big" aria-hidden="true"><?= icon($c['icon']) ?></span>
         <div>
@@ -40,7 +40,7 @@ $events = array_slice($events, 0, 50);
         $doneDays = array_column(array_filter($statuses, static fn($s) => $s['state'] === 'done'), 'days');
     }
     ?>
-    <section class="card" style="--c: <?= e($c['color']) ?>" aria-labelledby="works-title">
+    <section class="card" style="<?= cvars($c['color']) ?>" aria-labelledby="works-title">
         <div class="card-head">
             <h2 id="works-title" class="card-title"><?= e(Batons\Catalog::KINDS[$c['kind']]) ?> <span class="muted small"><?= count($works) ?></span></h2>
             <a class="btn accent" href="<?= url('work_add', ['id' => $id]) ?>">+ Ajouter</a>
@@ -82,7 +82,7 @@ $events = array_slice($events, 0, 50);
     $periods = Batons\Periods::list($id);
     $openP = ($periods && $periods[0]['finish'] === null) ? $periods[0] : null;
     $pStats = Batons\Periods::stats($periods); ?>
-    <section class="card game-status" style="--c: <?= e($c['color']) ?>" aria-labelledby="per-title">
+    <section class="card game-status" style="<?= cvars($c['color']) ?>" aria-labelledby="per-title">
         <div class="card-head">
             <h2 id="per-title" class="card-title">Périodes</h2>
             <?= help_box('Les périodes', [
@@ -126,7 +126,7 @@ $events = array_slice($events, 0, 50);
     </section>
 <?php endif; ?>
 
-<form class="card add-form" method="post" action="<?= url('event_add') ?>" style="--c: <?= e($c['color']) ?>" aria-label="Ajouter un bâton avec date, valeur ou note">
+<form class="card add-form" method="post" action="<?= url('event_add') ?>" style="<?= cvars($c['color']) ?>" aria-label="Ajouter un bâton avec date, valeur ou note">
     <?= csrf() ?>
     <input type="hidden" name="category_id" value="<?= $id ?>">
     <div class="row">
@@ -185,7 +185,7 @@ foreach ($calCounts as $d => $n) {
 }
 krsort($byMonth);
 ?>
-<section class="card" aria-labelledby="cal-title" style="--c: <?= e($c['color']) ?>">
+<section class="card" aria-labelledby="cal-title" style="<?= cvars($c['color']) ?>">
     <h2 id="cal-title" class="card-title">Calendrier <span class="muted small"><?= $calDays ?> jour<?= $calDays > 1 ? 's' : '' ?> <?= $c['periods'] ? 'avec bâton ou en période' : 'avec bâton' ?> sur 12 mois</span></h2>
     <div class="cal-wrap">
         <?= Chart::calendarDays() ?>

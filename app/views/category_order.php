@@ -78,7 +78,7 @@ $moveButton = static function (string $route, int $id, string $dir, string $labe
         </div>
         <ul class="order-list" id="list-<?= $gi ?>" data-list="<?= $sec['id'] ?>">
             <?php $n = count($sec['items']); foreach ($sec['items'] as $i => $c): ?>
-                <li style="--c: <?= e($c['color']) ?>" data-id="<?= (int) $c['id'] ?>" data-name="<?= e($c['name']) ?>">
+                <li style="<?= cvars($c['color']) ?>" data-id="<?= (int) $c['id'] ?>" data-name="<?= e($c['name']) ?>">
                     <span class="icon sm" aria-hidden="true"><?= icon($c['icon']) ?></span>
                     <span class="grow"><?= e($c['name']) ?><?php if ($c['hidden']): ?> <span class="hidden-mark" title="Catégorie masquée"><?= ui_icon('eye-off') ?><span class="sr">(masquée)</span></span><?php endif; ?></span>
                     <span class="order-buttons">

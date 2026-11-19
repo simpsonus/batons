@@ -7,6 +7,7 @@ $cur = fn(string $route): string => $r === $route ? ' aria-current="page"' : '';
     <li><a href="<?= url('archives') ?>"<?= $cur('archives') ?>><?= ui_icon('archive') ?> Archives</a></li>
     <li><a href="<?= url('import') ?>"<?= $cur('import') ?>><?= ui_icon('import') ?> Importer</a></li>
     <li><a href="<?= url('export') ?>"><?= ui_icon('export') ?> Exporter (CSV)</a></li>
+    <li><a href="<?= url('appearance', from_here([])) ?>"<?= $cur('appearance') ?>><?= ui_icon('palette') ?> Apparence</a></li>
 </ul>
 <ul class="appmenu-private">
     <?php if ($unlocked): ?>

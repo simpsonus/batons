@@ -1,8 +1,7 @@
 <?php
 $isEdit = !empty($c['id']);
 $closeTo = from_url($isEdit ? url('category', ['id' => $c['id']]) : url());
-$palette = ['#c2410c' => 'Orange', '#b91c1c' => 'Rouge', '#be185d' => 'Rose', '#7c3aed' => 'Violet', '#1d4ed8' => 'Bleu',
-            '#0e7490' => 'Bleu canard', '#047857' => 'Vert', '#4d7c0f' => 'Vert olive', '#a16207' => 'Ocre', '#57534e' => 'Gris'];
+$palette = Batons\Theme::palette();
 ?>
 <div class="page-head">
     <h1><?= $isEdit ? 'Modifier la catégorie' : 'Nouvelle catégorie' ?></h1>
@@ -38,7 +37,7 @@ $palette = ['#c2410c' => 'Orange', '#b91c1c' => 'Rouge', '#be185d' => 'Rose', '#
     <p class="muted small field-help" id="f-periods-help">Pour les catégories simples : un appui sur la tuile commence la période (un rhume…),
         l'appui suivant la termine ; la page de la catégorie montre les durées. Une seule période à la fois.</p>
 
-    <div class="icon-field" style="--c: <?= e($c['color']) ?>">
+    <div class="icon-field" style="<?= cvars($c['color']) ?>">
         <span class="icon big" aria-hidden="true" data-icon-preview><?= icon($c['icon'] ?: '|') ?></span>
         <label class="grow">Icône <span class="muted">un émoji, ou une icône Material Design notée <code>mdi:nom</code></span>
             <input type="text" name="icon" value="<?= e($c['icon']) ?>" maxlength="64" placeholder="☕ ou mdi:coffee" autocomplete="off" data-icon-input <?= isset($errors['icon']) ? 'aria-invalid="true" aria-describedby="err-icon"' : '' ?>>
@@ -58,9 +57,10 @@ $palette = ['#c2410c' => 'Orange', '#b91c1c' => 'Rouge', '#be185d' => 'Rose', '#
     <fieldset>
         <legend>Couleur</legend>
         <div class="swatches">
-            <?php foreach ($palette as $col => $colName): ?>
-                <label class="swatch" style="--c: <?= $col ?>">
-                     <input type="radio" name="color" value="<?= $col ?>" aria-label="<?= $colName ?>" <?= strtolower($c['color']) === $col ? 'checked' : '' ?>>
+            <?php $prevRow = null; foreach ($palette as $col => [$colName, $row]): ?>
+                <?php if ($row !== $prevRow): $prevRow = $row; ?><p class="swatch-row-label" aria-hidden="true"><?= e($row) ?></p><?php endif; ?>
+                <label class="swatch" style="<?= cvars($col) ?>" title="<?= e($colName) ?>">
+                     <input type="radio" name="color" value="<?= $col ?>" aria-label="<?= e($colName) ?>" <?= strtolower($c['color']) === $col ? 'checked' : '' ?>>
                     <span></span>
                 </label>
             <?php endforeach; ?>

@@ -20,7 +20,7 @@ $day = null;
         <h<?= $dayLevel ?> class="day"><?= e(Time::longDate($local)) ?></h<?= $dayLevel ?>>
         <ul class="events">
     <?php endif; ?>
-    <li style="--c: <?= e($ev['color'] ?? $c['color']) ?>">
+    <li style="<?= cvars($ev['color'] ?? $c['color']) ?>">
         <span class="time"><time datetime="<?= e($local->format(DATE_ATOM)) ?>"><?= $local->format('H:i') ?></time></span>
         <span class="body">
             <?php if ($showCategory): ?>

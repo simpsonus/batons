@@ -6,7 +6,7 @@ $verb = ['serie' => 'un épisode', 'film' => 'un visionnage', 'livre' => 'une le
 $ratings = array_filter(array_column($events, 'rating'), static fn($r) => $r !== null);
 $avg = $ratings ? (int) round(array_sum($ratings) / count($ratings)) : null;
 ?>
-<div class="page-head work-head" style="--c: <?= e($c['color']) ?>">
+<div class="page-head work-head" style="<?= cvars($c['color']) ?>">
     <div class="cat-title">
         <span class="poster md" aria-hidden="true"><?php if (poster_url($w)): ?><img src="<?= e(poster_url($w)) ?>" alt="" width="80" height="120"><?php else: ?><?= icon($c['icon']) ?><?php endif; ?></span>
         <div>
@@ -34,7 +34,7 @@ $avg = $ratings ? (int) round(array_sum($ratings) / count($ratings)) : null;
 </div>
 
 <?php if ($w['stopped_at']): ?>
-    <section class="card notice" style="--c: <?= e($c['color']) ?>">
+    <section class="card notice" style="<?= cvars($c['color']) ?>">
         <p>Tu as arrêté ce titre le <?= e(Time::longDate(Time::local($w['stopped_at']))) ?> : il n'est plus proposé dans « Continuer ».</p>
         <form method="post" action="<?= url('work_resume', ['id' => $c['id'], 'work' => $w['id']]) ?>">
             <?= csrf() ?>
@@ -44,7 +44,7 @@ $avg = $ratings ? (int) round(array_sum($ratings) / count($ratings)) : null;
 <?php endif; ?>
 
 <?php if (in_array($c['kind'], Works::TRACKED, true)): $st = Works::status((int) $w['id'], (int) $c['id']); $ml = Works::milestoneLabels($c['kind']); ?>
-    <section class="card game-status" style="--c: <?= e($c['color']) ?>" aria-labelledby="st-title">
+    <section class="card game-status" style="<?= cvars($c['color']) ?>" aria-labelledby="st-title">
         <?php $curVol = $c['kind'] === 'livre' ? Works::currentVolume((int) $w['id'], (int) $c['id']) : null; ?>
         <h2 id="st-title" class="card-title">Progression<?= $curVol ? ' · tome ' . $curVol : '' ?></h2>
         <?php if ($st['state'] === 'none'): ?>
@@ -86,7 +86,7 @@ $avg = $ratings ? (int) round(array_sum($ratings) / count($ratings)) : null;
     </section>
 <?php endif; ?>
 
-<div class="actions work-actions" style="--c: <?= e($c['color']) ?>">
+<div class="actions work-actions" style="<?= cvars($c['color']) ?>">
     <?php if ($last): $n = $next; $back = here(); $hideFinish = true; require __DIR__ . '/_work_actions.php'; endif; ?>
     <a class="btn <?= $next && $last ? 'ghost' : 'accent' ?>" href="<?= url('work_log', ['id' => $c['id'], 'work' => $w['id']]) ?>"
        title="Ajouter <?= e($verb) ?> en choisissant la date<?= $c['kind'] === 'serie' ? ', l\'épisode' : ($c['kind'] === 'livre' ? ', le tome' : '') ?> ou une note">+ Ajouter <?= $verb ?>…</a>

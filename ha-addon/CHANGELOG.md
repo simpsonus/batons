@@ -1,5 +1,14 @@
 # Journal des modifications
 
+## 0.23.0
+- **Nouvelle page « Apparence »** dans le Menu (elle quitte la page Compte) : choix illustrés par des vignettes,
+  aperçu de tes catégories qui reste visible pendant que tu choisis.
+- **Thème** : Automatique (suit l'appareil, comme avant), Clair ou Sombre.
+- **Bien plus de couleurs** pour les catégories : 16 teintes en version vive, moyenne et profonde, des neutres,
+  et les couleurs d'origine. Même les plus claires restent lisibles : quand la couleur sert de texte
+  (compteur du jour, boutons…), Bâtons utilise automatiquement une version assez contrastée.
+- Correctif : à l'ouverture du Menu sur téléphone, « Archives » n'est plus encadré.
+
 ## 0.22.1
 - **Correctif : les dégradés des tuiles s'affichent enfin** (Diagonal, Vertical, Lumière, Deux teintes) : ils
   étaient remplacés par une couleur unie, sur tous les navigateurs.

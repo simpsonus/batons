@@ -4,7 +4,7 @@ use Batons\Works;
 
 $kindLabel = ['film' => 'un film', 'serie' => 'une série', 'livre' => 'un livre', 'jeu' => 'un jeu'][$c['kind']];
 ?>
-<div class="page-head cat-head" style="--c: <?= e($c['color']) ?>">
+<div class="page-head cat-head" style="<?= cvars($c['color']) ?>">
     <div class="cat-title">
         <span class="icon big" aria-hidden="true"><?= icon($c['icon']) ?></span>
         <h1><?= e($c['name']) ?></h1>
@@ -38,7 +38,7 @@ $kindLabel = ['film' => 'un film', 'serie' => 'une série', 'livre' => 'un livre
 </div>
 
 <?php if ($continue): ?>
-    <section class="card" style="--c: <?= e($c['color']) ?>" aria-labelledby="cont-title">
+    <section class="card" style="<?= cvars($c['color']) ?>" aria-labelledby="cont-title">
         <h2 id="cont-title" class="card-title">Continuer</h2>
         <ul class="work-list">
             <?php foreach ($continue as $item): $w = $item['work']; $n = $item['next']; ?>
