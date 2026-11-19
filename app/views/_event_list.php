@@ -32,7 +32,7 @@ $day = null;
                     <?php if (!empty($hideWork) && empty($ev['milestone']) && !Batons\Works::progress($ev['season'], $ev['episode'], $ev['volume'])): ?>
                         <span class="muted"><?= ['jeu' => 'Partie', 'film' => 'Visionnage', 'livre' => 'Lecture', 'serie' => 'Épisode'][$c['kind'] ?? ''] ?? 'Bâton' ?></span>
                     <?php endif; ?>
-                    <?php if (!empty($ev['milestone'])): ?><span class="milestone"><?= $ev['milestone'] === 'finish' ? 'Terminé' : 'Commencé' ?></span><?php endif; ?>
+                    <?php if (!empty($ev['milestone'])): ?><span class="milestone"><?= $ev['milestone'] === 'finish' ? (($ev['kind'] ?? $c['kind'] ?? '') === 'livre' ? 'Lu' : 'Terminé') : 'Commencé' ?></span><?php endif; ?>
                     <?= rating_badge($ev['rating'] !== null ? (int) $ev['rating'] : null) ?></span>
             <?php endif; ?>
             <?php if ($ev['value'] !== null): ?>

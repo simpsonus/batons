@@ -103,7 +103,11 @@ final class Works
             return ['session' => true]; // une partie de plus (le jeu terminé est écarté par l'appelant)
         }
         if ($work['kind'] === 'livre') {
-            return ($last && $last['volume']) ? ['volume' => (int) $last['volume'] + 1] : null;
+            // Dernier tome renseigné (le tout dernier bâton peut être un « Lu » sans tome).
+            $vol = $last ? ($last['volume'] ?: Db::value(
+                'SELECT volume FROM events WHERE work_id = ? AND category_id = ? AND volume IS NOT NULL
+                  ORDER BY occurred_at DESC, id DESC LIMIT 1', [$last['work_id'], $last['category_id']])) : null;
+            return $vol ? ['volume' => (int) $vol + 1] : null;
         }
         if ($work['kind'] !== 'serie') {
             return null;
@@ -176,6 +180,17 @@ final class Works
         $end = Time::local($finish ?? Time::nowUtc())->setTime(0, 0);
         $days = (int) Time::local($start)->setTime(0, 0)->diff($end)->days;
         return ['state' => $finish ? 'done' : 'playing', 'start' => $start, 'finish' => $finish, 'days' => $days];
+    }
+
+    /** Types d'œuvre suivis avec un début et une fin. */
+    public const TRACKED = ['jeu', 'livre'];
+
+    /** Libellés des étapes selon le type : [bâton ordinaire, début, fin, nom au pluriel]. */
+    public static function milestoneLabels(string $kind): array
+    {
+        return $kind === 'livre'
+            ? ['' => 'Une séance de lecture', 'start' => 'Le début du livre', 'finish' => 'La fin du livre', 'plural' => 'livres', 'done' => 'Lu']
+            : ['' => 'Une partie', 'start' => 'Le début du jeu', 'finish' => 'La fin du jeu', 'plural' => 'jeux', 'done' => 'Terminé'];
     }
 
     /** « 47 jours », « 1 jour », « le jour même » */

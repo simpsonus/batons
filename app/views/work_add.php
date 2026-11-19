@@ -23,6 +23,9 @@ $kindLabel = ['film' => 'un film', 'serie' => 'une série', 'livre' => 'un livre
                         <a class="work-title" href="<?= url('work', ['id' => $c['id'], 'work' => $w['id']]) ?>"><?= e($w['title']) ?></a>
                         <span class="muted small">dernier : <?= e(Batons\Time::ago($w['last_at'])) ?></span>
                     </span>
+                    <?php if (!empty($n['reading'])): ?>
+                    <a class="btn ghost next-btn" href="<?= url('work', ['id' => $c['id'], 'work' => $w['id']]) ?>">En cours</a>
+                    <?php else: ?>
                     <form method="post" action="<?= url('work_next', ['id' => $c['id'], 'work' => $w['id']]) ?>">
                         <?= csrf() ?>
                         <input type="hidden" name="back" value="<?= e(url()) ?>">
@@ -30,6 +33,7 @@ $kindLabel = ['film' => 'un film', 'serie' => 'une série', 'livre' => 'un livre
                             <span aria-hidden="true">▶</span> <?= e((Works::progress($n['season'] ?? null, $n['episode'] ?? null, $n['volume'] ?? null) ?: 'Partie')) ?>
                         </button>
                     </form>
+                    <?php endif; ?>
                 </li>
             <?php endforeach; ?>
         </ul>

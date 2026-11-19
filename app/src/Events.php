@@ -84,7 +84,7 @@ final class Events
     public static function timeline(int $userId, int $limit = 100, int $offset = 0): array
     {
         return Db::all(
-            'SELECT e.*, c.name AS category_name, c.icon, c.color, c.unit, w.title AS work_title,
+            'SELECT e.*, c.name AS category_name, c.icon, c.color, c.unit, c.kind, w.title AS work_title,
                     CASE WHEN c.hidden = 1 OR g.hidden = 1 THEN 1 ELSE 0 END AS is_hidden
                FROM events e JOIN categories c ON c.id = e.category_id
                LEFT JOIN groups g ON g.id = c.group_id

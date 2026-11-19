@@ -1,5 +1,11 @@
 # Journal des modifications
 
+## 0.12.0
+- Livres : **date de début et de fin de lecture**, comme pour les jeux. « Commencé aujourd'hui » /
+  « 🏁 Lu aujourd'hui » sur la fiche du livre, ou n'importe quelle date à l'ajout ou en modifiant le bâton.
+- Durée (« Lu en 18 jours », « En cours depuis 5 jours ») et durée moyenne des livres lus.
+- Un livre en cours de lecture reste dans « Continuer » ; le tome suivant reste proposé après un « Lu ».
+
 ## 0.11.0
 - Jeux vidéo : **date de début et date de fin**. « Commencé aujourd'hui » / « 🏁 Terminé aujourd'hui »
   sur la fiche du jeu, ou n'importe quelle date via « + Ajouter une partie… » ou en modifiant le bâton.

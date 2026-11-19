@@ -39,21 +39,22 @@ $maxSeason = $seasons ? max(array_keys($seasons)) : null;
                 <?= e(implode(', ', array_map(fn($n, $cnt) => "S$n ($cnt ép.)", array_keys($seasons), $seasons))) ?></p>
         <?php endif; ?>
         <?php if (!$next && $last): ?><p class="muted small field-help">Tu es à jour des épisodes connus.</p><?php endif; ?>
-    <?php elseif ($c['kind'] === 'jeu'): ?>
-        <fieldset>
-            <legend>Ce bâton marque</legend>
-            <div class="kind-choice">
-                <?php foreach (['' => 'Une partie', 'start' => 'Le début du jeu', 'finish' => 'La fin du jeu'] as $k => $label): ?>
-                    <label class="chip wide"><input type="radio" name="milestone" value="<?= $k ?>" <?= ($last ? '' : 'start') === $k ? 'checked' : '' ?>><span><?= $label ?></span></label>
-                <?php endforeach; ?>
-            </div>
-        </fieldset>
     <?php elseif ($c['kind'] === 'livre'): ?>
         <label class="narrow">Tome <span class="muted">facultatif</span>
             <input type="number" name="volume" min="1" max="9999" inputmode="numeric" value="<?= $defVolume ? (int) $defVolume : '' ?>">
         </label>
     <?php endif; ?>
 
+    <?php if (in_array($c['kind'], Works::TRACKED, true)): $ml = Works::milestoneLabels($c['kind']); ?>
+        <fieldset>
+            <legend>Ce bâton marque</legend>
+            <div class="kind-choice">
+                <?php foreach (['', 'start', 'finish'] as $k): ?>
+                    <label class="chip wide"><input type="radio" name="milestone" value="<?= $k ?>" <?= ($last ? '' : 'start') === $k ? 'checked' : '' ?>><span><?= $ml[$k] ?></span></label>
+                <?php endforeach; ?>
+            </div>
+        </fieldset>
+    <?php endif; ?>
     <label>Quand
         <input type="datetime-local" name="occurred_at" value="<?= e(Time::toLocalInput()) ?>">
     </label>

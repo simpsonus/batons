@@ -29,7 +29,8 @@ $events = array_slice($events, 0, 50);
     <?php
     $works = Batons\Works::inCategory($uid, $id);
     $statuses = [];
-    if ($c['kind'] === 'jeu') {
+    if (in_array($c['kind'], Batons\Works::TRACKED, true)) {
+        $mlC = Batons\Works::milestoneLabels($c['kind']);
         foreach ($works as $w) {
             $statuses[$w['id']] = Batons\Works::status((int) $w['id'], $id);
         }
@@ -42,7 +43,7 @@ $events = array_slice($events, 0, 50);
             <a class="btn accent" href="<?= url('work_add', ['id' => $id]) ?>">+ Ajouter</a>
         </div>
         <?php if (!empty($doneDays)): ?>
-            <p class="small"><?= count($doneDays) ?> jeu<?= count($doneDays) > 1 ? 'x' : '' ?> terminé<?= count($doneDays) > 1 ? 's' : '' ?>,
+            <p class="small"><?= count($doneDays) ?> <?= $c['kind'] === 'livre' ? 'livre' . (count($doneDays) > 1 ? 's' : '') . ' lu' . (count($doneDays) > 1 ? 's' : '') : 'jeu' . (count($doneDays) > 1 ? 'x' : '') . ' terminé' . (count($doneDays) > 1 ? 's' : '') ?>,
                 en <strong><?= e(Batons\Works::daysLabel((int) round(array_sum($doneDays) / count($doneDays)))) ?></strong> en moyenne.</p>
         <?php endif; ?>
         <?php if (!$works): ?>
@@ -58,14 +59,14 @@ $events = array_slice($events, 0, 50);
                             <a class="work-title" href="<?= url('work', ['id' => $id, 'work' => $w['id']]) ?>"><?= e($w['title']) ?></a>
                             <?php $stW = $statuses[$w['id']] ?? null; ?>
                             <span class="muted small"><?= e(implode(' · ', array_filter([
-                                $stW ? ($stW['state'] === 'done' ? 'Terminé en ' . Batons\Works::daysLabel((int) $stW['days']) : 'En cours depuis ' . Batons\Works::daysLabel((int) $stW['days'])) : null,
+                                $stW ? ($stW['state'] === 'done' ? $mlC['done'] . ' en ' . Batons\Works::daysLabel((int) $stW['days']) : 'En cours depuis ' . Batons\Works::daysLabel((int) $stW['days'])) : null,
                                 Batons\Works::progress($lastW['season'] ?? null, $lastW['episode'] ?? null, $lastW['volume'] ?? null),
                                 Time::ago($w['last_at']),
                                 (int) $w['n'] > 1 ? $w['n'] . ' bâtons' : null,
                             ]))) ?></span>
                             <?php if ($w['avg_rating'] !== null): ?><?= rating_badge((int) round((float) $w['avg_rating'])) ?><?php endif; ?>
                         </span>
-                        <?php if ($nextW && !($stW && $stW['state'] === 'done')): ?>
+                        <?php if ($nextW && !($c['kind'] === 'jeu' && $stW && $stW['state'] === 'done')): ?>
                             <form method="post" action="<?= url('work_next', ['id' => $id, 'work' => $w['id']]) ?>">
                                 <?= csrf() ?>
                                 <input type="hidden" name="back" value="<?= e(here()) ?>">

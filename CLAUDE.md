@@ -138,7 +138,8 @@ docker build -f docker/Dockerfile -t batons . && docker run -p 8080:8080 -v $PWD
       note sur 10, affiches, export/réimport.
 - [x] v0.10 : jeux vidéo (RAWG, « ▶ Partie »), fiche œuvre, libellés Ajouter / Mettre à jour clarifiés.
 - [x] v0.11 : jeux : bâtons-étapes `events.milestone` (start / finish), durée pour finir (`Works::status()`),
-      moyenne des jeux terminés. Extensible aux livres si besoin.
+      moyenne des jeux terminés.
+- [x] v0.12 : idem pour les livres (`Works::TRACKED` = jeu, livre ; libellés via `Works::milestoneLabels()`).
 - [ ] Plus tard éventuellement : synchro BetaSeries / Trakt (pas SensCritique ni SerieBox : pas d'API
       publique). Jamais de synchro pour une catégorie masquée.
 - [ ] Recherche / filtre dans la chronologie.

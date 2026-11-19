@@ -187,7 +187,7 @@ switch ($route) {
         if ($ev['work_id']) {
             Events::updateWork((int) $ev['id'], $posInt(Http::input('season')), $posInt(Http::input('episode')),
                 $posInt(Http::input('volume')), $rating(Http::input('rating')),
-                $ev['kind'] === 'jeu' ? $milestone(Http::input('milestone')) : null);
+                in_array($ev['kind'], Batons\Works::TRACKED, true) ? $milestone(Http::input('milestone')) : null);
         }
         Http::flash('Bâton modifié.');
         Http::redirect('category', ['id' => $ev['category_id']]);
@@ -271,6 +271,10 @@ switch ($route) {
                     || Batons\Works::status((int) $w['id'], (int) $c['id'])['state'] === 'done')) {
                 $next = null; // jeux terminés ou pas joués depuis 3 mois : pas dans « Continuer »
             }
+            if ($w['kind'] === 'livre' && $next === null
+                && Batons\Works::status((int) $w['id'], (int) $c['id'])['state'] === 'playing') {
+                $next = ['reading' => true]; // livre en cours de lecture (sans tomes) : reste dans « Continuer »
+            }
             if ($next !== null) {
                 $continue[] = ['work' => $w, 'next' => $next];
             }
@@ -316,7 +320,7 @@ switch ($route) {
                 $c['kind'] === 'serie' ? $posInt(Http::input('episode')) : null,
                 $c['kind'] === 'livre' ? $posInt(Http::input('volume')) : null,
                 $rating(Http::input('rating')), Http::input('note'),
-                $c['kind'] === 'jeu' ? $milestone(Http::input('milestone')) : null);
+                in_array($c['kind'], Batons\Works::TRACKED, true) ? $milestone(Http::input('milestone')) : null);
             $ev = Events::find($uid, $evId);
             $label = trim($w['title'] . ' ' . Batons\Works::progress($ev['season'], $ev['episode'], $ev['volume'])
                 . ['start' => ' : commencé', 'finish' => ' : terminé', '' => ''][$ev['milestone'] ?? '']);
@@ -338,13 +342,13 @@ switch ($route) {
         $c = $category(Http::intInput('id'));
         $w = Batons\Works::find($uid, (int) Http::intInput('work')) ?? Http::notFound('Œuvre');
         $m = $milestone(Http::input('milestone'));
-        if ($m === null || $c['kind'] !== 'jeu') {
+        if ($m === null || !in_array($c['kind'], Batons\Works::TRACKED, true)) {
             Http::redirect('work', ['id' => $c['id'], 'work' => $w['id']]);
         }
         $evId = Events::addWork((int) $c['id'], Time::nowUtc(), (int) $w['id'], null, null, null, null, null, $m);
         $st = Batons\Works::status((int) $w['id'], (int) $c['id']);
         Http::flash($m === 'finish'
-            ? '« ' . $w['title'] . ' » terminé en ' . Batons\Works::daysLabel((int) $st['days']) . '. Bravo !'
+            ? '« ' . $w['title'] . ' » ' . ($c['kind'] === 'livre' ? 'lu' : 'terminé') . ' en ' . Batons\Works::daysLabel((int) $st['days']) . '. Bravo !'
             : '« ' . $w['title'] . ' » commencé aujourd\'hui.', $evId);
         Http::redirect('work', ['id' => $c['id'], 'work' => $w['id']]);
 
