@@ -57,6 +57,40 @@ $events = array_slice($events, 0, 50);
     <div class="stat"><span class="k">Intervalle moyen</span><span class="v"><?= $stats['avg_interval'] !== null ? e(Time::duration($stats['avg_interval'])) : '—' ?></span></div>
 </section>
 
+<?php
+[$calStart, $calCounts] = Batons\Events::daily($id);
+$calDays = count($calCounts);
+$byMonth = [];
+foreach ($calCounts as $d => $n) {
+    $k = substr($d, 0, 7);
+    $byMonth[$k] = ['days' => ($byMonth[$k]['days'] ?? 0) + 1, 'n' => ($byMonth[$k]['n'] ?? 0) + $n];
+}
+krsort($byMonth);
+?>
+<section class="card" aria-labelledby="cal-title" style="--c: <?= e($c['color']) ?>">
+    <h2 id="cal-title" class="card-title">Calendrier <span class="muted small"><?= $calDays ?> jour<?= $calDays > 1 ? 's' : '' ?> avec bâton sur 12 mois</span></h2>
+    <div class="cal-wrap">
+        <?= Chart::calendarDays() ?>
+        <div class="cal-scroll" data-scroll-end tabindex="0" role="group" aria-label="Calendrier des 12 derniers mois (défilement horizontal)">
+            <?= Chart::calendar($calStart, $calCounts) ?>
+        </div>
+    </div>
+    <div class="cal-legend" aria-hidden="true">
+        <span>Moins</span><i class="cal-0"></i><i class="cal-1"></i><i class="cal-2"></i><i class="cal-3"></i><i class="cal-4"></i><span>Plus</span>
+    </div>
+    <div class="sr"><table>
+        <caption>Jours avec au moins un bâton, par mois, sur les 12 derniers mois</caption>
+        <thead><tr><th scope="col">Mois</th><th scope="col">Jours</th><th scope="col">Bâtons</th></tr></thead>
+        <tbody>
+        <?php foreach ($byMonth as $ym => $v): ?>
+            <tr><th scope="row"><?= e(['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'][(int) substr($ym, 5, 2) - 1] . ' ' . substr($ym, 0, 4)) ?></th>
+                <td><?= $v['days'] ?></td><td><?= $v['n'] ?></td></tr>
+        <?php endforeach; ?>
+        <?php if (!$byMonth): ?><tr><td colspan="3">Aucun bâton sur la période.</td></tr><?php endif; ?>
+        </tbody>
+    </table></div>
+</section>
+
 <section class="card" aria-labelledby="chart-title">
     <h2 class="sr" id="chart-title">Graphique</h2>
     <div class="chart-head">

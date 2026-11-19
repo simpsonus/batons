@@ -180,6 +180,9 @@
         });
     }
 
+    // Calendrier : afficher d'emblée les semaines les plus récentes (à droite).
+    document.querySelectorAll('[data-scroll-end]').forEach((el) => { el.scrollLeft = el.scrollWidth; });
+
     // Retour haptique discret sur mobile lors d'un tap.
     document.querySelectorAll('.tap').forEach((btn) => {
         btn.addEventListener('click', () => navigator.vibrate?.(15));

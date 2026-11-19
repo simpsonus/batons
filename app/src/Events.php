@@ -101,6 +101,23 @@ final class Events
     }
 
     /**
+     * Nombre de bâtons par jour local ('Y-m-d' => n) depuis le lundi d'il y a $weeks semaines,
+     * et ce lundi de départ. Sert à la vue calendrier.
+     */
+    public static function daily(int $categoryId, int $weeks = 52): array
+    {
+        $tz = Time::tz();
+        $start = (new DateTimeImmutable('now', $tz))->modify('monday this week')->setTime(0, 0)->modify('-' . ($weeks - 1) . ' weeks');
+        $fromUtc = $start->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d H:i:s');
+        $counts = [];
+        foreach (Db::all('SELECT occurred_at FROM events WHERE category_id = ? AND occurred_at >= ?', [$categoryId, $fromUtc]) as $r) {
+            $d = Time::local($r['occurred_at'])->format('Y-m-d');
+            $counts[$d] = ($counts[$d] ?? 0) + 1;
+        }
+        return [$start, $counts];
+    }
+
+    /**
      * Série pour le graphique, regroupée dans le fuseau local.
      * $scale : 'day' (30 derniers jours), 'week' (12 semaines), 'month' (12 mois).
      * Renvoie une liste de ['label' => …, 'count' => int, 'sum' => float].

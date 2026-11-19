@@ -116,7 +116,12 @@ docker build -f docker/Dockerfile -t batons . && docker run -p 8080:8080 -v $PWD
 - [x] v0.6 : catégories et groupes **masqués** (à la « Photos masquées » d'Apple), voir ci-dessus.
 - [x] v0.7 : mode `builtin` (connexion, comptes) et combinaison `header,builtin` ; port direct facultatif dans
       l'add-on (doc Nginx Proxy Manager dans `ha-addon/DOCS.md`).
-- [ ] Recherche / filtre dans la chronologie, vue calendrier (heatmap) par catégorie.
+- [x] v0.8 : vue calendrier par catégorie (grille 52 semaines × 7 jours, lundi en haut, intensité 1→4+,
+      `Chart::calendar()` + tableau mensuel pour lecteurs d'écran).
+- [ ] Type de catégorie « œuvre » (film / série / livre) : saisie prédictive (TMDB, Open Library), épisode ou
+      tome suivant proposé, note facultative. Plus tard éventuellement : synchro BetaSeries / Trakt
+      (pas SensCritique ni SerieBox : pas d'API publique). Jamais de synchro pour une catégorie masquée.
+- [ ] Recherche / filtre dans la chronologie.
 - [ ] Rappels / objectifs (« au moins 3 par semaine »).
 - [ ] i18n (anglais).
 - [ ] Intégration HA facultative : capteurs (« temps depuis », « total du jour »), webhook/API pour ajouter

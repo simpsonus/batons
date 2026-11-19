@@ -63,4 +63,55 @@ final class Chart
         }
         return rtrim(rtrim(number_format($v, 2, ',', ' '), '0'), ',');
     }
+
+    /**
+     * Calendrier façon « grille de contributions » : une colonne par semaine, une ligne par jour
+     * (lundi en haut). Intensité selon le nombre de bâtons du jour (1, 2, 3, 4 et plus).
+     *
+     * @param \DateTimeImmutable $start  lundi de la première semaine (fuseau local)
+     * @param array<string,int>  $counts 'Y-m-d' => nombre de bâtons
+     */
+    public static function calendar(\DateTimeImmutable $start, array $counts, int $weeks = 52): string
+    {
+        $cell = 12; $gap = 3; $step = $cell + $gap;
+        $left = 0; $top = 18;
+        $w = $left + $weeks * $step; $h = $top + 7 * $step;
+        $today = (new \DateTimeImmutable('now', $start->getTimezone()))->format('Y-m-d');
+        $months = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'];
+
+        $svg = sprintf('<svg class="cal" viewBox="0 0 %d %d" width="%d" height="%d" aria-hidden="true" focusable="false">', $w, $h, $w, $h);
+        $prevMonth = null;
+        for ($col = 0; $col < $weeks; $col++) {
+            $monday = $start->modify("+$col weeks");
+            // Libellé du mois au-dessus de la première semaine qui le commence.
+            $m = (int) $monday->format('n');
+            if ($m !== $prevMonth && (int) $monday->format('j') <= 7 && $col < $weeks - 2) {
+                $svg .= sprintf('<text x="%d" y="11" class="cal-label">%s</text>', $left + $col * $step, $months[$m - 1]);
+            }
+            $prevMonth = $m;
+            for ($row = 0; $row < 7; $row++) {
+                $day = $monday->modify("+$row days");
+                $key = $day->format('Y-m-d');
+                if ($key > $today) {
+                    continue; // pas de jours futurs
+                }
+                $n = $counts[$key] ?? 0;
+                $level = min(4, $n);
+                $title = Time::longDate($day) . ' : ' . ($n === 0 ? 'aucun bâton' : $n . ' bâton' . ($n > 1 ? 's' : ''));
+                $svg .= sprintf('<rect x="%d" y="%d" width="%d" height="%d" rx="2.5" class="cal-%d%s"><title>%s</title></rect>',
+                    $left + $col * $step, $top + $row * $step, $cell, $cell, $level, $key === $today ? ' cal-today' : '', e(ucfirst($title)));
+            }
+        }
+        return $svg . '</svg>';
+    }
+
+    /** Colonne fixe des initiales des jours, alignée sur calendar(). */
+    public static function calendarDays(): string
+    {
+        $svg = '<svg class="cal-days" viewBox="0 0 14 123" width="14" height="123" aria-hidden="true" focusable="false">';
+        foreach (['L', 'M', 'M', 'J', 'V', 'S', 'D'] as $row => $label) {
+            $svg .= sprintf('<text x="0" y="%d" class="cal-label">%s</text>', 18 + $row * 15 + 10, $label);
+        }
+        return $svg . '</svg>';
+    }
 }
