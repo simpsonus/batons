@@ -1,7 +1,7 @@
 # Add-on Home Assistant : une simple enveloppe autour de l'image Docker générique.
 # Rien de spécifique à HA dans l'application : tout passe par des variables d'environnement.
 name: Bâtons
-version: "0.8.0"
+version: "0.8.1"
 slug: batons
 description: Compter et dater tout ce qui compte (habitudes, événements, symptômes…).
 url: https://github.com/simpsonus/batons
@@ -22,7 +22,7 @@ ports:
 ports_description:
   8080/tcp: "Accès direct à Bâtons (avec connexion), par ex. derrière Nginx Proxy Manager"
 
-panel_icon: mdi:counter
+panel_icon: mdi:tally-mark-5
 panel_title: Bâtons
 
 # Ingress : identité fournie par Home Assistant (seul le Supervisor, 172.30.32.2, est cru sur parole).

@@ -11,6 +11,8 @@ $unlocked = $authMethod !== null && Batons\Privacy::isUnlocked();
     <meta name="theme-color" content="#1c1917">
     <title><?= e($title === 'Bâtons' ? 'Bâtons' : $title . ' · Bâtons') ?></title>
     <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+    <meta name="apple-mobile-web-app-title" content="Bâtons">
     <link rel="manifest" href="assets/manifest.webmanifest">
     <link rel="stylesheet" href="assets/app.css?v=<?= Batons\VERSION ?>">
 </head>
