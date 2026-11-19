@@ -227,3 +227,11 @@ code { font-size: .85em; background: var(--line); padding: .05rem .3rem; border-
     -webkit-tap-highlight-color: transparent;
     touch-action: manipulation;
 }
+
+/* --- Import ------------------------------------------------------------------ */
+input[type=file] { font: inherit; font-weight: normal; display: block; margin-top: .4rem; max-width: 100%; }
+.report ul { padding-left: 1.2rem; }
+.report details { margin: .5rem 0 1rem; }
+.report .errors { color: var(--muted); font-size: .9rem; }
+.help { color: var(--muted); font-size: .95rem; }
+.help h2 { color: var(--ink); font-size: 1rem; }

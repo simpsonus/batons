@@ -170,6 +170,25 @@ switch ($route) {
         $page = max(0, (int) ($_GET['page'] ?? 0));
         Http::render('timeline', ['events' => Events::timeline($uid, 101, $page * 100), 'page' => $page], 'Chronologie');
 
+    // --- Import (Chronicling, ou export CSV de Bâtons) -----------------------------
+    case 'import':
+        if (!Http::isPost()) {
+            Http::render('import', ['report' => null], 'Importer');
+        }
+        $files = [];
+        foreach ((array) ($_FILES['files']['tmp_name'] ?? []) as $i => $tmp) {
+            if (($_FILES['files']['error'][$i] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_OK && is_uploaded_file($tmp)) {
+                $files[$tmp] = (string) $_FILES['files']['name'][$i];
+            }
+        }
+        $importer = new Batons\Importer($uid);
+        if ($files === []) {
+            $importer->report['errors'][] = 'Aucun fichier reçu.';
+        } else {
+            $importer->importFiles($files);
+        }
+        Http::render('import', ['report' => $importer->report], 'Importer');
+
     // --- Recherche d'icônes (JSON, pour le sélecteur du formulaire) ----------------
     case 'icons':
         header('Content-Type: application/json; charset=utf-8');

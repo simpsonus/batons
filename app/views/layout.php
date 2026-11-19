@@ -42,6 +42,7 @@
 
 <footer class="foot">
     <a href="<?= url('archives') ?>">Archives</a> ·
+    <a href="<?= url('import') ?>">Importer</a> ·
     <a href="<?= url('export') ?>">Exporter (CSV)</a> ·
     <span>Bâtons <?= Batons\VERSION ?></span>
 </footer>

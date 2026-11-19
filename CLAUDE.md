@@ -48,7 +48,7 @@ Le nom vient des bâtons qu'on trace pour compter (IIII barrés). Slug technique
 ```
 app/                    l'application, autonome
   public/               racine web : index.php (routeur), assets/
-  src/                  Config, Db (+ migrations), Auth, Http, Time, Categories, Events, Chart
+  src/                  Config, Db (+ migrations), Auth, Http, Time, Categories, Events, Chart, Icons, Importer
   views/                templates PHP natifs (layout.php + une vue par page)
   migrations/           NNN_nom.sql, appliqués automatiquement au démarrage
 docker/                 image générique nginx + php-fpm (Alpine), port 8080, données dans /data
@@ -83,9 +83,10 @@ docker build -f docker/Dockerfile -t batons . && docker run -p 8080:8080 -v $PWD
 - [x] v0.1 : catégories, groupes, bâtons (tap éclair + saisie détaillée), stats, graphique, chronologie,
       archives, réorganisation, export CSV, Docker, add-on HA.
 - [x] v0.2 : icônes Material Design (sélecteur avec recherche, mots-clés français), correctif appui long iOS.
+- [x] v0.3 : import (exports CSV Chronicling events/categories/groups, et export CSV de Bâtons), sans doublons
+      (`app/src/Importer.php` : SF Symbols -> MDI, couleurs iOS -> palette).
 - [ ] Recherche / filtre dans la chronologie, vue calendrier (heatmap) par catégorie.
 - [ ] Rappels / objectifs (« au moins 3 par semaine »).
-- [ ] Import CSV (et import depuis Chronicling).
 - [ ] Mode d'authentification `builtin` (prérequis pour exposer l'app hors d'un proxy authentifiant, ex. port direct de l'add-on).
 - [ ] i18n (anglais).
 - [ ] Intégration HA facultative : capteurs (« temps depuis », « total du jour »), webhook/API pour ajouter
