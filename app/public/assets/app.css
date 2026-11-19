@@ -720,7 +720,7 @@ body.shape-casse { --tile-r: 3px;  --tile-r-tr: 3px; }
 
 /* Styles « pleins » : fond de couleur, texte --c-on (blanc ou foncé selon la couleur). */
 .tiles-plein .tile, .tiles-degrade:not(.grad-pastel):not(.grad-voile) .tile {
-    background: var(--c-solid); color: var(--c-on); border-color: transparent; box-shadow: none;
+    background-color: var(--c-solid); color: var(--c-on); border-color: transparent; box-shadow: none;
 }
 .tiles-plein .tile .tap, .tiles-degrade:not(.grad-pastel):not(.grad-voile) .tile .tap { color: var(--c-on); }
 .tiles-plein .tile .tap .meta, .tiles-plein .tile .tap .meta b, .tiles-plein .tile .more,
@@ -738,10 +738,10 @@ body.shape-casse { --tile-r: 3px;  --tile-r-tr: 3px; }
 .tiles-teinte .tile::before, .tiles-pastille .tile::before { display: none; }
 
 /* Dégradés */
-.tiles-degrade.grad-diag .tile { background: linear-gradient(135deg, var(--c-solid), var(--c-deep)); }
-.tiles-degrade.grad-vert .tile { background: linear-gradient(180deg, var(--c-glow), var(--c-deep)); }
-.tiles-degrade.grad-lum  .tile { background: radial-gradient(circle at 18% 22%, var(--c-glow), var(--c-solid) 45%, var(--c-deep)); }
-.tiles-degrade.grad-deux .tile { background: linear-gradient(135deg, var(--c-solid), var(--c-hue2)); }
+.tiles-degrade.grad-diag .tile { background-image: linear-gradient(135deg, var(--c-solid), var(--c-deep)); }
+.tiles-degrade.grad-vert .tile { background-image: linear-gradient(180deg, var(--c-glow), var(--c-deep)); }
+.tiles-degrade.grad-lum  .tile { background-image: radial-gradient(circle at 18% 22%, var(--c-glow), var(--c-solid) 45%, var(--c-deep)); }
+.tiles-degrade.grad-deux .tile { background-image: linear-gradient(135deg, var(--c-solid), var(--c-hue2)); }
 .tiles-degrade.grad-pastel .tile { background: linear-gradient(135deg, var(--c-pastel), var(--c-pastel2)); border-color: transparent; }
 .tiles-degrade.grad-pastel .tile .tap, .tiles-degrade.grad-pastel .tile .tap .meta,
 .tiles-degrade.grad-pastel .tile .tap .meta b, .tiles-degrade.grad-pastel .tile .more { color: var(--c-pastel-ink); }

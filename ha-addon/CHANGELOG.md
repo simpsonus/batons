@@ -1,5 +1,9 @@
 # Journal des modifications
 
+## 0.22.1
+- **Correctif : les dégradés des tuiles s'affichent enfin** (Diagonal, Vertical, Lumière, Deux teintes) : ils
+  étaient remplacés par une couleur unie, sur tous les navigateurs.
+
 ## 0.22.0
 - **Apparence des tuiles** (Compte › Apparence, avec aperçu de tes catégories) : 6 styles — Liseré (l'actuel),
   Plein, Dégradé, Coin, Teinté, Pastille —, 6 dégradés (Diagonal, Vertical, Lumière, Deux teintes, Pastel,

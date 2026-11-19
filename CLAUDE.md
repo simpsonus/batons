@@ -184,6 +184,7 @@ docker build -f docker/Dockerfile -t batons . && docker run -p 8080:8080 -v $PWD
 - [x] v0.21.1 : groupe sous le doigt pendant le glisser (écart mesuré avant repli), pas de remplissage Contact Safari.
 - [x] v0.22 : apparence des tuiles (`Theme.php` : 6 styles, 6 dégradés, 5 formes, couleurs dérivées AA calculées en PHP,
       classes `tiles-*/grad-*/shape-*` sur `<body>`) ; calendrier à échelle relative (`Chart::calendarScale()`, 90e centile).
+- [x] v0.22.1 : dégradés réellement appliqués (fond uni en `background-color`, dégradé en `background-image`).
 - [ ] Type de catégorie « Éléments » générique (éléments nommés sans catalogue, plusieurs en parallèle,
       début/fin/durée — mécanique des œuvres) : à faire si un cas concret apparaît (ex. « Traitements »).
 - [ ] Plus tard éventuellement : synchro BetaSeries / Trakt (pas SensCritique ni SerieBox : pas d'API
