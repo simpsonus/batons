@@ -24,12 +24,17 @@ Le nom vient des bâtons qu'on trace pour compter (IIII barrés). Slug technique
 - **URLs toujours relatives.** Un seul point d'entrée `app/public/index.php`, routes via le paramètre `r`
   (`./?r=category&id=3`). Pas de réécriture d'URL. Ça fonctionne à la racine, en sous-dossier, derrière un
   proxy et sous HA Ingress. Ne jamais écrire d'URL absolue commençant par `/`.
-- **Authentification enfichable** (`BATONS_AUTH`) :
+- **Authentification enfichable** (`BATONS_AUTH`, un ou plusieurs modes séparés par des virgules, `Auth.php`) :
   - `none` : un seul utilisateur local (`default_user`) ;
-  - `header` : identité transmise par un reverse proxy (HA Ingress, Authelia, Authentik…), avec
-    `BATONS_TRUSTED_PROXIES` pour n'accepter l'en-tête que du proxy ;
-  - `builtin` (comptes + mots de passe) : **pas encore implémenté**.
-  Toutes les données sont rattachées à un `user_id` dès maintenant.
+  - `header` : identité transmise par un reverse proxy (HA Ingress, Authelia, Authentik…). L'en-tête n'est
+    cru que des IP de `BATONS_TRUSTED_PROXIES` ; ailleurs il est **ignoré** ;
+  - `builtin` : comptes + mots de passe (page de connexion, `password_hash`, 5 échecs -> blocage 15 min par
+    compte, 20 échecs/15 min par IP ; sessions de 30 jours stockées dans `data_dir/sessions` ; changer le
+    mot de passe invalide les autres sessions). En `builtin` seul : le premier compte (route `setup`) est admin
+    et gère les autres (page Compte).
+  - `header,builtin` (add-on HA) : Ingress = identité HA ; accès direct par un port = connexion, avec le
+    **même identifiant** (nom d'utilisateur HA) et un mot de passe défini dans « Compte » -> mêmes données.
+  Toutes les données sont rattachées à un `user_id`.
 - **Dates stockées en UTC** (`'Y-m-d H:i:s'`), converties dans le fuseau `BATONS_TIMEZONE`/`TZ`
   pour l'affichage et la saisie (`app/src/Time.php`).
 - **Front : HTML + CSS + un peu de JS vanilla**, mobile d'abord, clair/sombre automatique.
@@ -63,7 +68,8 @@ Le nom vient des bâtons qu'on trace pour compter (IIII barrés). Slug technique
 ```
 app/                    l'application, autonome
   public/               racine web : index.php (routeur), assets/
-  src/                  Config, Db (+ migrations), Auth, Http, Time, Categories, Events, Chart, Icons, Importer
+  src/                  Config, Db (+ migrations), Auth, Http, Time, Categories, Events, Chart, Icons, Importer,
+                        Privacy, WebAuthn, Cbor
   views/                templates PHP natifs (layout.php + une vue par page)
   migrations/           NNN_nom.sql, appliqués automatiquement au démarrage
 docker/                 image générique nginx + php-fpm (Alpine), port 8080, données dans /data
@@ -106,10 +112,11 @@ docker build -f docker/Dockerfile -t batons . && docker run -p 8080:8080 -v $PWD
       la CI crée elle-même les releases.
 - [x] v0.5 : menu sur le logo (Archives, Importer, Exporter ; `<details>` sans JS requis),
       réorganisation des groupes entre eux et des catégories dans leur groupe.
-- [x] v0.6 : catégories et groupes **masqués** (à la « Photos masquées » d'Apple), voir ci-dessous.
+- [x] v0.6 : catégories et groupes **masqués** (à la « Photos masquées » d'Apple), voir ci-dessus.
+- [x] v0.7 : mode `builtin` (connexion, comptes) et combinaison `header,builtin` ; port direct facultatif dans
+      l'add-on (doc Nginx Proxy Manager dans `ha-addon/DOCS.md`).
 - [ ] Recherche / filtre dans la chronologie, vue calendrier (heatmap) par catégorie.
 - [ ] Rappels / objectifs (« au moins 3 par semaine »).
-- [ ] Mode d'authentification `builtin` (prérequis pour exposer l'app hors d'un proxy authentifiant, ex. port direct de l'add-on).
 - [ ] i18n (anglais).
 - [ ] Intégration HA facultative : capteurs (« temps depuis », « total du jour »), webhook/API pour ajouter
       un bâton depuis une automatisation. Toujours via une API générique, pas de code spécifique HA dans l'app.

@@ -391,3 +391,4 @@ legend { font-size: .9rem; font-weight: 600; margin-bottom: .4rem; padding: 0; }
 }
 .card > h2:first-child { margin-top: 0; }
 [data-passkey-register] { margin-top: 1rem; }
+.narrow-card form + p { margin-top: 1rem; }

@@ -40,11 +40,15 @@ racine web (ou dans un sous-dossier). Le dossier `app/data/` doit être accessib
 | `BATONS_DATA_DIR` | `app/data` (`/data` en Docker) | Dossier de la base SQLite |
 | `BATONS_DB_DSN` | `sqlite:<data_dir>/batons.sqlite` | DSN PDO |
 | `BATONS_TIMEZONE` | `TZ` ou fuseau PHP | Fuseau d'affichage et de saisie |
-| `BATONS_AUTH` | `none` | `none` (un utilisateur) ou `header` (reverse proxy) |
+| `BATONS_AUTH` | `none` | `none` (un utilisateur), `header` (reverse proxy), `builtin` (comptes et mots de passe), ou une combinaison comme `header,builtin` |
 | `BATONS_AUTH_HEADER` | `Remote-User` | En-tête portant l'identifiant (mode `header`) |
 | `BATONS_AUTH_NAME_HEADER` | — | En-tête portant le nom affiché (facultatif) |
 | `BATONS_TRUSTED_PROXIES` | — | IP autorisées à envoyer l'en-tête, séparées par des virgules |
 | `BATONS_HIDDEN_TIMEOUT` | `300` | Secondes d'inactivité avant reverrouillage des éléments masqués |
+
+En mode `builtin` seul, le premier visiteur crée le compte **administrateur** (qui crée ensuite les autres) :
+fais-le dès l'installation. En mode `header,builtin`, les requêtes du proxy de confiance utilisent son identité ;
+les autres passent par la page de connexion, avec le même identifiant (mot de passe défini dans « Compte »).
 
 ⚠️ En mode `none`, n'exposez pas Bâtons sur Internet sans protection devant (reverse proxy avec authentification, VPN…).
 

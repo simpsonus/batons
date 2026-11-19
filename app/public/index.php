@@ -26,11 +26,69 @@ if ($route === 'health') {
 }
 
 Http::startSession();
-$uid = Auth::id();
-
 if (Http::isPost()) {
     Http::checkCsrf();
 }
+
+// --- Connexion (mode builtin) : pages accessibles sans être identifié -------------------
+if ($route === 'login' || $route === 'setup') {
+    if (!Auth::has('builtin')) {
+        Http::redirect();
+    }
+    if (Auth::method() !== null) {
+        Http::redirect(); // déjà identifié
+    }
+    $setup = Auth::needsSetup();
+    if ($route === 'login' && $setup) {
+        Http::redirect('setup');
+    }
+    if ($route === 'setup' && !$setup) {
+        Http::redirect('login');
+    }
+    $error = null;
+    $errors = [];
+    $username = Http::input('username');
+    if (Http::isPost()) {
+        if ($setup) {
+            if (!Auth::validUsername($username)) {
+                $errors['username'] = '2 à 60 caractères : lettres, chiffres, point, tiret, @.';
+            }
+            if ($pwErr = Auth::validatePassword((string) ($_POST['password'] ?? ''), (string) ($_POST['password2'] ?? ''))) {
+                $errors['password'] = $pwErr;
+            }
+            if (!$errors) {
+                Batons\Db::run('INSERT INTO users (username, display_name, is_admin, created_at) VALUES (?, ?, 1, ?)',
+                    [$username, $username, Time::nowUtc()]);
+                $newId = Batons\Db::lastId();
+                // Reprend les données de l'utilisateur local éventuel (passage du mode none au mode builtin).
+                $local = Batons\Db::value('SELECT id FROM users WHERE username = ? AND id <> ?', [(string) Batons\Config::get('default_user'), $newId]);
+                if ($local && !Batons\Db::value('SELECT 1 FROM categories WHERE user_id = ?', [$newId])) {
+                    Batons\Db::run('UPDATE categories SET user_id = ? WHERE user_id = ?', [$newId, $local]);
+                    Batons\Db::run('UPDATE groups SET user_id = ? WHERE user_id = ?', [$newId, $local]);
+                }
+                Auth::setPassword($newId, (string) $_POST['password']);
+                Auth::attempt($username, (string) $_POST['password']);
+                Http::flash('Compte administrateur créé. Bienvenue !');
+                Http::redirect();
+            }
+        } else {
+            $res = Auth::attempt($username, (string) ($_POST['password'] ?? ''));
+            if ($res === true) {
+                Http::redirect();
+            }
+            $error = $res;
+        }
+    }
+    Http::render('login', ['setup' => $setup, 'error' => $error, 'errors' => $errors, 'username' => $username],
+        $setup ? 'Créer le premier compte' : 'Connexion');
+}
+
+if ($route === 'logout' && Http::isPost()) {
+    Auth::logout();
+    Http::redirect('login');
+}
+
+$uid = Auth::id();
 
 /** Lit une valeur numérique saisie (accepte la virgule). */
 $parseValue = static function (string $raw): ?float {
@@ -167,6 +225,62 @@ switch ($route) {
         $c = $category(Http::intInput('id'));
         Categories::move($uid, (int) $c['id'], Http::input('dir') === 'up' ? -1 : 1);
         Http::back('category_order');
+
+    // --- Compte ----------------------------------------------------------------------
+    case 'account':
+    case 'account_password':
+    case 'account_password_remove':
+    case 'user_create':
+    case 'user_delete':
+        $me = Batons\Db::one('SELECT * FROM users WHERE id = ?', [$uid]);
+        $isAdmin = (bool) $me['is_admin'] && Auth::has('builtin') && !Auth::has('header');
+        $errors = [];
+        $newUsername = '';
+        if (Http::isPost()) {
+            if ($route === 'account_password' && Auth::has('builtin')) {
+                if (Auth::method() === 'builtin' && !password_verify((string) ($_POST['current'] ?? ''), (string) $me['password_hash'])) {
+                    $errors['current'] = 'Mot de passe actuel incorrect.';
+                } elseif ($err = Auth::validatePassword((string) ($_POST['password'] ?? ''), (string) ($_POST['password2'] ?? ''))) {
+                    $errors['password'] = $err;
+                } else {
+                    Auth::setPassword($uid, (string) $_POST['password']);
+                    Http::flash($me['password_hash'] ? 'Mot de passe changé.' : 'Mot de passe défini : l\'accès direct est ouvert pour « ' . $me['username'] . ' ».');
+                    Http::redirect('account');
+                }
+            } elseif ($route === 'account_password_remove' && Auth::method() === 'header') {
+                Batons\Db::run('UPDATE users SET password_hash = NULL WHERE id = ?', [$uid]);
+                Http::flash('Mot de passe supprimé : l\'accès direct est fermé pour ce compte.');
+                Http::redirect('account');
+            } elseif ($route === 'user_create' && $isAdmin) {
+                $newUsername = Http::input('username');
+                if (!Auth::validUsername($newUsername)) {
+                    $errors['new_username'] = '2 à 60 caractères : lettres, chiffres, point, tiret, @.';
+                } elseif (Batons\Db::value('SELECT 1 FROM users WHERE username = ?', [$newUsername])) {
+                    $errors['new_username'] = 'Cet identifiant existe déjà.';
+                }
+                $pw = (string) ($_POST['password'] ?? '');
+                if ($err = Auth::validatePassword($pw, $pw)) {
+                    $errors['new_password'] = $err;
+                }
+                if (!$errors) {
+                    Batons\Db::run('INSERT INTO users (username, display_name, created_at) VALUES (?, ?, ?)', [$newUsername, $newUsername, Time::nowUtc()]);
+                    Auth::setPassword(Batons\Db::lastId(), $pw);
+                    Http::flash('Compte « ' . $newUsername . ' » créé.');
+                    Http::redirect('account');
+                }
+            } elseif ($route === 'user_delete' && $isAdmin) {
+                $target = (int) Http::intInput('id');
+                if ($target !== $uid) {
+                    Batons\Db::run('DELETE FROM users WHERE id = ?', [$target]);
+                    Http::flash('Compte supprimé.');
+                }
+                Http::redirect('account');
+            }
+        }
+        Http::render('account', [
+            'me' => $me, 'method' => Auth::method(), 'errors' => $errors, 'newUsername' => $newUsername,
+            'users' => $isAdmin ? Batons\Db::all('SELECT id, username, is_admin, created_at FROM users WHERE password_hash IS NOT NULL ORDER BY username') : null,
+        ], 'Compte');
 
     // --- Éléments masqués : déverrouillage, code, passkeys ---------------------------
     case 'unlock':

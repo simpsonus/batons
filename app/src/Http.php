@@ -62,7 +62,15 @@ final class Http
             return;
         }
         session_name('batons_sid');
+        // Sessions stockées avec les données (survivent aux redémarrages), valables 30 jours.
+        $dir = Config::get('data_dir') . '/sessions';
+        if (is_dir($dir) || @mkdir($dir, 0700, true)) {
+            session_save_path($dir);
+        }
+        ini_set('session.gc_maxlifetime', (string) (30 * 86400));
+        ini_set('session.use_strict_mode', '1');
         session_set_cookie_params([
+            'lifetime' => 30 * 86400,
             'httponly' => true,
             'samesite' => 'Lax',
             'secure'   => (($_SERVER['HTTPS'] ?? '') !== '' && $_SERVER['HTTPS'] !== 'off')
