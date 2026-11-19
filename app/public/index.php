@@ -101,6 +101,11 @@ $posInt = static function (string $raw): ?int {
     return ctype_digit($raw) && (int) $raw > 0 && (int) $raw < 100000 ? (int) $raw : null;
 };
 
+/** Étape d'un jeu : start | finish | null. */
+$milestone = static function (string $raw): ?string {
+    return in_array($raw, ['start', 'finish'], true) ? $raw : null;
+};
+
 /** Note 1 à 10, ou null. */
 $rating = static function (string $raw): ?int {
     return ctype_digit($raw) && (int) $raw >= 1 && (int) $raw <= 10 ? (int) $raw : null;
@@ -181,7 +186,8 @@ switch ($route) {
         Events::update((int) $ev['id'], $at, $parseValue(Http::input('value')), Http::input('note'));
         if ($ev['work_id']) {
             Events::updateWork((int) $ev['id'], $posInt(Http::input('season')), $posInt(Http::input('episode')),
-                $posInt(Http::input('volume')), $rating(Http::input('rating')));
+                $posInt(Http::input('volume')), $rating(Http::input('rating')),
+                $ev['kind'] === 'jeu' ? $milestone(Http::input('milestone')) : null);
         }
         Http::flash('Bâton modifié.');
         Http::redirect('category', ['id' => $ev['category_id']]);
@@ -261,8 +267,9 @@ switch ($route) {
         $continue = [];
         foreach (Batons\Works::inCategory($uid, (int) $c['id']) as $w) {
             $next = Batons\Works::next($uid, $w, Batons\Works::lastEvent((int) $w['id'], (int) $c['id']));
-            if ($w['kind'] === 'jeu' && strtotime($w['last_at'] . ' UTC') < time() - 90 * 86400) {
-                $next = null; // jeux pas joués depuis 3 mois : pas dans « Continuer »
+            if ($w['kind'] === 'jeu' && (strtotime($w['last_at'] . ' UTC') < time() - 90 * 86400
+                    || Batons\Works::status((int) $w['id'], (int) $c['id'])['state'] === 'done')) {
+                $next = null; // jeux terminés ou pas joués depuis 3 mois : pas dans « Continuer »
             }
             if ($next !== null) {
                 $continue[] = ['work' => $w, 'next' => $next];
@@ -308,9 +315,11 @@ switch ($route) {
                 $c['kind'] === 'serie' ? $posInt(Http::input('season')) : null,
                 $c['kind'] === 'serie' ? $posInt(Http::input('episode')) : null,
                 $c['kind'] === 'livre' ? $posInt(Http::input('volume')) : null,
-                $rating(Http::input('rating')), Http::input('note'));
+                $rating(Http::input('rating')), Http::input('note'),
+                $c['kind'] === 'jeu' ? $milestone(Http::input('milestone')) : null);
             $ev = Events::find($uid, $evId);
-            $label = trim($w['title'] . ' ' . Batons\Works::progress($ev['season'], $ev['episode'], $ev['volume']));
+            $label = trim($w['title'] . ' ' . Batons\Works::progress($ev['season'], $ev['episode'], $ev['volume'])
+                . ['start' => ' : commencé', 'finish' => ' : terminé', '' => ''][$ev['milestone'] ?? '']);
             Http::flash('« ' . $label . ' » ajouté.', $evId);
             Http::redirect('work', ['id' => $c['id'], 'work' => $w['id']]);
         }
@@ -324,6 +333,20 @@ switch ($route) {
         $last = $evs[0] ?? null;
         Http::render('work', ['c' => $c, 'w' => $w, 'events' => $evs,
             'next' => Batons\Works::next($uid, $w, $last), 'last' => $last], $w['title']);
+
+    case 'work_mark':
+        $c = $category(Http::intInput('id'));
+        $w = Batons\Works::find($uid, (int) Http::intInput('work')) ?? Http::notFound('Œuvre');
+        $m = $milestone(Http::input('milestone'));
+        if ($m === null || $c['kind'] !== 'jeu') {
+            Http::redirect('work', ['id' => $c['id'], 'work' => $w['id']]);
+        }
+        $evId = Events::addWork((int) $c['id'], Time::nowUtc(), (int) $w['id'], null, null, null, null, null, $m);
+        $st = Batons\Works::status((int) $w['id'], (int) $c['id']);
+        Http::flash($m === 'finish'
+            ? '« ' . $w['title'] . ' » terminé en ' . Batons\Works::daysLabel((int) $st['days']) . '. Bravo !'
+            : '« ' . $w['title'] . ' » commencé aujourd\'hui.', $evId);
+        Http::redirect('work', ['id' => $c['id'], 'work' => $w['id']]);
 
     case 'work_next':
         $c = $category(Http::intInput('id'));
@@ -620,12 +643,13 @@ switch ($route) {
         $out = fopen('php://output', 'w');
         fwrite($out, "\xEF\xBB\xBF"); // BOM pour Excel
         fputcsv($out, ['date_locale', 'date_utc', 'categorie', 'groupe', 'valeur', 'unite', 'note',
-            'type', 'oeuvre', 'oeuvre_detail', 'annee', 'source', 'source_id', 'saison', 'episode', 'tome', 'note_sur_10'], ';');
+            'type', 'oeuvre', 'oeuvre_detail', 'annee', 'source', 'source_id', 'saison', 'episode', 'tome', 'note_sur_10', 'etape'], ';');
         $stmt = Events::allForExport($uid);
         while ($r = $stmt->fetch()) {
             fputcsv($out, [Time::local($r['occurred_at'])->format('Y-m-d H:i'), $r['occurred_at'], $r['category'],
                 $r['grp'], $r['value'], $r['unit'], $r['note'], $r['kind'], $r['work'], $r['work_subtitle'], $r['work_year'],
-                $r['work_source'], $r['work_source_id'], $r['season'], $r['episode'], $r['volume'], $r['rating']], ';');
+                $r['work_source'], $r['work_source_id'], $r['season'], $r['episode'], $r['volume'], $r['rating'],
+                ['start' => 'debut', 'finish' => 'fin'][$r['milestone'] ?? ''] ?? ''], ';');
         }
         exit;
 

@@ -22,6 +22,15 @@
                 <label class="narrow">Saison <input type="number" name="season" min="1" inputmode="numeric" value="<?= e($ev['season']) ?>"></label>
                 <label class="narrow">Épisode <input type="number" name="episode" min="1" inputmode="numeric" value="<?= e($ev['episode']) ?>"></label>
             </div>
+        <?php elseif ($ev['kind'] === 'jeu'): ?>
+            <fieldset>
+                <legend>Ce bâton marque</legend>
+                <div class="kind-choice">
+                    <?php foreach (['' => 'Une partie', 'start' => 'Le début du jeu', 'finish' => 'La fin du jeu'] as $k => $label): ?>
+                        <label class="chip wide"><input type="radio" name="milestone" value="<?= $k ?>" <?= (string) $ev['milestone'] === $k ? 'checked' : '' ?>><span><?= $label ?></span></label>
+                    <?php endforeach; ?>
+                </div>
+            </fieldset>
         <?php elseif ($ev['kind'] === 'livre'): ?>
             <label class="narrow">Tome <input type="number" name="volume" min="1" inputmode="numeric" value="<?= e($ev['volume']) ?>"></label>
         <?php endif; ?>

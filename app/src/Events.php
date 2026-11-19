@@ -20,19 +20,21 @@ final class Events
 
     /** Bâton d'une catégorie « œuvre ». */
     public static function addWork(int $categoryId, string $atUtc, int $workId, ?int $season, ?int $episode,
-                                   ?int $volume, ?int $rating, ?string $note): int
+                                   ?int $volume, ?int $rating, ?string $note, ?string $milestone = null): int
     {
         Db::run(
-            'INSERT INTO events (category_id, occurred_at, work_id, season, episode, volume, rating, note, created_at)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-            [$categoryId, $atUtc, $workId, $season, $episode, $volume, $rating, $note === '' ? null : $note, Time::nowUtc()]
+            'INSERT INTO events (category_id, occurred_at, work_id, season, episode, volume, rating, note, milestone, created_at)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            [$categoryId, $atUtc, $workId, $season, $episode, $volume, $rating, $note === '' ? null : $note,
+             in_array($milestone, ['start', 'finish'], true) ? $milestone : null, Time::nowUtc()]
         );
         return Db::lastId();
     }
 
-    public static function updateWork(int $id, ?int $season, ?int $episode, ?int $volume, ?int $rating): void
+    public static function updateWork(int $id, ?int $season, ?int $episode, ?int $volume, ?int $rating, ?string $milestone = null): void
     {
-        Db::run('UPDATE events SET season = ?, episode = ?, volume = ?, rating = ? WHERE id = ?', [$season, $episode, $volume, $rating, $id]);
+        Db::run('UPDATE events SET season = ?, episode = ?, volume = ?, rating = ?, milestone = ? WHERE id = ?',
+            [$season, $episode, $volume, $rating, in_array($milestone, ['start', 'finish'], true) ? $milestone : null, $id]);
     }
 
     public static function find(int $userId, int $id): ?array
@@ -99,7 +101,7 @@ final class Events
         return Db::run(
             'SELECT e.occurred_at, c.name AS category, g.name AS grp, e.value, c.unit, e.note, c.kind,
                     w.title AS work, w.subtitle AS work_subtitle, w.year AS work_year, w.source AS work_source,
-                    w.source_id AS work_source_id, e.season, e.episode, e.volume, e.rating
+                    w.source_id AS work_source_id, e.season, e.episode, e.volume, e.rating, e.milestone
                FROM events e JOIN categories c ON c.id = e.category_id
                LEFT JOIN groups g ON g.id = c.group_id
                LEFT JOIN works w ON w.id = e.work_id

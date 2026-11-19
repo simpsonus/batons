@@ -26,12 +26,25 @@ $events = array_slice($events, 0, 50);
 </div>
 
 <?php if ($c['kind'] !== 'simple'): ?>
-    <?php $works = Batons\Works::inCategory($uid, $id); ?>
+    <?php
+    $works = Batons\Works::inCategory($uid, $id);
+    $statuses = [];
+    if ($c['kind'] === 'jeu') {
+        foreach ($works as $w) {
+            $statuses[$w['id']] = Batons\Works::status((int) $w['id'], $id);
+        }
+        $doneDays = array_column(array_filter($statuses, static fn($s) => $s['state'] === 'done'), 'days');
+    }
+    ?>
     <section class="card" style="--c: <?= e($c['color']) ?>" aria-labelledby="works-title">
         <div class="card-head">
             <h2 id="works-title" class="card-title"><?= e(Batons\Catalog::KINDS[$c['kind']]) ?> <span class="muted small"><?= count($works) ?></span></h2>
             <a class="btn accent" href="<?= url('work_add', ['id' => $id]) ?>">+ Ajouter</a>
         </div>
+        <?php if (!empty($doneDays)): ?>
+            <p class="small"><?= count($doneDays) ?> jeu<?= count($doneDays) > 1 ? 'x' : '' ?> terminé<?= count($doneDays) > 1 ? 's' : '' ?>,
+                en <strong><?= e(Batons\Works::daysLabel((int) round(array_sum($doneDays) / count($doneDays)))) ?></strong> en moyenne.</p>
+        <?php endif; ?>
         <?php if (!$works): ?>
             <p class="muted">Rien pour l'instant : « + Ajouter » pour chercher <?= ['film' => 'un film', 'serie' => 'une série', 'livre' => 'un livre', 'jeu' => 'un jeu'][$c['kind']] ?>.</p>
         <?php else: ?>
@@ -43,14 +56,16 @@ $events = array_slice($events, 0, 50);
                         <span class="poster sm" aria-hidden="true"><?php if (poster_url($w)): ?><img src="<?= e(poster_url($w)) ?>" alt="" loading="lazy" width="46" height="69"><?php else: ?><?= icon($c['icon']) ?><?php endif; ?></span>
                         <span class="work-text">
                             <a class="work-title" href="<?= url('work', ['id' => $id, 'work' => $w['id']]) ?>"><?= e($w['title']) ?></a>
+                            <?php $stW = $statuses[$w['id']] ?? null; ?>
                             <span class="muted small"><?= e(implode(' · ', array_filter([
+                                $stW ? ($stW['state'] === 'done' ? 'Terminé en ' . Batons\Works::daysLabel((int) $stW['days']) : 'En cours depuis ' . Batons\Works::daysLabel((int) $stW['days'])) : null,
                                 Batons\Works::progress($lastW['season'] ?? null, $lastW['episode'] ?? null, $lastW['volume'] ?? null),
                                 Time::ago($w['last_at']),
                                 (int) $w['n'] > 1 ? $w['n'] . ' bâtons' : null,
                             ]))) ?></span>
                             <?php if ($w['avg_rating'] !== null): ?><?= rating_badge((int) round((float) $w['avg_rating'])) ?><?php endif; ?>
                         </span>
-                        <?php if ($nextW): ?>
+                        <?php if ($nextW && !($stW && $stW['state'] === 'done')): ?>
                             <form method="post" action="<?= url('work_next', ['id' => $id, 'work' => $w['id']]) ?>">
                                 <?= csrf() ?>
                                 <input type="hidden" name="back" value="<?= e(here()) ?>">

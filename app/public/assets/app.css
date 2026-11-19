@@ -479,3 +479,11 @@ a.tap { text-decoration: none; }
 .work-title:hover { text-decoration: underline; }
 .work-actions { margin: 0 0 1rem; }
 .work-actions form { margin: 0; }
+
+.milestone { font-size: .8rem; font-weight: 700; padding: .05rem .45rem; border-radius: 999px; background: var(--line); }
+.dates { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(9rem, 100%), 1fr)); gap: .6rem; margin: 0 0 1rem; }
+.dates div { min-width: 0; }
+.dates dt { font-size: .8rem; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+.dates dd { margin: 0; font-weight: 600; }
+.dates dd.big { font-size: 1.35rem; font-weight: 700; }
+.game-status form { margin: 0 0 .5rem; }

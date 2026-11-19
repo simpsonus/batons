@@ -94,7 +94,7 @@ repository.yaml         pour ajouter le dépôt comme source d'add-ons dans HA
 ## Modèle de données
 
 `users` → `groups` (facultatifs) → `categories` (nom, icône, couleur, unité, position, archivée, masquée, kind)
-→ `events` (occurred_at UTC, value, note, + work_id, season, episode, volume, rating pour les œuvres).
+→ `events` (occurred_at UTC, value, note, + work_id, season, episode, volume, rating, milestone pour les œuvres).
 `works` (par utilisateur : kind, source, source_id, titre, sous-titre, année, affiche, saisons en JSON).
 Autres : `passkeys`, `user_settings`, `login_failures`, `http_cache`.
 Nouvelle évolution de schéma = nouveau fichier `app/migrations/00N_xxx.sql`, jamais modifier un ancien.
@@ -137,6 +137,8 @@ docker build -f docker/Dockerfile -t batons . && docker run -p 8080:8080 -v $PWD
 - [x] v0.9 : catégories « œuvre » (séries, films, livres) : recherche catalogue, épisode/tome suivant,
       note sur 10, affiches, export/réimport.
 - [x] v0.10 : jeux vidéo (RAWG, « ▶ Partie »), fiche œuvre, libellés Ajouter / Mettre à jour clarifiés.
+- [x] v0.11 : jeux : bâtons-étapes `events.milestone` (start / finish), durée pour finir (`Works::status()`),
+      moyenne des jeux terminés. Extensible aux livres si besoin.
 - [ ] Plus tard éventuellement : synchro BetaSeries / Trakt (pas SensCritique ni SerieBox : pas d'API
       publique). Jamais de synchro pour une catégorie masquée.
 - [ ] Recherche / filtre dans la chronologie.

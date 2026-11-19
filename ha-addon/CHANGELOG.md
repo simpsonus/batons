@@ -1,5 +1,12 @@
 # Journal des modifications
 
+## 0.11.0
+- Jeux vidéo : **date de début et date de fin**. « Commencé aujourd'hui » / « 🏁 Terminé aujourd'hui »
+  sur la fiche du jeu, ou n'importe quelle date via « + Ajouter une partie… » ou en modifiant le bâton.
+- Durée affichée (« Terminé en 47 jours », « En cours depuis 12 jours ») et durée moyenne des jeux terminés.
+- Les jeux terminés sortent de « Continuer » ; « Recommencer » pour une nouvelle partie complète.
+- Export CSV : nouvelle colonne « etape » (debut / fin), reprise à l'import.
+
 ## 0.10.0
 - Nouveau type de catégorie **Jeux vidéo** : recherche RAWG (clé gratuite dans Compte), plateformes,
   « ▶ Partie » en un tap, note sur 10 ; saisie manuelle possible sans clé.

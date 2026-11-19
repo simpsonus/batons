@@ -181,7 +181,8 @@ final class Importer
                 } else {
                     $rt = $int($r['note_sur_10'] ?? null);
                     Events::addWork($id, $at, $workId, $int($r['saison'] ?? null), $int($r['episode'] ?? null),
-                        $int($r['tome'] ?? null), $rt !== null && $rt <= 10 ? $rt : null, trim($r['note'] ?? ''));
+                        $int($r['tome'] ?? null), $rt !== null && $rt <= 10 ? $rt : null, trim($r['note'] ?? ''),
+                        ['debut' => 'start', 'fin' => 'finish'][$r['etape'] ?? ''] ?? null);
                     $this->report['events_imported']++;
                 }
                 continue;

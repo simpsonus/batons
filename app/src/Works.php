@@ -100,7 +100,7 @@ final class Works
     public static function next(int $userId, array $work, ?array $last): ?array
     {
         if ($work['kind'] === 'jeu') {
-            return ['session' => true]; // une partie de plus
+            return ['session' => true]; // une partie de plus (le jeu terminé est écarté par l'appelant)
         }
         if ($work['kind'] === 'livre') {
             return ($last && $last['volume']) ? ['volume' => (int) $last['volume'] + 1] : null;
@@ -145,6 +145,43 @@ final class Works
             return ['season' => $s, 'episode' => $e + 1]; // saison inconnue du catalogue : on avance quand même
         }
         return null; // à jour
+    }
+
+    /**
+     * Début, fin et durée d'une œuvre dans une catégorie (jeux vidéo).
+     * Début = dernier « Commencé » (sinon premier bâton) ; fin = dernier « Terminé » postérieur au début.
+     * Renvoie ['state' => none|playing|done, 'start' => utc|null, 'finish' => utc|null, 'days' => int|null].
+     */
+    public static function status(int $workId, int $categoryId): array
+    {
+        $rows = Db::all('SELECT occurred_at, milestone FROM events WHERE work_id = ? AND category_id = ? ORDER BY occurred_at, id',
+            [$workId, $categoryId]);
+        if (!$rows) {
+            return ['state' => 'none', 'start' => null, 'finish' => null, 'days' => null];
+        }
+        $start = null;
+        $finish = null;
+        foreach ($rows as $r) {
+            if ($r['milestone'] === 'start') {
+                $start = $r['occurred_at'];
+                $finish = null; // nouvelle partie complète (on recommence le jeu)
+            } elseif ($r['milestone'] === 'finish') {
+                $finish = $r['occurred_at'];
+            }
+        }
+        $start ??= $rows[0]['occurred_at'];
+        if ($finish !== null && $finish < $start) {
+            $finish = null;
+        }
+        $end = Time::local($finish ?? Time::nowUtc())->setTime(0, 0);
+        $days = (int) Time::local($start)->setTime(0, 0)->diff($end)->days;
+        return ['state' => $finish ? 'done' : 'playing', 'start' => $start, 'finish' => $finish, 'days' => $days];
+    }
+
+    /** « 47 jours », « 1 jour », « le jour même » */
+    public static function daysLabel(int $days): string
+    {
+        return $days === 0 ? 'le jour même' : $days . ' jour' . ($days > 1 ? 's' : '');
     }
 
     /** « S02E05 », « Tome 3 » ou '' */

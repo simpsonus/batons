@@ -1,7 +1,7 @@
 # Add-on Home Assistant : une simple enveloppe autour de l'image Docker générique.
 # Rien de spécifique à HA dans l'application : tout passe par des variables d'environnement.
 name: Bâtons
-version: "0.10.0"
+version: "0.11.0"
 slug: batons
 description: Compter et dater tout ce qui compte (habitudes, événements, symptômes…).
 url: https://github.com/simpsonus/batons

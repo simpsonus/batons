@@ -21,8 +21,34 @@ $avg = $ratings ? (int) round(array_sum($ratings) / count($ratings)) : null;
     </div>
 </div>
 
+<?php if ($c['kind'] === 'jeu'): $st = Works::status((int) $w['id'], (int) $c['id']); ?>
+    <section class="card game-status" style="--c: <?= e($c['color']) ?>" aria-labelledby="st-title">
+        <h2 id="st-title" class="card-title">Progression</h2>
+        <?php if ($st['state'] === 'none'): ?>
+            <p class="muted">Pas encore commencé.</p>
+        <?php else: ?>
+            <dl class="dates">
+                <div><dt>Commencé</dt><dd><?= e(Time::longDate(Time::local($st['start']))) ?></dd></div>
+                <div><dt>Terminé</dt><dd><?= $st['finish'] ? e(Time::longDate(Time::local($st['finish']))) : '<span class="muted">en cours</span>' ?></dd></div>
+                <div><dt><?= $st['state'] === 'done' ? 'Durée' : 'Depuis' ?></dt><dd class="big"><?= e(Works::daysLabel((int) $st['days'])) ?></dd></div>
+            </dl>
+        <?php endif; ?>
+        <form method="post" action="<?= url('work_mark', ['id' => $c['id'], 'work' => $w['id']]) ?>">
+            <?= csrf() ?>
+            <?php if ($st['state'] === 'playing'): ?>
+                <input type="hidden" name="milestone" value="finish">
+                <button class="btn accent">🏁 Terminé aujourd'hui</button>
+            <?php else: ?>
+                <input type="hidden" name="milestone" value="start">
+                <button class="btn <?= $st['state'] === 'done' ? 'ghost' : 'accent' ?>"><?= $st['state'] === 'done' ? 'Recommencer aujourd\'hui' : 'Commencé aujourd\'hui' ?></button>
+            <?php endif; ?>
+        </form>
+        <p class="muted small">Autre date ? « + Ajouter une partie… » puis « Le début / La fin du jeu », ou modifie le bâton dans l'historique.</p>
+    </section>
+<?php endif; ?>
+
 <div class="actions work-actions" style="--c: <?= e($c['color']) ?>">
-    <?php if ($next && $last): ?>
+    <?php if ($next && $last && !($c['kind'] === 'jeu' && ($st['state'] ?? '') === 'done')): ?>
         <form method="post" action="<?= url('work_next', ['id' => $c['id'], 'work' => $w['id']]) ?>">
             <?= csrf() ?>
             <input type="hidden" name="back" value="<?= e(here()) ?>">
