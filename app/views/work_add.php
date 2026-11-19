@@ -45,7 +45,7 @@ $kindLabel = ['film' => 'un film', 'serie' => 'une série', 'livre' => 'un livre
                 <li>
                     <span class="poster sm" aria-hidden="true"><?php if (poster_url($w)): ?><img src="<?= e(poster_url($w)) ?>" alt="" width="46" height="69"><?php else: ?><?= icon($c['icon']) ?><?php endif; ?></span>
                     <span class="work-text">
-                        <a class="work-title" href="<?= url('work', ['id' => $c['id'], 'work' => $w['id']]) ?>"><?= e($w['title']) ?></a>
+                        <a class="work-title" href="<?= url('work', from_here(['id' => $c['id'], 'work' => $w['id']])) ?>"><?= e($w['title']) ?></a>
                         <?php
                         $stC = in_array($c['kind'], Works::TRACKED, true) ? Works::status((int) $w['id'], (int) $c['id']) : null;
                         $volC = $c['kind'] === 'livre' ? Works::currentVolume((int) $w['id'], (int) $c['id']) : null;
@@ -99,7 +99,7 @@ $kindLabel = ['film' => 'un film', 'serie' => 'une série', 'livre' => 'un livre
     </details>
 </section>
 
-<a class="stats-link" href="<?= url('category', ['id' => $c['id']]) ?>">
+<a class="stats-link" href="<?= url('category', from_here(['id' => $c['id']])) ?>">
     <?= ui_icon('chart') ?>
     <span class="grow"><span class="stats-main">Statistiques et historique</span>
         <span class="stats-sub"><?= ['film' => 'tous les films', 'serie' => 'toutes les séries', 'livre' => 'tous les livres', 'jeu' => 'tous les jeux'][$c['kind']] ?>, calendrier</span></span>

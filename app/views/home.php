@@ -61,7 +61,7 @@ $currentGroup = false;
             </button>
         </form>
         <?php endif; ?>
-        <a class="more" href="<?= url('category', ['id' => $c['id']]) ?>" title="Détails, saisie avec date, valeur ou note">
+        <a class="more" href="<?= url('category', from_here(['id' => $c['id']])) ?>" title="Détails, saisie avec date, valeur ou note">
             <?= ui_icon('chevron') ?><span class="sr">Détails de <?= e($c['name']) ?></span>
         </a>
     </div>

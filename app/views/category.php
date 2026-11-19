@@ -16,7 +16,7 @@ $events = array_slice($events, 0, 50);
         <div>
             <div class="title-line">
                 <h1><?= e($c['name']) ?></h1>
-                <a class="icon-btn edit-btn" href="<?= url('category_edit', ['id' => $id]) ?>" aria-label="Modifier la catégorie <?= e($c['name']) ?>" title="Modifier la catégorie (nom, icône, couleur, groupe…)"><?= ui_icon('pencil') ?></a>
+                <a class="icon-btn edit-btn" href="<?= url('category_edit', from_here(['id' => $id])) ?>" aria-label="Modifier la catégorie <?= e($c['name']) ?>" title="Modifier la catégorie (nom, icône, couleur, groupe…)"><?= ui_icon('pencil') ?></a>
             </div>
             <?php if ($c['group_name']): ?><p class="muted"><?= e($c['group_name']) ?></p><?php endif; ?>
             <?php if ($c['archived']): ?><p class="badge">Archivée</p><?php endif; ?>
@@ -24,7 +24,7 @@ $events = array_slice($events, 0, 50);
         </div>
     </div>
     <div class="head-tools">
-        <?= close_link($c['kind'] !== 'simple' ? url('work_add', ['id' => $id]) : url(), $c['kind'] !== 'simple' ? 'Fermer (retour à ' . $c['name'] . ')' : 'Fermer (retour aux catégories)') ?>
+        <?= close_link(from_url($c['kind'] !== 'simple' ? url('work_add', ['id' => $id]) : url()), 'Fermer') ?>
     </div>
 </div>
 
@@ -59,7 +59,7 @@ $events = array_slice($events, 0, 50);
                     <li>
                         <span class="poster sm" aria-hidden="true"><?php if (poster_url($w)): ?><img src="<?= e(poster_url($w)) ?>" alt="" loading="lazy" width="46" height="69"><?php else: ?><?= icon($c['icon']) ?><?php endif; ?></span>
                         <span class="work-text">
-                            <a class="work-title" href="<?= url('work', ['id' => $id, 'work' => $w['id']]) ?>"><?= e($w['title']) ?></a>
+                            <a class="work-title" href="<?= url('work', from_here(['id' => $id, 'work' => $w['id']])) ?>"><?= e($w['title']) ?></a>
                             <?php $stW = $statuses[$w['id']] ?? null; ?>
                             <span class="muted small"><?= e(implode(' · ', array_filter([
                                 $stW ? (($vW = $c['kind'] === 'livre' ? Batons\Works::currentVolume((int) $w['id'], $id) : null) ? 'Tome ' . $vW . ' ' : '')
@@ -214,13 +214,13 @@ krsort($byMonth);
     <div class="chart-head">
         <nav class="seg" aria-label="Échelle">
             <?php foreach (['day' => '30 jours', 'week' => '12 semaines', 'month' => '12 mois'] as $k => $label): ?>
-                <a href="<?= url('category', ['id' => $id, 'scale' => $k, 'metric' => $metric]) ?>" <?= $scale === $k ? 'aria-current="true"' : '' ?>><?= $label ?></a>
+                <a href="<?= url('category', keep_from(['id' => $id, 'scale' => $k, 'metric' => $metric])) ?>" <?= $scale === $k ? 'aria-current="true"' : '' ?>><?= $label ?></a>
             <?php endforeach; ?>
         </nav>
         <?php if ($hasValues): ?>
             <nav class="seg" aria-label="Mesure">
-                <a href="<?= url('category', ['id' => $id, 'scale' => $scale, 'metric' => 'count']) ?>" <?= $metric === 'count' ? 'aria-current="true"' : '' ?>>Nombre</a>
-                <a href="<?= url('category', ['id' => $id, 'scale' => $scale, 'metric' => 'sum']) ?>" <?= $metric === 'sum' ? 'aria-current="true"' : '' ?>>Somme<?= $c['unit'] ? ' (' . e($c['unit']) . ')' : '' ?></a>
+                <a href="<?= url('category', keep_from(['id' => $id, 'scale' => $scale, 'metric' => 'count'])) ?>" <?= $metric === 'count' ? 'aria-current="true"' : '' ?>>Nombre</a>
+                <a href="<?= url('category', keep_from(['id' => $id, 'scale' => $scale, 'metric' => 'sum'])) ?>" <?= $metric === 'sum' ? 'aria-current="true"' : '' ?>>Somme<?= $c['unit'] ? ' (' . e($c['unit']) . ')' : '' ?></a>
             </nav>
         <?php endif; ?>
     </div>
@@ -245,8 +245,8 @@ krsort($byMonth);
     <?php else: ?>
         <?php require __DIR__ . '/_event_list.php'; ?>
         <div class="pager">
-            <?php if ($page > 0): ?><a class="btn ghost" href="<?= url('category', ['id' => $id, 'scale' => $scale, 'page' => $page - 1]) ?>">← Plus récents</a><?php endif; ?>
-            <?php if ($hasMore): ?><a class="btn ghost" href="<?= url('category', ['id' => $id, 'scale' => $scale, 'page' => $page + 1]) ?>">Plus anciens →</a><?php endif; ?>
+            <?php if ($page > 0): ?><a class="btn ghost" href="<?= url('category', keep_from(['id' => $id, 'scale' => $scale, 'page' => $page - 1])) ?>">← Plus récents</a><?php endif; ?>
+            <?php if ($hasMore): ?><a class="btn ghost" href="<?= url('category', keep_from(['id' => $id, 'scale' => $scale, 'page' => $page + 1])) ?>">Plus anciens →</a><?php endif; ?>
         </div>
     <?php endif; ?>
 </section>

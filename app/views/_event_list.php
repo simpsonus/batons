@@ -24,7 +24,7 @@ $day = null;
         <span class="time"><time datetime="<?= e($local->format(DATE_ATOM)) ?>"><?= $local->format('H:i') ?></time></span>
         <span class="body">
             <?php if ($showCategory): ?>
-                <a class="cat" href="<?= url('category', ['id' => $ev['category_id']]) ?>"><span class="icon sm" aria-hidden="true"><?= icon($ev['icon']) ?></span><?= e($ev['category_name']) ?><?php if (!empty($ev['is_hidden'])): ?> <span class="hidden-mark" title="Masquée"><?= ui_icon('eye-off') ?><span class="sr">(masquée)</span></span><?php endif; ?></a>
+                <a class="cat" href="<?= url('category', from_here(['id' => $ev['category_id']])) ?>"><span class="icon sm" aria-hidden="true"><?= icon($ev['icon']) ?></span><?= e($ev['category_name']) ?><?php if (!empty($ev['is_hidden'])): ?> <span class="hidden-mark" title="Masquée"><?= ui_icon('eye-off') ?><span class="sr">(masquée)</span></span><?php endif; ?></a>
             <?php endif; ?>
             <?php if (!empty($ev['work_title'])): ?>
                 <span class="work-line"><?php if (empty($hideWork)): ?><strong><?= e($ev['work_title']) ?></strong><?php endif; ?>
@@ -44,7 +44,7 @@ $day = null;
             <?php if ($ev['note'] !== null): ?><span class="note"><?= e($ev['note']) ?></span><?php endif; ?>
         </span>
         <span class="row-actions">
-            <a class="icon-btn" href="<?= url('event_edit', ['id' => $ev['id']]) ?>" aria-label="Modifier le bâton : <?= e($label) ?>" title="Modifier"><?= ui_icon('pencil') ?></a>
+            <a class="icon-btn" href="<?= url('event_edit', from_here(['id' => $ev['id']])) ?>" aria-label="Modifier le bâton : <?= e($label) ?>" title="Modifier"><?= ui_icon('pencil') ?></a>
             <form method="post" action="<?= url('event_delete') ?>" data-confirm="Supprimer ce bâton (<?= e($label) ?>) ?">
                 <?= csrf() ?>
                 <input type="hidden" name="id" value="<?= (int) $ev['id'] ?>">

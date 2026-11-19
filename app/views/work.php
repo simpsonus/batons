@@ -13,7 +13,7 @@ $avg = $ratings ? (int) round(array_sum($ratings) / count($ratings)) : null;
             <h1><?= e($w['title']) ?></h1>
             <p class="muted"><?= e(implode(' · ', array_filter([$w['year'], $w['subtitle']]))) ?></p>
             <p class="small">
-                <a href="<?= url('category', ['id' => $c['id']]) ?>"><?= e($c['name']) ?></a>
+                <a href="<?= url('category', from_here(['id' => $c['id']])) ?>"><?= e($c['name']) ?></a>
                 · <?= count($events) ?> bâton<?= count($events) > 1 ? 's' : '' ?>
                 <?= $avg ? ' · ' . rating_badge($avg) : '' ?>
             </p>
@@ -29,7 +29,7 @@ $avg = $ratings ? (int) round(array_sum($ratings) / count($ratings)) : null;
             $c['kind'] !== 'film' ? '<strong>J\'arrête là</strong> : ne plus proposer ce titre dans « Continuer » (tu peux reprendre quand tu veux).' : null,
             'Le crayon de l\'historique corrige un bâton (date, épisode, note…), la corbeille le supprime.',
         ])) ?>
-        <?= close_link(url('work_add', ['id' => $c['id']]), 'Fermer la fiche (retour à ' . $c['name'] . ')') ?>
+        <?= close_link(from_url(url('work_add', ['id' => $c['id']])), 'Fermer la fiche') ?>
     </div>
 </div>
 

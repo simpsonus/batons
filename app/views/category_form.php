@@ -1,15 +1,17 @@
 <?php
 $isEdit = !empty($c['id']);
+$closeTo = from_url($isEdit ? url('category', ['id' => $c['id']]) : url());
 $palette = ['#c2410c' => 'Orange', '#b91c1c' => 'Rouge', '#be185d' => 'Rose', '#7c3aed' => 'Violet', '#1d4ed8' => 'Bleu',
             '#0e7490' => 'Bleu canard', '#047857' => 'Vert', '#4d7c0f' => 'Vert olive', '#a16207' => 'Ocre', '#57534e' => 'Gris'];
 ?>
 <div class="page-head">
     <h1><?= $isEdit ? 'Modifier la catégorie' : 'Nouvelle catégorie' ?></h1>
-    <div class="head-tools"><?= close_link($isEdit ? url('category', ['id' => $c['id']]) : url(), 'Fermer sans enregistrer') ?></div>
+    <div class="head-tools"><?= close_link($closeTo, 'Fermer sans enregistrer') ?></div>
 </div>
 
 <form class="card" method="post" action="<?= url('category_save') ?>">
     <?= csrf() ?>
+    <input type="hidden" name="back" value="<?= e($closeTo) ?>">
     <?php if ($isEdit): ?><input type="hidden" name="id" value="<?= (int) $c['id'] ?>"><?php endif; ?>
 
     <div class="row">
@@ -88,7 +90,7 @@ $palette = ['#c2410c' => 'Orange', '#b91c1c' => 'Rouge', '#be185d' => 'Rose', '#
 
     <div class="form-actions">
         <button class="btn accent"><?= $isEdit ? 'Enregistrer' : 'Créer' ?></button>
-        <a class="btn ghost" href="<?= $isEdit ? url('category', ['id' => $c['id']]) : url() ?>">Annuler</a>
+        <a class="btn ghost" href="<?= e($closeTo) ?>">Annuler</a>
     </div>
 </form>
 

@@ -1,5 +1,10 @@
 # Journal des modifications
 
+## 0.20.1
+- **Correctif : la croix ✕ ramène là d'où l'on vient.** Par exemple : accueil › Statistiques et historique
+  › fiche d'un film, puis ✕ revient à la liste, et ✕ encore revient à l'accueil. Idem depuis la
+  Chronologie (modifier un bâton puis ✕ ou « Enregistrer » ramène à la Chronologie), les Archives, etc.
+
 ## 0.20.0
 - **Aide « ? » réécrite** pour les films, séries, livres et jeux : elle commence par l'essentiel
   (ajouter un titre : le chercher, le choisir, puis « + Ajouter le bâton ») et renvoie aux vrais

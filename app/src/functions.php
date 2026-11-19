@@ -30,6 +30,36 @@ function here(): string
     return './' . ($q !== '' ? '?' . $q : '');
 }
 
+/*
+ * Retour « d'où l'on vient » : les liens vers une page secondaire portent ?from=<page d'origine>, et la croix ✕
+ * (ou « Annuler », ou la redirection après enregistrement) y ramène. Sans « from » valide : un écran fixe par défaut.
+ * Seules les URL relatives de l'application sont acceptées (pas de redirection ouverte).
+ */
+function safe_from(mixed $v): ?string
+{
+    return is_string($v) && $v !== '' && strlen($v) < 1500 && str_starts_with($v, './')
+        && !str_contains($v, '//') && !str_contains($v, '\\') ? $v : null;
+}
+
+/** Page d'origine transmise par « from », sinon $default. */
+function from_url(string $default): string
+{
+    return safe_from($_GET['from'] ?? null) ?? $default;
+}
+
+/** Paramètres d'un lien qui doit ramener ici (ajoute from = page courante). */
+function from_here(array $params): array
+{
+    return $params + ['from' => here()];
+}
+
+/** Paramètres d'un lien vers la même page (pagination, échelle…) : conserve le « from » reçu. */
+function keep_from(array $params): array
+{
+    $f = safe_from($_GET['from'] ?? null);
+    return $f ? $params + ['from' => $f] : $params;
+}
+
 /** HTML d'une icône de catégorie (émoji ou « mdi:nom »). */
 function icon(?string $icon): string
 {

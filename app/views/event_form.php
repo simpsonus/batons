@@ -1,12 +1,14 @@
-<?php use Batons\Time; ?>
+<?php use Batons\Time;
+$closeTo = from_url(url('category', ['id' => $ev['category_id']])); ?>
 <div class="page-head">
     <h1>Modifier le bâton</h1>
-    <div class="head-tools"><?= close_link(url('category', ['id' => $ev['category_id']]), 'Fermer sans enregistrer') ?></div>
+    <div class="head-tools"><?= close_link($closeTo, 'Fermer sans enregistrer') ?></div>
 </div>
 <p class="muted"><span class="icon sm" aria-hidden="true" style="--c: <?= e($ev['color']) ?>"><?= icon($ev['icon']) ?></span> <?= e($ev['category_name']) ?></p>
 
 <form class="card" method="post" action="<?= url('event_save') ?>">
     <?= csrf() ?>
+    <input type="hidden" name="back" value="<?= e($closeTo) ?>">
     <input type="hidden" name="id" value="<?= (int) $ev['id'] ?>">
     <div class="row">
         <label>Quand
@@ -53,7 +55,7 @@
     </label>
     <div class="form-actions">
         <button class="btn accent">Mettre à jour</button>
-        <a class="btn ghost" href="<?= url('category', ['id' => $ev['category_id']]) ?>">Annuler</a>
+        <a class="btn ghost" href="<?= e($closeTo) ?>">Annuler</a>
     </div>
 </form>
 

@@ -212,7 +212,7 @@ switch ($route) {
                 in_array($ev['kind'], Batons\Works::TRACKED, true) ? $milestone(Http::input('milestone')) : null);
         }
         Http::flash('Bâton modifié.');
-        Http::redirect('category', ['id' => $ev['category_id']]);
+        Http::back('category', ['id' => $ev['category_id']]);
 
     case 'event_delete':
         $ev = $event(Http::intInput('id'));
@@ -249,7 +249,7 @@ switch ($route) {
                 Http::redirect();
             }
             Http::flash('Catégorie enregistrée.');
-            Http::redirect('category', ['id' => $id]);
+            Http::back('category', ['id' => $id]);
         }
         $id = Categories::create($uid, $data);
         Http::flash('Catégorie « ' . $data['name'] . ' » créée.');

@@ -61,7 +61,9 @@ Le nom vient des bâtons qu'on trace pour compter (IIII barrés). Slug technique
   téléphone, route `menu` sans JS). Ajouter une entrée de menu = l'ajouter là ; le menu ne contient que des entrées valables
   depuis n'importe quel écran (Réorganiser est sur l'accueil, ligne `.home-actions` sous les groupes).
 - **Pages secondaires** (fiche catégorie, fiche œuvre, formulaires) : ✕ en haut à droite via `close_link()` dans
-  `.head-tools`, vers un écran fixe (accueil, « Continuer » de la catégorie œuvre, fiche) — jamais « page précédente ».
+  `.head-tools`, vers la page d'origine transmise par `?from=` (liens construits avec `from_here()`, conservé sur la
+  même page par `keep_from()`, lu par `from_url($défaut)`, validé par `safe_from()` : URL relative seulement) ; sans `from`,
+  un écran fixe par défaut — jamais `history.back()`. Les formulaires renvoient `back` = cette origine (`Http::back()`).
   Modifier la catégorie = ✎ (`.edit-btn`) collé au nom. Vocabulaire : « fiche » = page d'une œuvre uniquement ; la page
   d'une catégorie s'appelle « Statistiques et historique » (lien `.stats-link` en bas de `work_add`).
 - L'interface ne mentionne pas Home Assistant (l'app doit rester neutre).
@@ -167,6 +169,7 @@ docker build -f docker/Dockerfile -t batons . && docker run -p 8080:8080 -v $PWD
 - [x] v0.18 : ✎ à côté du nom de la catégorie, ✕ « fermer » en haut à droite des pages secondaires.
 - [x] v0.19 : ✕ sur l'écran d'une catégorie œuvre, « Fiche » -> ligne « Statistiques et historique » en bas.
 - [x] v0.20 : aides réécrites (ajouter un titre d'abord), vocabulaire neutre doigt/souris, insécables dans `help_box()`.
+- [x] v0.20.1 : ✕ / Annuler / Enregistrer ramènent à la page d'origine (`from`).
 - [ ] Type de catégorie « Éléments » générique (éléments nommés sans catalogue, plusieurs en parallèle,
       début/fin/durée — mécanique des œuvres) : à faire si un cas concret apparaît (ex. « Traitements »).
 - [ ] Plus tard éventuellement : synchro BetaSeries / Trakt (pas SensCritique ni SerieBox : pas d'API
