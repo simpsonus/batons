@@ -1,5 +1,12 @@
 # Journal des modifications
 
+## 0.25.0
+- **Filtrer la Chronologie** : une rangée de pastilles de groupes en haut (cumulables : un appui ajoute le
+  groupe, un second le retire ; « Tout » efface le filtre), qui reste visible en faisant défiler. Le bouton de
+  réglage ouvre un panneau pour cocher des catégories précises, groupe par groupe, avec « Tout cocher /
+  Tout décocher », une recherche quand il y a beaucoup de catégories et le nombre de bâtons affichés.
+  Le filtre est gardé dans l'adresse (favori possible) et retrouvé après avoir modifié un bâton.
+
 ## 0.24.1
 - Correctif d'affichage : l'encadré en tête de la fiche d'une œuvre avait pris le style du message de la page Exporter.
 

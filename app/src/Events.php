@@ -85,18 +85,31 @@ final class Events
     }
 
     /** Derniers bâtons toutes catégories confondues. */
-    public static function timeline(int $userId, int $limit = 100, int $offset = 0): array
+    public static function timeline(int $userId, int $limit = 100, int $offset = 0, ?array $categoryIds = null): array
     {
+        $only = $categoryIds === null ? '' : ' AND e.category_id IN (' . (implode(',', array_map('intval', $categoryIds)) ?: '0') . ')';
         return Db::all(
             'SELECT e.*, c.name AS category_name, c.icon, c.color, c.unit, c.kind, w.title AS work_title,
                     CASE WHEN c.hidden = 1 OR g.hidden = 1 THEN 1 ELSE 0 END AS is_hidden
                FROM events e JOIN categories c ON c.id = e.category_id
                LEFT JOIN groups g ON g.id = c.group_id
                LEFT JOIN works w ON w.id = e.work_id
-              WHERE c.user_id = ?' . Privacy::visibleSql() . '
+              WHERE c.user_id = ?' . Privacy::visibleSql() . $only . '
               ORDER BY e.occurred_at DESC, e.id DESC LIMIT ? OFFSET ?',
             [$userId, $limit, $offset]
         );
+    }
+
+    /** Nombre de bâtons par catégorie visible (filtre de la chronologie) : [id => n]. */
+    public static function countsByCategory(int $userId): array
+    {
+        $out = [];
+        foreach (Db::all('SELECT c.id, COUNT(e.id) AS n FROM categories c LEFT JOIN groups g ON g.id = c.group_id
+                           LEFT JOIN events e ON e.category_id = c.id
+                          WHERE c.user_id = ?' . Privacy::visibleSql() . ' GROUP BY c.id', [$userId]) as $r) {
+            $out[(int) $r['id']] = (int) $r['n'];
+        }
+        return $out;
     }
 
     /** Tous les bâtons d'un utilisateur, pour l'export CSV. */

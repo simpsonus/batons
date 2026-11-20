@@ -568,6 +568,78 @@
         sync();
     }
 
+    // --- Chronologie : filtre ------------------------------------------------------------------
+    const chips = document.querySelector('[data-chips]');
+    chips?.querySelector('[data-on]')?.scrollIntoView({ block: 'nearest', inline: 'center' });
+    const fSheet = document.querySelector('[data-filter-sheet]');
+    const fOpen = document.querySelector('[data-filter-open]');
+    if (fSheet && fOpen && typeof fSheet.showModal === 'function') {
+        fOpen.addEventListener('click', (ev) => {
+            ev.preventDefault();
+            fSheet.showModal();
+            fSheet.querySelector('h2')?.setAttribute('tabindex', '-1');
+            fSheet.querySelector('h2')?.focus();
+        });
+        fSheet.addEventListener('click', (ev) => {
+            if (ev.target === fSheet) fSheet.close();
+            if (ev.target.closest('[data-filter-close]')) { ev.preventDefault(); fSheet.close(); }
+        });
+        fSheet.addEventListener('close', () => fOpen.focus());
+    }
+    document.querySelectorAll('[data-filter-form]').forEach((form) => {
+        const boxes = () => [...form.querySelectorAll('input[name="c[]"]')];
+        const submit = form.querySelector('[data-filter-submit]');
+        const all = form.querySelector('[data-check-all]');
+        if (all) all.hidden = false;
+        const refresh = () => {
+            form.querySelectorAll('[data-group]').forEach((g) => {
+                const bs = [...g.querySelectorAll('input[name="c[]"]')];
+                const on = bs.filter((b) => b.checked).length;
+                const box = g.querySelector('[data-group-box]');
+                box.hidden = false;
+                box.checked = on === bs.length;
+                box.indeterminate = on > 0 && on < bs.length;
+                g.querySelector('[data-group-state]').textContent = on === bs.length ? 'tout le groupe' : on + ' sur ' + bs.length;
+            });
+            const checked = boxes().filter((b) => b.checked);
+            const n = checked.reduce((s, b) => s + Number(b.dataset.n || 0), 0);
+            const none = checked.length === 0 || checked.length === boxes().length;
+            submit.textContent = none ? 'Afficher tous les bâtons' : 'Afficher ' + n.toLocaleString('fr-FR') + ' bâton' + (n > 1 ? 's' : '');
+            if (all) all.textContent = checked.length === boxes().length ? 'Tout décocher' : 'Tout cocher';
+        };
+        form.addEventListener('change', refresh);
+        form.addEventListener('click', (ev) => {
+            const box = ev.target.closest('[data-group-box]');
+            if (box) {
+                ev.preventDefault();                       // ne pas replier / déplier le groupe
+                const target = !(box.checked && !box.indeterminate);
+                setTimeout(() => {
+                    box.closest('[data-group]').querySelectorAll('input[name="c[]"]').forEach((b) => { b.checked = target; });
+                    refresh();
+                }, 0);
+            }
+            if (ev.target.closest('[data-check-all]')) {
+                const target = !boxes().every((b) => b.checked);
+                boxes().forEach((b) => { b.checked = target; });
+                refresh();
+            }
+        });
+        form.querySelector('[data-filter-search]')?.addEventListener('input', (ev) => {
+            const q = ev.target.value.trim().toLowerCase();
+            form.querySelectorAll('[data-group]').forEach((g) => {
+                let any = false;
+                g.querySelectorAll('.tl-cat').forEach((l) => {
+                    const ok = !q || l.dataset.name.includes(q);
+                    l.hidden = !ok;
+                    any ||= ok;
+                });
+                g.hidden = !any;
+                if (q) g.open = true;
+            });
+        });
+        refresh();
+    });
+
     // Aides « ? » : fermeture par Échap ou clic à l'extérieur.
     document.addEventListener('click', (ev) => {
         document.querySelectorAll('details.help-box[open]').forEach((d) => { if (!d.contains(ev.target)) d.open = false; });
