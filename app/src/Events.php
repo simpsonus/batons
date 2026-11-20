@@ -17,9 +17,7 @@ final class Events
             [$categoryId, $occurredAtUtc ?? Time::nowUtc(), $value, $note === '' ? null : $note,
              in_array($milestone, ['start', 'finish'], true) ? $milestone : null, Time::nowUtc()]
         );
-        $id = Db::lastId();
-        Db::run('UPDATE works SET stopped_at = NULL WHERE id = ? AND stopped_at IS NOT NULL', [$workId]); // reprise
-        return $id;
+        return Db::lastId();
     }
 
     /** Bâton d'une catégorie « œuvre ». */
@@ -32,7 +30,10 @@ final class Events
             [$categoryId, $atUtc, $workId, $season, $episode, $volume, $rating, $note === '' ? null : $note,
              in_array($milestone, ['start', 'finish'], true) ? $milestone : null, Time::nowUtc()]
         );
-        return Db::lastId();
+        $id = Db::lastId();
+        // Un nouveau bâton sur l'œuvre annule « J'arrête là ».
+        Db::run('UPDATE works SET stopped_at = NULL WHERE id = ? AND stopped_at IS NOT NULL', [$workId]);
+        return $id;
     }
 
     public static function updateWork(int $id, ?int $season, ?int $episode, ?int $volume, ?int $rating, ?string $milestone = null): void

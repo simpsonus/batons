@@ -10,7 +10,8 @@ Après l'installation, démarre l'add-on puis ouvre **Bâtons** dans la barre la
 
 - Chaque utilisateur Home Assistant a ses propres catégories et bâtons (identité transmise par Ingress).
 - Les données (base SQLite) sont dans le dossier `/data` de l'add-on et sont incluses dans les
-  sauvegardes Home Assistant.
+  sauvegardes Home Assistant. Bâtons garde en plus, dans `/data/backups`, une copie de la base pour
+  chacun des 7 derniers jours (variable `BATONS_BACKUP_DAYS`).
 - Export CSV disponible en bas de page.
 
 ## Accès direct (sans passer par Home Assistant)

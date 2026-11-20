@@ -25,6 +25,7 @@ final class Config
         'timezone'        => null,          // ex. Europe/Paris ; par défaut celui de PHP / TZ
         'default_user'    => 'local',       // nom de l'utilisateur unique en mode none
         'hidden_timeout'  => 300,
+        'backup_days'     => 7,             // sauvegardes quotidiennes de la base gardées (0 = aucune)
         'rawg_key'        => '',            // clé API RAWG (jeux vidéo) par défaut
         'tmdb_key'        => '',            // clé API TMDB (films/séries) par défaut ; chaque utilisateur peut la sienne           // secondes d'inactivité avant reverrouillage des éléments masqués
     ];

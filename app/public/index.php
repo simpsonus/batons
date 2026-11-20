@@ -25,6 +25,21 @@ if ($route === 'health') {
     exit('ok');
 }
 
+// En-têtes de sécurité. Pas de « frame-ancestors » : Bâtons doit pouvoir s'afficher dans le cadre d'un
+// tableau de bord (Home Assistant Ingress…). style-src 'unsafe-inline' : couleurs des catégories en attribut style.
+header("Content-Security-Policy: default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; "
+    . "script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'");
+header('X-Content-Type-Options: nosniff');
+header('Referrer-Policy: same-origin');
+
+// Sauvegarde du jour, après l'envoi de la page.
+register_shutdown_function(static function (): void {
+    if (function_exists('fastcgi_finish_request')) {
+        fastcgi_finish_request();
+    }
+    Batons\Backup::maybeRun();
+});
+
 Http::startSession();
 if (Http::isPost()) {
     Http::checkCsrf();

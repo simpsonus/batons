@@ -45,6 +45,7 @@ racine web (ou dans un sous-dossier). Le dossier `app/data/` doit être accessib
 | `BATONS_AUTH_HEADER` | `Remote-User` | En-tête portant l'identifiant (mode `header`) |
 | `BATONS_AUTH_NAME_HEADER` | — | En-tête portant le nom affiché (facultatif) |
 | `BATONS_TRUSTED_PROXIES` | — | IP autorisées à envoyer l'en-tête, séparées par des virgules |
+| `BATONS_BACKUP_DAYS` | `7` | Sauvegardes quotidiennes de la base gardées dans `<data_dir>/backups` (`0` = aucune) |
 | `BATONS_HIDDEN_TIMEOUT` | `300` | Secondes d'inactivité avant reverrouillage des éléments masqués |
 | `BATONS_RAWG_KEY` | — | Clé RAWG commune (jeux vidéo) ; chaque utilisateur peut aussi saisir la sienne |
 | `BATONS_TMDB_KEY` | — | Clé TMDB commune (films et séries) ; chaque utilisateur peut aussi saisir la sienne dans « Compte » |
@@ -59,6 +60,14 @@ les autres passent par la page de connexion, avec le même identifiant (mot de p
 
 ```sh
 cd app && php -S 127.0.0.1:8080 -t public
+```
+
+Tests (lancés aussi par la CI avant toute publication) :
+
+```sh
+php tests/unit.php                                         # tests unitaires, sans dépendance
+pip install playwright && playwright install chromium      # une fois
+python3 tests/e2e.py                                       # parcours dans un navigateur + mise en page
 ```
 
 Voir `CLAUDE.md` pour l'architecture et les conventions.

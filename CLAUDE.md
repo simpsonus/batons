@@ -89,6 +89,9 @@ Le nom vient des bâtons qu'on trace pour compter (IIII barrés). Slug technique
   Bouton « Filtrer » + résumé (pas de pastilles, v0.25.1), panneau `views/_timeline_filter.php` (`<dialog>`, ou inline
   avec `filter=1` sans JS) : case de groupe et chevron dans deux zones séparées (jamais une case dans un `<summary>`).
   Effacer le filtre = croix DANS la pastille coupée (`.fsplit`), jamais une croix isolée (réservée à « fermer la page »).
+- **Sécurité HTTP** : CSP posée dans `index.php` (pas de script inline, pas d'attribut `on…`, pas de ressource
+  externe dans le navigateur ; pas de `frame-ancestors` à cause de l'iframe Ingress). Sauvegarde quotidienne
+  `Backup::maybeRun()` (`VACUUM INTO`, après l'envoi de la page, `BATONS_BACKUP_DAYS`).
 - **Champs de saisie libre** (intitulés) : jamais `name="name"` ni d'id/libellé « name » — Safari y propose une
   fiche Contact malgré `autocomplete="off"`. Utiliser `name="label"` + autocomplete/autocorrect/spellcheck désactivés.
 - L'interface ne mentionne pas Home Assistant (l'app doit rester neutre).
@@ -121,9 +124,10 @@ Le nom vient des bâtons qu'on trace pour compter (IIII barrés). Slug technique
 app/                    l'application, autonome
   public/               racine web : index.php (routeur), assets/
   src/                  Config, Db (+ migrations), Auth, Http, Time, Categories, Events, Chart, Icons, Importer,
-                        Privacy, WebAuthn, Cbor, Catalog, Net, Works, Settings, Periods, Theme
+                        Privacy, WebAuthn, Cbor, Catalog, Net, Works, Settings, Periods, Theme, Backup
   views/                templates PHP natifs (layout.php + une vue par page)
   migrations/           NNN_nom.sql, appliqués automatiquement au démarrage
+tests/                  unit.php (sans dépendance), e2e.py (Playwright)
 docker/                 image générique nginx + php-fpm (Alpine), port 8080, données dans /data
 ha-addon/               add-on Home Assistant = enveloppe autour de l'image (config.yaml seulement)
 repository.yaml         pour ajouter le dépôt comme source d'add-ons dans HA
@@ -146,6 +150,14 @@ cd app && php -S 127.0.0.1:8080 -t public      # données dans app/data/
 BATONS_AUTH=header BATONS_AUTH_HEADER=X-User php -S …   # tester le mode header
 docker build -f docker/Dockerfile -t batons . && docker run -p 8080:8080 -v $PWD/data:/data batons
 ```
+
+## Tests
+
+- `php tests/unit.php` : tests unitaires sans dépendance (fonctions `test_*`, base neuve). Ajouter un test pour tout
+  calcul ou règle métier nouvelle (périodes, couleurs, réorganisation, import…).
+- `python3 tests/e2e.py` : parcours dans Chromium (Playwright) + absence de débordement de 320 px à 1280 px,
+  clair/sombre, sans erreur JS ni violation CSP. Ajouter le parcours de toute nouvelle fonction visible.
+- La CI lance les deux avant de construire l'image : un échec bloque la publication.
 
 ## Publier une version (pour l'add-on HA)
 
@@ -211,6 +223,9 @@ docker build -f docker/Dockerfile -t batons . && docker run -p 8080:8080 -v $PWD
 - [x] v0.25 : filtre de la chronologie par groupes et catégories.
 - [x] v0.25.1 : filtre réduit au bouton + panneau, case de groupe réparée.
 - [x] v0.25.2 : pastille de filtre coupée (Filtrer · n | ✕), « Tout afficher » dans le panneau, titres focalisés sans cadre.
+- [x] v0.26 : tests unitaires + parcours navigateur en CI (bloquants), sauvegarde quotidienne, en-têtes de sécurité.
+- [ ] Rangement : découper app.css par composant (retirer le code mort des versions passées) et index.php par domaine.
+- [ ] Tests de WebAuthn/CBOR avec des jeux d'essai officiels.
 - [ ] Recherche dans les notes et intervalle de dates dans la chronologie (à ajouter au panneau de filtre).
 - [ ] Rappels / objectifs (« au moins 3 par semaine »).
 - [ ] i18n (anglais).

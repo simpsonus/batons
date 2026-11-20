@@ -161,7 +161,7 @@ svg.ui { width: 1.35rem; height: 1.35rem; fill: currentColor; flex: none; }
 .icon-btn.is-hidden { color: var(--accent); }
 .check { display: flex; align-items: center; gap: .6rem; min-height: var(--tap); }
 .check input { width: 1.4rem; height: 1.4rem; margin: 0; accent-color: var(--accent-bg); flex: none; }
-.check label { margin: 0; display: inline-flex; align-items: center; gap: .35rem; flex: none; }
+.check label { margin: 0; display: inline-flex; flex-wrap: wrap; align-items: center; gap: .35rem; flex: 0 1 auto; min-width: 0; }
 .check label svg.ui { width: 1.15rem; height: 1.15rem; color: var(--muted); }
 .field-help { margin: 0 0 1rem; }
 .narrow-card { max-width: 28rem; margin-left: auto; margin-right: auto; }

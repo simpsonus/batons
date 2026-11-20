@@ -5,6 +5,7 @@
 #       image X.Y.Z + latest, puis création du tag et de la release GitHub (automatique) ;
 #   - sinon : image « edge » seulement.
 # Il suffit donc d'augmenter la version (bootstrap.php + config.yaml) et de pousser.
+# Les tests (tests/unit.php, tests/e2e.py) passent d'abord : en cas d'échec, rien n'est publié.
 name: Image Docker
 
 on:
@@ -17,7 +18,30 @@ permissions:
   packages: write
 
 jobs:
+  # Tests unitaires et parcours dans un navigateur : aucune image n'est publiée s'ils échouent.
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: pdo_sqlite, sqlite3, mbstring, intl, iconv
+          coverage: none
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Playwright (Chromium)
+        run: |
+          pip install playwright
+          python -m playwright install --with-deps chromium
+      - name: Tests unitaires
+        run: php tests/unit.php
+      - name: Parcours dans le navigateur
+        run: python tests/e2e.py
+
   build:
+    needs: tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

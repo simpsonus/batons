@@ -1,5 +1,17 @@
 # Journal des modifications
 
+## 0.26.0
+- **Sauvegarde automatique** : chaque jour, une copie de la base est gardée dans le dossier de données
+  (`backups/`), pour les 7 derniers jours. Un filet en cas de fausse manœuvre, en plus des sauvegardes
+  Home Assistant.
+- **Correctif** : ajouter un bâton à un livre ou un jeu marqué « J'arrête là » le remet bien en cours.
+- **Correctif d'affichage** sur très petit écran (320 px) : les cases à cocher à long libellé (« Compter les
+  bâtons à venir… », choix de l'export) débordaient de l'écran.
+- Sécurité : en-têtes de protection du navigateur ajoutés (politique de contenu, etc.).
+- En coulisses : des tests automatiques (calculs, parcours dans un navigateur, mise en page de 320 px à
+  l'ordinateur, en clair et en sombre) sont lancés avant chaque publication ; une version qui les échoue
+  n'est plus publiée.
+
 ## 0.25.2
 - **Chronologie** : plus de croix isolée en haut à droite. Quand un filtre est actif, la pastille « Filtrer · 3 »
   est coupée en deux : la partie gauche ouvre le panneau, la croix à droite efface le filtre. « Tout afficher »
