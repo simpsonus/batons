@@ -86,7 +86,8 @@ Le nom vient des bâtons qu'on trace pour compter (IIII barrés). Slug technique
   choix, fichier seulement avec `download=1`. Toutes les pages du Menu ont la ✕ (`from`).
 - **Filtre de la Chronologie** : paramètres `g` (groupes entiers, 0 = sans groupe) et `c` (catégories isolées),
   listes « 1,2 » ; forme canonique calculée dans la route (groupes complets -> g), redirection depuis `c[]` du panneau.
-  Pastilles cumulables, panneau `views/_timeline_filter.php` (`<dialog>`, ou inline avec `filter=1` sans JS).
+  Bouton « Filtrer » + résumé (pas de pastilles, v0.25.1), panneau `views/_timeline_filter.php` (`<dialog>`, ou inline
+  avec `filter=1` sans JS) : case de groupe et chevron dans deux zones séparées (jamais une case dans un `<summary>`).
 - **Champs de saisie libre** (intitulés) : jamais `name="name"` ni d'id/libellé « name » — Safari y propose une
   fiche Contact malgré `autocomplete="off"`. Utiliser `name="label"` + autocomplete/autocorrect/spellcheck désactivés.
 - L'interface ne mentionne pas Home Assistant (l'app doit rester neutre).
@@ -207,6 +208,7 @@ docker build -f docker/Dockerfile -t batons . && docker run -p 8080:8080 -v $PWD
 - [ ] Plus tard éventuellement : synchro BetaSeries / Trakt (pas SensCritique ni SerieBox : pas d'API
       publique). Jamais de synchro pour une catégorie masquée.
 - [x] v0.25 : filtre de la chronologie par groupes et catégories.
+- [x] v0.25.1 : filtre réduit au bouton + panneau, case de groupe réparée.
 - [ ] Recherche dans les notes et intervalle de dates dans la chronologie (à ajouter au panneau de filtre).
 - [ ] Rappels / objectifs (« au moins 3 par semaine »).
 - [ ] i18n (anglais).

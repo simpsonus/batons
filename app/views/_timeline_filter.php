@@ -20,21 +20,29 @@ $many = count($cats) > 15;
     <div class="tl-groups">
         <?php foreach ($groupNames as $gid => $gname): if (empty($byGroup[$gid])) { continue; }
             $members = $byGroup[$gid];
-            $nOn = count(array_intersect($members, $filter['cats'])); ?>
-            <details class="tl-group" data-group <?= ($nOn && $nOn < count($members)) || count($groupNames) <= 2 ? 'open' : '' ?>>
-                <summary>
-                    <span class="grow"><?= e($gname) ?> <span class="muted small" data-group-state><?= $nOn === count($members) ? 'tout le groupe' : $nOn . ' sur ' . count($members) ?></span></span>
-                    <input type="checkbox" data-group-box aria-label="Tout le groupe <?= e($gname) ?>" <?= $nOn === count($members) ? 'checked' : '' ?> hidden>
-                </summary>
-                <?php foreach ($members as $cid): $cat = $catById[$cid]; ?>
-                    <label class="tl-cat" data-name="<?= e(mb_strtolower($cat['name'])) ?>">
-                        <input type="checkbox" name="c[]" value="<?= $cid ?>" data-n="<?= (int) ($counts[$cid] ?? 0) ?>" <?= in_array($cid, $filter['cats'], true) ? 'checked' : '' ?>>
-                        <span class="icon sm" aria-hidden="true" style="<?= cvars($cat['color']) ?>"><?= icon($cat['icon']) ?></span>
-                        <span class="grow"><?= e($cat['name']) ?><?= $cat['archived'] ? ' <span class="muted small">(archivée)</span>' : '' ?></span>
-                        <span class="muted small"><?= (int) ($counts[$cid] ?? 0) ?></span>
+            $nOn = count(array_intersect($members, $filter['cats']));
+            $all = $nOn === count($members);
+            $listId = 'tlg-' . $panelId . '-' . $gid; ?>
+            <div class="tl-group" data-group data-partial="<?= $nOn && !$all ? '1' : '0' ?>">
+                <div class="tl-group-head">
+                    <label class="tl-group-label">
+                        <input type="checkbox" name="g[]" value="<?= $gid ?>" data-group-box <?= $all ? 'checked' : '' ?>>
+                        <b><?= e($gname) ?></b> <span class="muted small" data-group-state><?= $all ? 'tout le groupe' : $nOn . ' sur ' . count($members) ?></span>
                     </label>
-                <?php endforeach; ?>
-            </details>
+                    <button type="button" class="icon-btn tl-toggle" data-group-toggle aria-expanded="true" aria-controls="<?= $listId ?>"
+                            aria-label="Afficher les catégories de <?= e($gname) ?>" hidden><?= ui_icon('down') ?></button>
+                </div>
+                <div class="tl-group-list" id="<?= $listId ?>">
+                    <?php foreach ($members as $cid): $cat = $catById[$cid]; ?>
+                        <label class="tl-cat" data-name="<?= e(mb_strtolower($cat['name'])) ?>">
+                            <input type="checkbox" name="c[]" value="<?= $cid ?>" data-n="<?= (int) ($counts[$cid] ?? 0) ?>" <?= in_array($cid, $filter['cats'], true) ? 'checked' : '' ?>>
+                            <span class="icon sm" aria-hidden="true" style="<?= cvars($cat['color']) ?>"><?= icon($cat['icon']) ?></span>
+                            <span class="grow"><?= e($cat['name']) ?><?= $cat['archived'] ? ' <span class="muted small">(archivée)</span>' : '' ?></span>
+                            <span class="muted small"><?= (int) ($counts[$cid] ?? 0) ?></span>
+                        </label>
+                    <?php endforeach; ?>
+                </div>
+            </div>
         <?php endforeach; ?>
     </div>
     <div class="form-actions tl-panel-actions">

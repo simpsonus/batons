@@ -569,16 +569,15 @@
     }
 
     // --- Chronologie : filtre ------------------------------------------------------------------
-    const chips = document.querySelector('[data-chips]');
-    chips?.querySelector('[data-on]')?.scrollIntoView({ block: 'nearest', inline: 'center' });
     const fSheet = document.querySelector('[data-filter-sheet]');
     const fOpen = document.querySelector('[data-filter-open]');
     if (fSheet && fOpen && typeof fSheet.showModal === 'function') {
         fOpen.addEventListener('click', (ev) => {
             ev.preventDefault();
             fSheet.showModal();
-            fSheet.querySelector('h2')?.setAttribute('tabindex', '-1');
-            fSheet.querySelector('h2')?.focus();
+            const h = fSheet.querySelector('h2');
+            h?.setAttribute('tabindex', '-1');
+            h?.focus();
         });
         fSheet.addEventListener('click', (ev) => {
             if (ev.target === fSheet) fSheet.close();
@@ -591,12 +590,24 @@
         const submit = form.querySelector('[data-filter-submit]');
         const all = form.querySelector('[data-check-all]');
         if (all) all.hidden = false;
+        // Avec JS, la case du groupe ne fait que (dé)cocher ses catégories : seules les catégories partent.
+        form.querySelectorAll('[data-group-box]').forEach((b) => b.removeAttribute('name'));
+        const setOpen = (g, open) => {
+            const t = g.querySelector('[data-group-toggle]');
+            g.querySelector('.tl-group-list').hidden = !open;
+            g.classList.toggle('open', open);
+            t.setAttribute('aria-expanded', open ? 'true' : 'false');
+            t.setAttribute('aria-label', (open ? 'Masquer' : 'Afficher') + ' les catégories de ' + g.querySelector('b').textContent);
+        };
+        form.querySelectorAll('[data-group]').forEach((g) => {
+            g.querySelector('[data-group-toggle]').hidden = false;
+            setOpen(g, g.dataset.partial === '1' || form.querySelectorAll('[data-group]').length <= 2);
+        });
         const refresh = () => {
             form.querySelectorAll('[data-group]').forEach((g) => {
                 const bs = [...g.querySelectorAll('input[name="c[]"]')];
                 const on = bs.filter((b) => b.checked).length;
                 const box = g.querySelector('[data-group-box]');
-                box.hidden = false;
                 box.checked = on === bs.length;
                 box.indeterminate = on > 0 && on < bs.length;
                 g.querySelector('[data-group-state]').textContent = on === bs.length ? 'tout le groupe' : on + ' sur ' + bs.length;
@@ -607,17 +618,14 @@
             submit.textContent = none ? 'Afficher tous les bâtons' : 'Afficher ' + n.toLocaleString('fr-FR') + ' bâton' + (n > 1 ? 's' : '');
             if (all) all.textContent = checked.length === boxes().length ? 'Tout décocher' : 'Tout cocher';
         };
-        form.addEventListener('change', refresh);
-        form.addEventListener('click', (ev) => {
+        form.addEventListener('change', (ev) => {
             const box = ev.target.closest('[data-group-box]');
-            if (box) {
-                ev.preventDefault();                       // ne pas replier / déplier le groupe
-                const target = !(box.checked && !box.indeterminate);
-                setTimeout(() => {
-                    box.closest('[data-group]').querySelectorAll('input[name="c[]"]').forEach((b) => { b.checked = target; });
-                    refresh();
-                }, 0);
-            }
+            if (box) box.closest('[data-group]').querySelectorAll('input[name="c[]"]').forEach((b) => { b.checked = box.checked; });
+            refresh();
+        });
+        form.addEventListener('click', (ev) => {
+            const t = ev.target.closest('[data-group-toggle]');
+            if (t) { const g = t.closest('[data-group]'); setOpen(g, !g.classList.contains('open')); }
             if (ev.target.closest('[data-check-all]')) {
                 const target = !boxes().every((b) => b.checked);
                 boxes().forEach((b) => { b.checked = target; });
@@ -634,7 +642,7 @@
                     any ||= ok;
                 });
                 g.hidden = !any;
-                if (q) g.open = true;
+                if (q) setOpen(g, true);
             });
         });
         refresh();

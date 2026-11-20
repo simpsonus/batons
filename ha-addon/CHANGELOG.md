@@ -1,5 +1,11 @@
 # Journal des modifications
 
+## 0.25.1
+- **Filtre de la Chronologie simplifié** : un seul bouton « Filtrer » et une ligne qui résume ce qui est affiché
+  (✕ pour tout effacer) ; la rangée de pastilles de groupes disparaît.
+- **Cocher un groupe entier** fonctionne enfin dans le panneau (sur iPhone, l'appui dépliait le groupe au lieu de le
+  cocher) : la case à gauche coche tout le groupe, le chevron à droite déplie ses catégories.
+
 ## 0.25.0
 - **Filtrer la Chronologie** : une rangée de pastilles de groupes en haut (cumulables : un appui ajoute le
   groupe, un second le retire ; « Tout » efface le filtre), qui reste visible en faisant défiler. Le bouton de
