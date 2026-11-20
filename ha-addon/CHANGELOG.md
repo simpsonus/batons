@@ -1,5 +1,14 @@
 # Journal des modifications
 
+## 0.27.0
+- Version de rangement, **sans changement visible** : l'affichage est identique (vérifié écran par écran,
+  en clair et en sombre, du téléphone à l'ordinateur).
+- En coulisses : la feuille de style est découpée par partie de l'application et débarrassée des restes
+  des anciennes versions ; le code des pages est rangé par domaine.
+- Face ID / Touch ID : la vérification des passkeys est maintenant testée avec les **jeux d'essai officiels**
+  de la norme WebAuthn (W3C) avant chaque publication. Le décodeur interne refuse aussi plus proprement
+  les données inattendues.
+
 ## 0.26.0
 - **Sauvegarde automatique** : chaque jour, une copie de la base est gardée dans le dossier de données
   (`backups/`), pour les 7 derniers jours. Un filet en cas de fausse manœuvre, en plus des sauvegardes

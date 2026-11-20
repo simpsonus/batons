@@ -37,7 +37,8 @@ Le nom vient des bâtons qu'on trace pour compter (IIII barrés). Slug technique
   Toutes les données sont rattachées à un `user_id`.
 - **Dates stockées en UTC** (`'Y-m-d H:i:s'`), converties dans le fuseau `BATONS_TIMEZONE`/`TZ`
   pour l'affichage et la saisie (`app/src/Time.php`).
-- **Front : HTML + CSS + un peu de JS vanilla**, mobile d'abord, clair/sombre automatique.
+- **Front : HTML + CSS + un peu de JS vanilla**, mobile d'abord, clair/sombre automatique. CSS rangé par composant dans
+  `public/assets/css/NN-nom.css` (ajouter une règle dans la feuille du composant ; nouvelle feuille = nouveau numéro).
   Tout doit marcher sans JS (formulaires POST + redirection 303). Graphiques en **SVG générés en PHP**.
 - Sécurité : échapper toute sortie avec `e()`, jeton CSRF sur tout POST (`csrf()` dans les formulaires),
   requêtes toujours filtrées par `user_id`.
@@ -122,12 +123,16 @@ Le nom vient des bâtons qu'on trace pour compter (IIII barrés). Slug technique
 
 ```
 app/                    l'application, autonome
-  public/               racine web : index.php (routeur), assets/
+  public/               racine web : index.php (amorce : en-têtes, session, connexion, aides), assets/
+    assets/css/         une feuille par composant, chargées dans l'ordre du numéro (01-base … 09-pages)
+  routes/               les routes par domaine (categories, events, works, account, privacy, data) :
+                        un `switch ($route)` par fichier, inclus par index.php ; 404 si aucun ne répond
   src/                  Config, Db (+ migrations), Auth, Http, Time, Categories, Events, Chart, Icons, Importer,
                         Privacy, WebAuthn, Cbor, Catalog, Net, Works, Settings, Periods, Theme, Backup
   views/                templates PHP natifs (layout.php + une vue par page)
   migrations/           NNN_nom.sql, appliqués automatiquement au démarrage
-tests/                  unit.php (sans dépendance), e2e.py (Playwright)
+tests/                  unit.php (sans dépendance), e2e.py (Playwright), fixtures.php (catalogues figés),
+                        webauthn-vectors.php (jeux d'essai W3C)
 docker/                 image générique nginx + php-fpm (Alpine), port 8080, données dans /data
 ha-addon/               add-on Home Assistant = enveloppe autour de l'image (config.yaml seulement)
 repository.yaml         pour ajouter le dépôt comme source d'add-ons dans HA
@@ -224,8 +229,12 @@ docker build -f docker/Dockerfile -t batons . && docker run -p 8080:8080 -v $PWD
 - [x] v0.25.1 : filtre réduit au bouton + panneau, case de groupe réparée.
 - [x] v0.25.2 : pastille de filtre coupée (Filtrer · n | ✕), « Tout afficher » dans le panneau, titres focalisés sans cadre.
 - [x] v0.26 : tests unitaires + parcours navigateur en CI (bloquants), sauvegarde quotidienne, en-têtes de sécurité.
-- [ ] Rangement : découper app.css par composant (retirer le code mort des versions passées) et index.php par domaine.
-- [ ] Tests de WebAuthn/CBOR avec des jeux d'essai officiels.
+- [x] v0.27 : rangement : `app.css` découpé en 9 feuilles par composant (code mort retiré, rendu identique au pixel
+      près vérifié par captures avant/après), `index.php` découpé en `routes/*.php` ; tests WebAuthn avec les jeux
+      d'essai officiels du W3C (`tests/webauthn-vectors.php`) et CBOR avec l'annexe A de la RFC 8949 ; parcours
+      « série » en e2e avec réponses de catalogue figées (`tests/fixtures.php`).
+- [ ] Réorganiser, option A (validée, à faire) : commutateur « Tout | Groupes seuls » au-dessus de la liste (remplace
+      le bouton « Tout replier » de l'en-tête), nombre de catégories affiché sur un groupe plié.
 - [ ] Recherche dans les notes et intervalle de dates dans la chronologie (à ajouter au panneau de filtre).
 - [ ] Rappels / objectifs (« au moins 3 par semaine »).
 - [ ] i18n (anglais).

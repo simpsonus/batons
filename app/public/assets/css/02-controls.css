@@ -1,0 +1,134 @@
+/* Contrôles : boutons, champs, cases, puces de choix, couleurs, icônes, aide « ? ». */
+
+/* --- Boutons ------------------------------------------------------------------------------ */
+.btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: .3rem;
+    min-height: var(--tap); padding: .45rem 1rem; border-radius: 10px; border: 1px solid transparent;
+    background: var(--ink); color: var(--bg);
+    font: inherit; font-weight: 600; text-decoration: none; cursor: pointer; text-align: center;
+}
+/* Bouton coloré par une catégorie : --c-solid + --c-on (cvars), jamais la couleur brute. */
+.btn.accent { background: var(--c-solid, color-mix(in srgb, var(--accent-bg) 88%, black)); color: var(--c-on, #fff); }
+.btn.ghost { background: transparent; color: var(--ink); border-color: var(--field); }
+.btn.danger { background: transparent; color: var(--danger); border-color: currentColor; }
+.btn.wide { width: 100%; }
+.btn svg.ui { width: 1.15rem; height: 1.15rem; }
+.small-btn { min-height: 2.4rem; padding: 0 .8rem; font-size: .875rem; }
+
+.icon-btn {
+    display: inline-grid; place-items: center; width: var(--tap); height: var(--tap);
+    border-radius: 10px; border: 0; background: none; color: var(--muted); cursor: pointer; padding: 0;
+}
+.icon-btn:hover { background: var(--bg); color: var(--ink); }
+.icon-btn.danger:hover { color: var(--danger); }
+.icon-btn:disabled { opacity: .3; cursor: default; background: none; }
+.icon-btn.is-hidden { color: var(--accent); }
+
+.actions { display: flex; gap: .5rem; flex-wrap: wrap; }
+.row-actions { display: flex; flex: none; }
+.row-actions form { margin: 0; }
+.danger-zone { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px dashed var(--field); }
+.danger-zone form { margin: 0; }
+
+/* Pastilles d'information. */
+.badge { display: inline-block; font-size: .8125rem; padding: .1rem .5rem; border-radius: 999px; background: var(--line); }
+.badge svg.ui { width: .95rem; height: .95rem; vertical-align: -2px; }
+.hidden-mark { display: inline-flex; vertical-align: middle; color: var(--muted); }
+.hidden-mark svg.ui { width: 1rem; height: 1rem; }
+
+/* --- Formulaires -------------------------------------------------------------------------- */
+label { display: block; font-size: .9rem; font-weight: 600; margin-bottom: .8rem; flex: 1; min-width: 0; }
+label > input, label > .error { display: block; margin-top: .3rem; }
+input[type=text], input[type=search], input[type=datetime-local], input[type=number], input[type=password] {
+    font: inherit; font-size: max(1rem, 16px); /* ≥ 16 px : pas de zoom automatique sur iOS */
+    font-weight: normal; min-height: var(--tap); padding: .5rem .7rem; border-radius: 9px;
+    border: 1px solid var(--field); background: var(--bg); color: var(--ink); width: 100%; max-width: 100%;
+}
+input[aria-invalid="true"] { border-color: var(--danger); border-width: 2px; }
+input[type=datetime-local] { -webkit-appearance: none; appearance: none; }
+input[type=file] { font: inherit; font-weight: normal; display: block; margin-top: .4rem; max-width: 100%; min-height: var(--tap); padding: .4rem 0; }
+.row { display: flex; gap: 0 .8rem; flex-wrap: wrap; }
+.row > label { flex: 1 1 12rem; }
+.row > .narrow { flex: 0 1 9rem; }
+.error { color: var(--danger); font-weight: 600; }
+.form-actions { display: flex; gap: .5rem; flex-wrap: wrap; }
+.field-help { margin: 0 0 1rem; }
+fieldset { border: 0; padding: 0; margin: 0 0 .8rem; min-width: 0; }
+legend { font-size: .9rem; font-weight: 600; margin-bottom: .4rem; padding: 0; }
+.search-row { display: flex; gap: .5rem; margin-top: .3rem; }
+.search-row input { flex: 1; min-width: 0; }
+form[role=search] label { margin-bottom: 0; }
+
+/* Case à cocher avec libellé. */
+.check { display: flex; align-items: center; gap: .6rem; min-height: var(--tap); }
+.check input { width: 1.4rem; height: 1.4rem; margin: 0; accent-color: var(--accent-bg); flex: none; }
+.check label { margin: 0; display: inline-flex; flex-wrap: wrap; align-items: center; gap: .35rem; flex: 0 1 auto; min-width: 0; }
+.check label svg.ui { width: 1.15rem; height: 1.15rem; color: var(--muted); }
+
+/* Puces de choix (boutons radio habillés) : note, type de catégorie. */
+.rating-chips, .kind-choice { display: flex; flex-wrap: wrap; gap: .3rem; }
+.chip { margin: 0; flex: none; position: relative; cursor: pointer; }
+.chip input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
+.chip span {
+    display: grid; place-items: center; min-width: var(--tap); min-height: var(--tap); padding: 0 .6rem;
+    border: 1px solid var(--field); border-radius: 10px; font-weight: 600; font-variant-numeric: tabular-nums;
+}
+.chip.wide span { padding: 0 .9rem; font-weight: 500; }
+.chip input:checked + span { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.chip input:focus-visible + span { outline: 3px solid var(--focus); outline-offset: 2px; }
+
+/* Commutateur segmenté (périodes du graphique). */
+.seg { display: inline-flex; flex-wrap: wrap; background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 2px; max-width: 100%; }
+.seg a { display: inline-flex; align-items: center; min-height: 2.5rem; text-decoration: none; font-size: .9rem; padding: 0 .7rem; border-radius: 8px; color: var(--muted); }
+.seg a[aria-current] { background: var(--surface); color: var(--ink); font-weight: 600; box-shadow: var(--shadow); outline: 1px solid var(--line); }
+
+/* --- Couleurs (palette) -------------------------------------------------------------------- */
+.swatches { display: flex; flex-wrap: wrap; gap: .1rem .2rem; }
+.swatch-row-label { flex: 0 0 100%; margin: .5rem 0 0; font-size: .875rem; color: var(--muted); font-weight: 600; }
+.swatch { margin: 0; flex: 0 0 auto; cursor: pointer; position: relative; display: grid; place-items: center; width: var(--tap); height: var(--tap); }
+.swatch input[type=radio] { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
+.swatch span { display: block; width: 2rem; height: 2rem; border-radius: 50%; background: var(--c); border: 3px solid var(--surface); box-shadow: 0 0 0 1px var(--field); }
+.swatch input:checked + span { box-shadow: 0 0 0 3px var(--ink); }
+.swatch input:checked + span::after { content: "✓"; display: grid; place-items: center; height: 100%; color: var(--c-on, #fff); font-weight: 700; font-size: .9rem; }
+.swatch input:focus-visible + span { outline: 3px solid var(--focus); outline-offset: 3px; }
+.swatch.custom input { width: 2rem; height: 2rem; padding: 0; border: 1px solid var(--field); border-radius: 50%; background: none; cursor: pointer; }
+
+/* --- Sélecteur d'icône --------------------------------------------------------------------- */
+.icon-field { display: flex; align-items: center; gap: .8rem; }
+.icon-picker { border: 1px solid var(--line); border-radius: 12px; padding: .7rem; margin-bottom: 1rem; background: var(--bg); }
+.icon-picker input[type=search] { background: var(--surface); }
+.icon-results { display: grid; grid-template-columns: repeat(auto-fill, minmax(var(--tap), 1fr)); gap: .3rem; margin: .6rem 0 .3rem; max-height: 15rem; overflow-y: auto; }
+.icon-choice {
+    display: grid; place-items: center; min-height: var(--tap); border: 2px solid transparent; border-radius: 9px;
+    background: var(--surface); color: var(--ink); cursor: pointer; padding: 0;
+}
+.icon-choice svg { width: 1.4rem; height: 1.4rem; fill: currentColor; }
+.icon-choice:hover { border-color: var(--line); }
+.icon-choice.selected { border-color: var(--c-ink, var(--accent)); color: var(--c-ink, var(--accent)); background: color-mix(in srgb, var(--c, var(--accent)) 12%, transparent); }
+
+/* --- Aide « ? » (help_box) -----------------------------------------------------------------
+   La bulle se cale sur le bloc qui contient le « ? » (en-tête de page ou carte), pas sur le bouton :
+   elle ne sort jamais de l'écran, même quand le « ? » est à gauche. */
+.help-box { position: static; }
+.help-box > summary {
+    list-style: none; cursor: pointer; display: grid; place-items: center;
+    width: var(--tap); height: var(--tap); border-radius: 50%; border: 1px solid var(--field);
+    font-weight: 700; font-size: 1.05rem; color: var(--muted); background: var(--surface);
+}
+.help-box > summary::-webkit-details-marker { display: none; }
+.help-box[open] > summary { color: var(--ink); border-color: var(--ink); }
+.help-pop {
+    position: absolute; right: 0; top: calc(100% + .4rem); z-index: 15; width: min(22rem, calc(100vw - 2rem));
+    background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 12px;
+    box-shadow: 0 8px 28px rgb(0 0 0 / .18); padding: .8rem 1rem; font-size: .92rem; text-align: left;
+}
+.help-title { margin: 0 0 .4rem; font-weight: 700; }
+.help-pop ul { margin: 0; padding-left: 1.1rem; }
+.help-pop li { margin: .3rem 0; }
+@media (max-width: 480px) {
+    .help-pop { left: 0; right: 0; width: auto; }
+}
+
+@media (forced-colors: active) {
+    .icon-btn, .swatch span { border: 1px solid ButtonText; }
+}

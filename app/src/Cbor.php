@@ -5,7 +5,8 @@ namespace Batons;
 
 /**
  * Décodeur CBOR minimal (RFC 8949), suffisant pour WebAuthn :
- * entiers, chaînes d'octets, textes, tableaux, tables, booléens/null. Pas de longueurs indéfinies.
+ * entiers, chaînes d'octets, textes, tableaux, tables, booléens/null. Pas de longueurs indéfinies, de flottants
+ * ni d'étiquettes (refusés par une exception). Vérifié avec les exemples de l'annexe A de la RFC (tests/unit.php).
  */
 final class Cbor
 {
@@ -49,6 +50,9 @@ final class Cbor
                 $out = [];
                 for ($i = 0; $i < $n; $i++) {
                     $k = self::item($d, $p, $depth + 1);
+                    if (!is_int($k) && !is_string($k)) {
+                        throw new \RuntimeException('CBOR : clé de table non prise en charge.');
+                    }
                     $out[$k] = self::item($d, $p, $depth + 1);
                 }
                 return $out;
@@ -72,6 +76,10 @@ final class Cbor
         }
         $bytes = substr($d, $p, $size);
         $p += $size;
-        return match ($size) { 1 => ord($bytes), 2 => unpack('n', $bytes)[1], 4 => unpack('N', $bytes)[1], 8 => unpack('J', $bytes)[1] };
+        $n = match ($size) { 1 => ord($bytes), 2 => unpack('n', $bytes)[1], 4 => unpack('N', $bytes)[1], 8 => unpack('J', $bytes)[1] };
+        if ($n < 0) {
+            throw new \RuntimeException('CBOR : entier trop grand.');   // ≥ 2^63 : hors des entiers PHP
+        }
+        return $n;
     }
 }

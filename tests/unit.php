@@ -182,6 +182,135 @@ function test_backup(): void
     same(1, count(Batons\Backup::list()), 'une seule par jour');
 }
 
+// --- CBOR : exemples de la RFC 8949, annexe A ----------------------------------------------------------
+
+function test_cbor_rfc8949_examples(): void
+{
+    $ok = [
+        '00' => 0, '01' => 1, '0a' => 10, '17' => 23, '1818' => 24, '1819' => 25, '1864' => 100, '1903e8' => 1000,
+        '1a000f4240' => 1000000, '1b000000e8d4a51000' => 1000000000000, '1b7fffffffffffffff' => PHP_INT_MAX,
+        '20' => -1, '29' => -10, '3863' => -100, '3903e7' => -1000,
+        '40' => '', '4401020304' => "\x01\x02\x03\x04", '60' => '', '6161' => 'a', '6449455446' => 'IETF',
+        '62225c' => "\"\\", '62c3bc' => 'ü', '63e6b0b4' => '水', '64f0908591' => '𐅑',
+        '80' => [], '83010203' => [1, 2, 3], '8301820203820405' => [1, [2, 3], [4, 5]],
+        '98190102030405060708090a0b0c0d0e0f101112131415161718181819' => range(1, 25),
+        'a0' => [], 'a201020304' => [1 => 2, 3 => 4], 'a26161016162820203' => ['a' => 1, 'b' => [2, 3]],
+        '826161a161626163' => ['a', ['b' => 'c']],
+        'a56161614161626142616361436164614461656145' => ['a' => 'A', 'b' => 'B', 'c' => 'C', 'd' => 'D', 'e' => 'E'],
+        'f4' => false, 'f5' => true, 'f6' => null, 'f7' => null,
+    ];
+    foreach ($ok as $hex => $expected) {   // (string) : PHP change les clés '17', '20'… en entiers
+        $hex = (string) $hex;
+        same($expected, Batons\Cbor::decode(hex2bin($hex)), "CBOR $hex");
+    }
+    Batons\Cbor::decode(hex2bin('8301020304'), $end);
+    same(4, $end, 'position après la valeur (octets restants ignorés)');
+
+    // Hors du sous-ensemble WebAuthn ou invalides : refusés proprement, jamais une valeur fausse.
+    $refused = [
+        '1bffffffffffffffff' => 'entier ≥ 2^63', '3bffffffffffffffff' => 'négatif < -2^63',
+        'f93c00' => 'flottant', 'fb3ff199999999999a' => 'flottant double', 'c11a514b67b0' => 'étiquette (date)',
+        '5f42010243030405ff' => 'longueur indéfinie', '9fff' => 'tableau indéfini', 'f820' => 'valeur simple 32',
+        '' => 'vide', '19' => 'tronqué', '6461' => 'texte tronqué', '83' => 'tableau tronqué', 'a1' => 'table tronquée',
+        'a1800102' => 'clé de table non scalaire',
+        str_repeat('81', 20) . '00' => 'imbrication trop profonde',
+    ];
+    foreach ($refused as $hex => $what) {
+        $hex = (string) $hex;
+        try {
+            Batons\Cbor::decode((string) hex2bin($hex));
+            check(false, "CBOR refusé : $what");
+        } catch (RuntimeException) {
+            check(true, "CBOR refusé : $what");
+        }
+    }
+}
+
+// --- WebAuthn : jeux d'essai officiels du W3C (tests/webauthn-vectors.php) -----------------------------
+
+/** Réponse du navigateur (champs en base64url) pour une création de passkey. */
+function wa_create(array $v, ?string $challenge = null): array
+{
+    $_SESSION['webauthn'] = ['type' => 'create', 'challenge' => Batons\WebAuthn::b64u(hex2bin($challenge ?? $v['reg_challenge'])), 'exp' => time() + 60];
+    return ['clientDataJSON' => Batons\WebAuthn::b64u(hex2bin($v['reg_client_data'])),
+            'attestationObject' => Batons\WebAuthn::b64u(hex2bin($v['attestation_object']))];
+}
+
+/** Réponse du navigateur pour une signature (déverrouillage). */
+function wa_get(array $v, array $change = []): array
+{
+    $_SESSION['webauthn'] = ['type' => 'get', 'challenge' => Batons\WebAuthn::b64u(hex2bin($change['challenge'] ?? $v['auth_challenge'])), 'exp' => time() + 60];
+    return ['id' => Batons\WebAuthn::b64u(hex2bin($v['credential_id'])),
+            'clientDataJSON' => Batons\WebAuthn::b64u(hex2bin($v['auth_client_data'])),
+            'authenticatorData' => Batons\WebAuthn::b64u(hex2bin($change['authenticator_data'] ?? $v['authenticator_data'])),
+            'signature' => Batons\WebAuthn::b64u(hex2bin($change['signature'] ?? $v['signature']))];
+}
+
+/** Exécute $fn et renvoie le message d'erreur (ou '' si tout s'est bien passé). */
+function wa_error(callable $fn): string
+{
+    try {
+        $fn();
+        return '';
+    } catch (RuntimeException $e) {
+        return $e->getMessage();
+    }
+}
+
+function test_webauthn_official_vectors_es256(): void
+{
+    $vectors = require __DIR__ . '/webauthn-vectors.php';
+    foreach (['packed-es256', 'tpm-es256'] as $name) {
+        $v = $vectors[$name];
+        $uid = user();
+        same('', wa_error(fn() => Batons\WebAuthn::register($uid, wa_create($v), 'Test')), "$name : création acceptée");
+        $key = Db::one('SELECT * FROM passkeys WHERE user_id = ?', [$uid]);
+        same(Batons\WebAuthn::b64u(hex2bin($v['credential_id'])), $key['credential_id'] ?? null, "$name : identifiant enregistré");
+        same('example.org', $key['rp_id'] ?? null, "$name : domaine (rpId) enregistré avec la clé");
+        same('', wa_error(fn() => Batons\WebAuthn::verify($uid, wa_get($v))), "$name : signature officielle acceptée");
+
+        // Falsifications : chacune doit être refusée.
+        $sig = hex2bin($v['signature']);
+        $sig[10] = chr(ord($sig[10]) ^ 1);
+        check(wa_error(fn() => Batons\WebAuthn::verify($uid, wa_get($v, ['signature' => bin2hex($sig)]))) !== '', "$name : signature altérée refusée");
+        check(wa_error(fn() => Batons\WebAuthn::verify($uid, wa_get($v, ['challenge' => str_repeat('00', 32)]))) !== '', "$name : autre défi refusé");
+        $auth = hex2bin($v['authenticator_data']);
+        $auth[0] = chr(ord($auth[0]) ^ 1);
+        check(wa_error(fn() => Batons\WebAuthn::verify($uid, wa_get($v, ['authenticator_data' => bin2hex($auth)]))) !== '', "$name : autre domaine refusé");
+        $in = wa_get($v);
+        same('', wa_error(fn() => Batons\WebAuthn::verify($uid, $in)), "$name : nouvelle signature acceptée");
+        check(wa_error(fn() => Batons\WebAuthn::verify($uid, $in)) !== '', "$name : défi à usage unique (rejeu refusé)");
+        $other = user();
+        check(wa_error(fn() => Batons\WebAuthn::verify($other, wa_get($v))) !== '', "$name : clé d'un autre utilisateur refusée");
+        check(wa_error(fn() => Batons\WebAuthn::register($uid, wa_create($v), 'Test')) !== '', "$name : même appareil pas enregistré deux fois");
+    }
+}
+
+function test_webauthn_official_vectors_refused(): void
+{
+    $vectors = require __DIR__ . '/webauthn-vectors.php';
+    // Sans vérification de l'utilisateur (bit UV absent) : refusé, Bâtons exige biométrie ou code de l'appareil.
+    foreach (['none-es256', 'none-es256-long-credential-id'] as $name) {
+        $uid = user();
+        check(str_contains(wa_error(fn() => Batons\WebAuthn::register($uid, wa_create($vectors[$name]), 'T')), 'vérification'), "$name : création sans UV refusée");
+    }
+    $uid = user();
+    check(str_contains(wa_error(fn() => Batons\WebAuthn::register($uid, wa_create($vectors['none-es256-crossOrigin']), 'T')), 'autre site'), 'crossOrigin : refusé');
+    check(str_contains(wa_error(fn() => Batons\WebAuthn::register($uid, wa_create($vectors['packed-es512']), 'T')), 'non pris en charge'), 'ES512 : type de clé refusé');
+    check(wa_error(fn() => Batons\WebAuthn::register($uid, wa_create($vectors['packed-es256'], str_repeat('11', 32)), 'T')) !== '', 'création avec un autre défi refusée');
+
+    // Création acceptée, signature refusée faute d'UV ; la clé et la signature restent mathématiquement valides.
+    foreach (['packed-self-es256' => OPENSSL_ALGO_SHA256, 'packed-rs256' => OPENSSL_ALGO_SHA256] as $name => $algo) {
+        $v = $vectors[$name];
+        $uid = user();
+        same('', wa_error(fn() => Batons\WebAuthn::register($uid, wa_create($v), 'T')), "$name : création acceptée (clé COSE convertie)");
+        $pem = (string) Db::value('SELECT public_key FROM passkeys WHERE user_id = ?', [$uid]);
+        $signed = hex2bin($v['authenticator_data']) . hash('sha256', hex2bin($v['auth_client_data']), true);
+        same(1, openssl_verify($signed, hex2bin($v['signature']), $pem, $algo), "$name : clé convertie en PEM vérifie la signature officielle");
+        check(str_contains(wa_error(fn() => Batons\WebAuthn::verify($uid, wa_get($v))), 'vérification'), "$name : signature sans UV refusée");
+    }
+}
+
 // --- Exécution ---------------------------------------------------------------------------------------
 
 $tests = array_values(array_filter(get_defined_functions()['user'], static fn($f) => str_starts_with($f, 'test_')));

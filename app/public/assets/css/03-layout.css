@@ -1,0 +1,173 @@
+/* Mise en page : barre du haut, menu, barre d'onglets (téléphone), messages, en-têtes de page, cartes. */
+
+/* --- Barre du haut (grand écran) ---------------------------------------------------------- */
+.topbar {
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: .25rem 1rem;
+    padding: .45rem max(1rem, env(safe-area-inset-right)) .45rem max(1rem, env(safe-area-inset-left));
+    padding-top: max(.45rem, env(safe-area-inset-top));
+    background: var(--surface); color: var(--ink);
+    border-bottom: 1px solid color-mix(in srgb, var(--ink) 28%, var(--bg));   /* même filet que la barre d'onglets */
+}
+.brand { display: flex; align-items: center; gap: .5rem; min-height: var(--tap); text-decoration: none; font-weight: 700; font-size: 1.1rem; }
+.brand svg { width: 28px; height: 28px; }
+.brand .slash { color: var(--accent); }
+.topbar > nav { display: flex; gap: .25rem; }
+.topbar > nav a {
+    display: inline-flex; align-items: center; gap: .45rem; min-height: var(--tap);
+    text-decoration: none; padding: 0 .9rem 0 .75rem; border-radius: 999px; font-size: .95rem; font-weight: 600; color: var(--muted);
+}
+.topbar > nav a svg.ui { width: 1.25rem; height: 1.25rem; }
+.topbar > nav a:hover { color: var(--ink); background: var(--bg); }
+.topbar > nav a[aria-current] { background: color-mix(in srgb, var(--accent) 18%, var(--surface)); color: var(--ink); }
+.topbar > nav a[aria-current] svg.ui { color: var(--accent); }
+.lock-quick { margin: 0 0 0 auto; }
+.topbar .lock-quick .icon-btn { color: var(--accent); }
+@media (max-width: 429px) {
+    .brand span { display: none; }       /* petits écrans : logo + flèche seuls (nom lu via aria-label) */
+}
+@media (max-width: 359px) {
+    .topbar > nav a { padding: 0 .55rem; font-size: .9rem; }
+}
+
+/* --- Menu (views/_menu.php) : panneau du logo (details/summary, sans JS), feuille sur téléphone, page « menu » --- */
+.appmenu { position: relative; }
+.appmenu > summary { list-style: none; cursor: pointer; padding: 0 .4rem 0 .2rem; margin-left: -.2rem; border-radius: 10px; }
+.appmenu > summary::-webkit-details-marker { display: none; }
+.appmenu > summary:hover { background: var(--bg); }
+.appmenu .caret { width: 1.1rem; height: 1.1rem; opacity: .75; transition: transform .15s; }
+.appmenu[open] .caret { transform: rotate(180deg); }
+.appmenu-panel {
+    position: absolute; z-index: 20; top: calc(100% + .35rem); left: 0; min-width: 16.5rem;
+    background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 12px;
+    box-shadow: 0 8px 28px rgb(0 0 0 / .22); padding: .35rem;
+}
+.appmenu-panel ul { list-style: none; margin: 0; padding: 0; }
+.appmenu-panel a {
+    display: flex; align-items: center; min-height: var(--tap); padding: 0 .8rem; border-radius: 8px;
+    text-decoration: none; font-weight: 500;
+}
+.appmenu-panel a:hover { background: var(--bg); }
+.appmenu-panel a[aria-current] { font-weight: 700; background: var(--bg); }
+.appmenu-panel :focus-visible { outline-color: var(--focus); }
+.appmenu-version { margin: .3rem .8rem .2rem; padding-top: .4rem; border-top: 1px solid var(--line); font-size: .85rem; color: var(--muted); }
+.appmenu-private { list-style: none; margin: .3rem 0 0; padding: .3rem 0 0; border-top: 1px solid var(--line); }
+.appmenu-private form { margin: 0; }
+.appmenu-panel a svg.ui, .menu-btn svg.ui { width: 1.2rem; height: 1.2rem; margin-right: .5rem; color: var(--muted); }
+.menu-btn {
+    display: flex; align-items: center; width: 100%; min-height: var(--tap); padding: 0 .8rem; border-radius: 8px;
+    background: none; border: 0; color: inherit; font: inherit; font-weight: 500; text-align: left; cursor: pointer;
+}
+.menu-btn:hover { background: var(--bg); }
+.menu-page.appmenu-panel { position: static; min-width: 0; box-shadow: var(--shadow); padding: .4rem; }
+.sheet { display: none; }
+
+/* --- Téléphone (≤ 640 px) : barre d'onglets en bas, menu en feuille qui monte du bas ------- */
+.tabbar { display: none; }
+@media (max-width: 640px) {
+    body.tabbed .topbar { display: none; }
+    body.tabbed main {
+        padding-top: max(1rem, env(safe-area-inset-top));
+        padding-bottom: calc(5.5rem + env(safe-area-inset-bottom));
+    }
+
+    .tabbar {
+        display: block; position: fixed; left: 0; right: 0; bottom: 0; z-index: 20;
+        background: var(--bg);
+        padding: 0 env(safe-area-inset-right) max(.45rem, env(safe-area-inset-bottom)) env(safe-area-inset-left);
+    }
+    /* Dans le navigateur, deux filets délimitent la barre, séparée de celle du navigateur par une bande vide. */
+    .tabbar-row {
+        display: flex; background: var(--surface);
+        border-top: 1px solid color-mix(in srgb, var(--ink) 28%, var(--bg));
+        border-bottom: 1px solid color-mix(in srgb, var(--ink) 28%, var(--bg));
+    }
+    .tabbar a {
+        flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .1rem;
+        min-height: 3.4rem; padding: .3rem .2rem; text-decoration: none; color: var(--muted);
+        font-size: .8125rem; font-weight: 600; line-height: 1.15; text-align: center;
+        -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent;
+    }
+    .tabbar a:focus-visible { outline-offset: -3px; }
+    .tab-ico { position: relative; display: grid; place-items: center; width: 3.2rem; height: 1.75rem; border-radius: 999px; }
+    .tabbar a[aria-current] { color: var(--ink); }
+    .tabbar a[aria-current] .tab-ico { background: color-mix(in srgb, var(--accent) 18%, var(--surface)); color: var(--accent); }
+    .tab-dot { position: absolute; top: .1rem; right: .7rem; width: .55rem; height: .55rem; border-radius: 50%; background: var(--accent); border: 2px solid var(--surface); }
+
+    .sheet[open] {
+        display: block; position: fixed; inset: auto 0 0 0; margin: 0; width: 100%; max-width: none; max-height: 85dvh; overflow-y: auto;
+        border: 0; border-top: 1px solid var(--line); border-radius: 18px 18px 0 0;
+        background: var(--surface); color: var(--ink);
+        padding: .6rem max(.6rem, env(safe-area-inset-right)) max(.8rem, env(safe-area-inset-bottom)) max(.6rem, env(safe-area-inset-left));
+        animation: sheet-up .2s ease-out;
+    }
+    .sheet::backdrop { background: rgb(0 0 0 / .4); }
+    .sheet .appmenu-panel { position: static; width: auto; border: 0; box-shadow: none; padding: 0; background: none; }
+    .sheet form[method=dialog] { margin: .5rem 0 0; }
+    .sheet-close { width: 100%; }
+    @keyframes sheet-up { from { transform: translateY(100%); } to { transform: none; } }
+}
+/* Ouvert depuis l'écran d'accueil (sans barre de navigateur) : un seul filet, la barre va jusqu'en bas. */
+@media (max-width: 640px) and (display-mode: standalone) {
+    .tabbar { background: var(--surface); padding-bottom: env(safe-area-inset-bottom); }
+    .tabbar-row { border-bottom: 0; }
+}
+@media (forced-colors: active) {
+    .tabbar-row { border-top: 1px solid CanvasText; border-bottom: 1px solid CanvasText; }
+    .tabbar a[aria-current] { text-decoration: underline; }
+}
+
+/* --- Messages flash (restent jusqu'à fermeture : pas de message qui disparaît tout seul) ----- */
+.flash {
+    position: sticky; top: 0; z-index: 10;
+    display: flex; gap: .5rem 1rem; align-items: center; justify-content: center; flex-wrap: wrap;
+    padding: .3rem 3rem .3rem 1rem; min-height: var(--tap);
+    background: var(--accent-bg); color: #fff; font-weight: 500;
+    animation: flash-in .25s ease-out;
+}
+.flash form { margin: 0; }
+.flash-btn {
+    min-height: 2.25rem; padding: 0 .9rem; border-radius: 8px; cursor: pointer;
+    font: inherit; font-weight: 700; color: #fff; background: rgb(0 0 0 / .18); border: 1px solid rgb(255 255 255 / .6);
+}
+.flash-close {
+    position: absolute; right: .2rem; top: 50%; transform: translateY(-50%);
+    width: var(--tap); height: var(--tap); display: grid; place-items: center;
+    background: none; border: 0; color: #fff; cursor: pointer; border-radius: 8px;
+}
+.flash :focus-visible { outline-color: #fff; }
+@keyframes flash-in { from { transform: translateY(-100%); } }
+
+/* --- En-tête de page : titre, ✎ collé au nom, ✕ « fermer » en haut à droite (close_link) ------ */
+.page-head { position: relative; display: flex; align-items: center; justify-content: space-between; gap: .75rem 1rem; flex-wrap: wrap; margin: .5rem 0 1rem; }
+.page-head > :first-child { min-width: 0; }
+.page-head.end { justify-content: flex-end; margin-top: 0; }
+.page-head:has(.head-tools) { flex-wrap: nowrap; align-items: flex-start; }
+.page-head:has(.head-tools) > .cat-title { flex: 1 1 auto; }
+.head-tools { display: flex; align-items: center; gap: .4rem; flex: none; margin-left: auto; }
+.close-btn { border: 1px solid var(--field); background: var(--surface); border-radius: 50%; }
+.close-btn:hover { border-color: var(--ink); }
+.title-line { display: flex; align-items: center; gap: .15rem; min-width: 0; }
+.title-line h1 { min-width: 0; }
+.edit-btn { flex: none; border-radius: 50%; }
+.edit-btn svg.ui { width: 1.25rem; height: 1.25rem; }
+.cat-title { display: flex; align-items: center; gap: .8rem; min-width: 0; }
+.cat-title p { margin: .1rem 0 0; }
+.cat-title h1 { min-width: 0; }
+.cat-title .help-box { flex: none; }
+@media (max-width: 379px) {
+    .head-tools { gap: .2rem; }
+}
+
+/* --- Cartes ------------------------------------------------------------------------------- */
+.card { position: relative; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 1rem; box-shadow: var(--shadow); margin-bottom: 1rem; }
+.card > h2:first-child { margin-top: 0; }
+.card-title { margin: 0 0 .6rem; font-size: 1rem; display: flex; flex-wrap: wrap; align-items: baseline; gap: .2rem .6rem; }
+.card-head { position: relative; display: flex; align-items: center; justify-content: space-between; gap: .5rem; margin-bottom: .6rem; flex-wrap: wrap; }
+.card-head .card-title { margin: 0; }
+.narrow-card { max-width: 28rem; margin-left: auto; margin-right: auto; }
+.narrow-card form + p { margin-top: 1rem; }
+.notice { border-left: 4px solid var(--c, var(--accent)); }
+.notice p { margin-top: 0; }
+.notice form { margin: 0; }
+.empty { text-align: center; padding: 2.5rem 1rem; max-width: 30rem; margin: 0 auto; }
+.tally-big { width: 72px; height: 72px; color: var(--accent); }

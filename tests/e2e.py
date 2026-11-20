@@ -45,7 +45,8 @@ def main():
     data = tempfile.mkdtemp(prefix='batons-e2e-')
     port = free_port()
     base = f'http://127.0.0.1:{port}/'
-    env = dict(os.environ, BATONS_DATA_DIR=data, BATONS_AUTH='none', BATONS_TIMEZONE='Europe/Paris')
+    env = dict(os.environ, BATONS_DATA_DIR=data, BATONS_AUTH='none', BATONS_TIMEZONE='Europe/Paris',
+               BATONS_HTTP_FIXTURES=os.path.join(ROOT, 'tests/fixtures.php'))
     srv = subprocess.Popen(['php', '-S', f'127.0.0.1:{port}', '-t', os.path.join(ROOT, 'app/public')],
                            env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     try:
@@ -59,8 +60,13 @@ def main():
             ctx = browser.new_context(viewport={'width': 402, 'height': 874}, is_mobile=True, has_touch=True,
                                       accept_downloads=True)
             page = ctx.new_page()
-            page.on('console', lambda m: m.type in ('error',) and console_errors.append(m.text))
+            page.on('console', lambda m: m.type == 'error' and 'Failed to load resource' not in m.text
+                    and console_errors.append(m.text))
             page.on('pageerror', lambda e: console_errors.append(str(e)))
+            # Ressources en erreur (hors vignettes de catalogue, absentes des réponses figées des tests).
+            page.on('response', lambda r: r.status >= 400 and r.request.resource_type != 'document'
+                    and 'r=thumb' not in r.url and 'r=poster' not in r.url
+                    and console_errors.append(f'{r.status} {r.url}'))
             run_flows(page, base)
             run_layout(browser, base)
             browser.close()
@@ -77,9 +83,11 @@ def main():
     print('Tous les parcours passent.')
 
 
-def create_category(page, base, name, group='', unit='', count_future=None):
+def create_category(page, base, name, group='', unit='', count_future=None, kind=None):
     page.goto(base + '?r=category_new')
     page.fill('input[name=label]', name)
+    if kind:
+        page.check(f'input[name=kind][value={kind}]')
     if group:
         page.fill('input[name=group]', group)
     if unit:
@@ -191,6 +199,23 @@ def run_flows(page, base):
         check('Fioul' in content and 'Café' not in content, 'seulement la catégorie choisie')
     export()
 
+    @step('Série : recherche au catalogue, épisode, puis « ▶ épisode suivant »')
+    def series():
+        create_category(page, base, 'Séries', kind='serie')
+        page.goto(base)
+        page.locator('.tile', has_text='Séries').locator('a.tap').click()
+        page.fill('input[name=q]', 'bear')
+        page.press('input[name=q]', 'Enter')
+        page.locator('button.work-pick', has_text='The Bear').first.click()
+        page.click('button:has-text("Ajouter le bâton")')
+        page.goto(base)
+        page.locator('.tile', has_text='Séries').locator('a.tap').click()
+        nxt = page.locator('button.next-btn').first
+        check(nxt.count() == 1 and 'E02' in nxt.inner_text(), '« Continuer » propose l\'épisode suivant')
+        nxt.click()
+        check('The Bear' in page.inner_text('.flash'), 'épisode suivant enregistré')
+    series()
+
     @step('Pages du menu : croix pour fermer')
     def close_links():
         for r in ['archives', 'import', 'export', 'account', 'appearance', 'unlock', 'menu']:
@@ -209,7 +234,8 @@ def run_layout(browser, base):
                                       color_scheme=scheme)
             pg = ctx.new_page()
             pg.on('pageerror', lambda e: console_errors.append(str(e)))
-            pg.on('console', lambda m: m.type == 'error' and console_errors.append(m.text))
+            pg.on('console', lambda m: m.type == 'error' and 'Failed to load resource' not in m.text
+                  and console_errors.append(m.text))
             # catégories : aussi la page de chaque catégorie
             pg.goto(base)
             links = pg.eval_on_selector_all('.tile a.more', 'els => els.map(e => e.getAttribute("href"))')

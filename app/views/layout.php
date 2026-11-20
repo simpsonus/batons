@@ -22,7 +22,10 @@ $catRoutes = ['home', 'category_order', 'category', 'category_new', 'category_ed
     <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
     <meta name="apple-mobile-web-app-title" content="Bâtons">
     <link rel="manifest" href="assets/manifest.webmanifest">
-    <link rel="stylesheet" href="assets/app.css?v=<?= Batons\VERSION ?>">
+    <?php /* Feuilles par composant, dans l'ordre de leur numéro (public/assets/css/NN-nom.css). */
+    foreach (glob(dirname(__DIR__) . '/public/assets/css/[0-9][0-9]-*.css') as $cssFile): ?>
+    <link rel="stylesheet" href="assets/css/<?= e(basename($cssFile)) ?>?v=<?= Batons\VERSION ?>">
+    <?php endforeach; ?>
 </head>
 <body<?= $authMethod !== null ? ' class="tabbed ' . Batons\Theme::bodyClasses(Batons\Theme::current(Batons\Auth::id())) . '"' : '' ?><?= $unlocked ? ' data-relock="' . Batons\Privacy::remaining() . '"' : '' ?>>
 <a class="skip" href="#contenu">Aller au contenu</a>

@@ -1,0 +1,42 @@
+/* Chronologie : bouton « Filtrer » (pastille coupée), résumé, panneau de filtre (views/_timeline_filter.php). */
+
+/* --- Barre de filtre : pastille « Filtrer · n | ✕ » + résumé ------------------------------- */
+.tl-filter { position: sticky; top: 0; z-index: 6; display: flex; align-items: center; gap: .6rem; margin: 0 -1rem .6rem; padding: .5rem 1rem; background: var(--bg); }
+@media (min-width: 641px) { .tl-filter { margin: 0 0 .8rem; padding: .3rem 0; } }
+.fsplit { flex: none; display: inline-flex; align-items: stretch; border-radius: 999px; border: 1px solid var(--field); background: var(--surface); overflow: hidden; }
+.fsplit.on { background: var(--accent-bg); border-color: transparent; }
+.fsplit a { display: inline-flex; align-items: center; gap: .35rem; min-height: var(--tap); color: var(--ink); text-decoration: none; font-weight: 600; font-size: .95rem; white-space: nowrap; }
+.fsplit.on a { color: #fff; }
+.fs-main { padding: 0 1rem; }
+.fsplit.on .fs-main { padding-right: .8rem; }
+/* Effacer le filtre : croix DANS la pastille, jamais une croix isolée (réservée à « fermer la page »). */
+.fs-x { justify-content: center; min-width: var(--tap); border-left: 1px solid rgb(255 255 255 / .5); }
+.fsplit a:hover { background: color-mix(in srgb, var(--ink) 8%, transparent); }
+.fsplit.on a:hover { background: rgb(255 255 255 / .14); }
+.fsplit a:focus-visible { outline-offset: -4px; }
+.fsplit svg.ui { width: 1.2rem; height: 1.2rem; }
+.tl-sum { flex: 1; min-width: 0; margin: 0; color: var(--muted); font-size: .9rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* --- Panneau : <dialog> (feuille sur téléphone, fenêtre au centre sur grand écran), ou inline sans JS --- */
+.tl-panel h2 { font-size: 1.1rem; margin: 0; }
+.tl-panel-head { display: flex; align-items: center; justify-content: space-between; gap: .5rem; margin-bottom: .6rem; }
+.tl-search { display: flex; align-items: center; gap: .4rem; margin: 0 0 .6rem; font-weight: 400; }
+.tl-search input { flex: 1; }
+/* Groupe : case et chevron dans deux zones séparées (jamais une case dans un <summary>). */
+.tl-group { border-top: 1px solid var(--line); }
+.tl-group-head { display: flex; align-items: center; gap: .4rem; }
+.tl-group-label { flex: 1; display: flex; align-items: center; gap: .6rem; min-height: var(--tap); margin: 0; font-weight: 400; cursor: pointer; }
+.tl-group input[type=checkbox], .tl-cat input[type=checkbox] { width: 1.3rem; height: 1.3rem; accent-color: var(--accent-bg); flex: none; }
+.tl-toggle svg.ui { transition: transform .15s; transform: rotate(-90deg); }
+.tl-group.open .tl-toggle svg.ui { transform: none; }
+.tl-cat { display: flex; align-items: center; gap: .6rem; min-height: var(--tap); padding-left: 1.9rem; font-weight: 400; margin: 0; }
+.tl-panel-actions { position: sticky; bottom: 0; background: inherit; padding-top: .6rem; flex-wrap: nowrap; gap: .4rem; }
+.tl-panel-actions .btn { flex: 1 1 auto; padding-inline: .7rem; white-space: nowrap; }
+.filter-sheet .tl-panel-actions { background: var(--surface); }
+.tl-panel-inline .tl-panel-actions { position: static; }
+@media (max-width: 379px) { .tl-panel-actions { flex-wrap: wrap; } }
+@media (min-width: 641px) {
+    .filter-sheet[open] { display: block; position: fixed; inset: 0; margin: auto; height: max-content; width: min(34rem, 92vw); max-height: 85vh; overflow-y: auto; border: 1px solid var(--line);
+        border-radius: 16px; background: var(--surface); color: var(--ink); padding: 1rem 1.2rem; }
+    .filter-sheet::backdrop { background: rgb(0 0 0 / .4); }
+}

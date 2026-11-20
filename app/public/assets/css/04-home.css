@@ -1,0 +1,165 @@
+/* Accueil : grille des catégories, tuiles et leurs apparences (Theme.php), actions sous les groupes. */
+
+/* --- Grille et tuiles --------------------------------------------------------------------- */
+h2.group { font-size: .8125rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 1.4rem 0 .5rem; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(150px, 100%), 1fr)); gap: .7rem; }
+.tile {
+    position: relative; min-width: 0; background: var(--surface); border-radius: var(--radius);
+    box-shadow: var(--shadow); border: 1px solid var(--line); overflow: hidden;
+}
+.tile::before { content: ""; position: absolute; inset: 0 auto 0 0; width: 5px; background: var(--c); }
+.tile form { margin: 0; height: 100%; }
+.tap {
+    display: flex; flex-direction: column; align-items: flex-start; gap: .2rem;
+    width: 100%; height: 100%; min-height: 118px; padding: .9rem 2.6rem .8rem 1.1rem;
+    background: none; border: 0; color: inherit; font: inherit; text-align: left; cursor: pointer;
+    transition: background .15s;
+}
+a.tap { text-decoration: none; }
+.tap:hover { background: color-mix(in srgb, var(--c) 6%, transparent); }
+.tap:active { background: color-mix(in srgb, var(--c) 16%, transparent); }
+.tap:focus-visible { outline-offset: -3px; border-radius: var(--radius); }
+.tap .name { font-weight: 650; line-height: 1.2; }
+.tap .meta { display: block; width: 100%; min-width: 0; overflow: hidden; font-size: .85rem; color: var(--muted); margin-top: auto; }
+.tap .meta b { color: var(--c-ink); font-size: 1rem; }
+.more {
+    position: absolute; top: 0; right: 0; width: var(--tap); height: var(--tap);
+    display: grid; place-items: center; text-decoration: none; color: var(--muted); border-radius: 0 var(--radius) 0 10px;
+}
+.more:hover { color: var(--ink); background: var(--bg); }
+
+/* Icône d'une catégorie (émoji ou MDI), aussi en tête des pages de catégorie. */
+.icon {
+    display: inline-grid; place-items: center; width: 2.1rem; height: 2.1rem; border-radius: 10px; flex: none;
+    background: color-mix(in srgb, var(--c) 15%, transparent); color: var(--c-ink);
+    font-size: 1.15rem; font-weight: 700; line-height: 1;
+}
+.icon svg { width: 62%; height: 62%; fill: currentColor; }
+.icon.big { width: 3.2rem; height: 3.2rem; font-size: 1.7rem; border-radius: 14px; }
+.icon.sm { width: 1.6rem; height: 1.6rem; font-size: .9rem; border-radius: 7px; vertical-align: middle; margin-right: .35rem; }
+
+@media (max-width: 480px) {
+    .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .55rem; }
+    .tap { min-height: 110px; padding-left: .95rem; }
+}
+@media (max-width: 359px) {
+    .grid { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* --- Actions de l'accueil : sur une ligne à part, sous un filet (pas dans le dernier groupe) --- */
+.home-actions {
+    display: flex; flex-wrap: wrap; gap: .6rem; margin-top: 1.4rem; padding-top: 1rem;
+    border-top: 1px solid color-mix(in srgb, var(--ink) 22%, var(--bg));
+}
+.act-btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: .45rem; min-height: var(--tap); padding: .4rem 1rem;
+    border: 2px dashed color-mix(in srgb, var(--ink) 30%, var(--bg)); border-radius: 12px;
+    color: var(--muted); font-weight: 600; text-decoration: none; text-align: center;
+}
+.act-btn:hover { color: var(--ink); border-color: var(--ink); background: var(--surface); }
+.act-btn svg.ui { width: 1.25rem; height: 1.25rem; }
+@media (max-width: 480px) {
+    .home-actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(9rem, 100%), 1fr)); }
+}
+
+/* --- Apparence des tuiles (page Apparence) -------------------------------------------------
+   Classes sur <body> : tiles-<style> grad-<dégradé> shape-<forme>. Les couleurs dérivées (--c-solid, --c-on…)
+   sont calculées en PHP (Theme::tileVars) pour garder 4,5:1 entre texte et fond quelle que soit la couleur. */
+body { --tile-r: var(--radius); --tile-r-tr: var(--radius); }
+body.shape-car   { --tile-r: 3px;  --tile-r-tr: 3px; }
+body.shape-tres  { --tile-r: 26px; --tile-r-tr: 26px; }
+body.shape-un    { --tile-r: 3px 3px 30px 3px; --tile-r-tr: 3px; }
+body.shape-casse { --tile-r: 3px;  --tile-r-tr: 3px; }
+.tile { border-radius: var(--tile-r); }
+.tile .tap:focus-visible { border-radius: var(--tile-r); }
+.tile .more { border-radius: 0 var(--tile-r-tr) 0 10px; }
+.shape-casse .tile { clip-path: polygon(0 0, 100% 0, 100% calc(100% - 24px), calc(100% - 24px) 100%, 0 100%); }
+.shape-casse .tile .tap:focus-visible { outline-offset: -5px; }
+
+/* Styles « pleins » : fond de couleur, texte --c-on (blanc ou foncé selon la couleur).
+   Le fond uni est en background-color, les dégradés en background-image (sinon ils ne s'appliquent pas). */
+.tiles-plein .tile, .tiles-degrade:not(.grad-pastel):not(.grad-voile) .tile {
+    background-color: var(--c-solid); color: var(--c-on); border-color: transparent; box-shadow: none;
+}
+.tiles-plein .tile .tap, .tiles-degrade:not(.grad-pastel):not(.grad-voile) .tile .tap { color: var(--c-on); }
+.tiles-plein .tile .tap .meta, .tiles-plein .tile .tap .meta b, .tiles-plein .tile .more,
+.tiles-degrade:not(.grad-pastel):not(.grad-voile) .tile .tap .meta,
+.tiles-degrade:not(.grad-pastel):not(.grad-voile) .tile .tap .meta b,
+.tiles-degrade:not(.grad-pastel):not(.grad-voile) .tile .more { color: var(--c-on); }
+.tiles-plein .tile .hidden-mark, .tiles-degrade:not(.grad-pastel):not(.grad-voile) .tile .hidden-mark { color: inherit; }
+.tiles-plein .tile .icon, .tiles-degrade:not(.grad-pastel):not(.grad-voile) .tile .icon {
+    background: color-mix(in srgb, var(--c-on) 18%, transparent); color: var(--c-on);
+}
+.tiles-plein .tile .tap:hover, .tiles-degrade:not(.grad-pastel):not(.grad-voile) .tile .tap:hover { background: color-mix(in srgb, var(--c-on) 10%, transparent); }
+.tiles-plein .tile .tap:active, .tiles-degrade:not(.grad-pastel):not(.grad-voile) .tile .tap:active { background: color-mix(in srgb, var(--c-on) 18%, transparent); }
+.tiles-plein .tile .more:hover, .tiles-degrade:not(.grad-pastel):not(.grad-voile) .tile .more:hover { background: color-mix(in srgb, var(--c-on) 15%, transparent); }
+.tiles-plein .tile::before, .tiles-degrade .tile::before, .tiles-coin .tile::before,
+.tiles-teinte .tile::before, .tiles-pastille .tile::before { display: none; }
+
+/* Dégradés */
+.tiles-degrade.grad-diag .tile { background-image: linear-gradient(135deg, var(--c-solid), var(--c-deep)); }
+.tiles-degrade.grad-vert .tile { background-image: linear-gradient(180deg, var(--c-glow), var(--c-deep)); }
+.tiles-degrade.grad-lum  .tile { background-image: radial-gradient(circle at 18% 22%, var(--c-glow), var(--c-solid) 45%, var(--c-deep)); }
+.tiles-degrade.grad-deux .tile { background-image: linear-gradient(135deg, var(--c-solid), var(--c-hue2)); }
+.tiles-degrade.grad-pastel .tile { background: linear-gradient(135deg, var(--c-pastel), var(--c-pastel2)); border-color: transparent; }
+.tiles-degrade.grad-pastel .tile .tap, .tiles-degrade.grad-pastel .tile .tap .meta,
+.tiles-degrade.grad-pastel .tile .tap .meta b, .tiles-degrade.grad-pastel .tile .more { color: var(--c-pastel-ink); }
+.tiles-degrade.grad-pastel .tile .icon { background: rgb(255 255 255 / .6); color: var(--c-pastel-ink); }
+.tiles-degrade.grad-voile .tile { background: linear-gradient(90deg, color-mix(in srgb, var(--c) 34%, transparent), transparent 70%), var(--surface); }
+@media (prefers-color-scheme: dark) {
+    html:not([data-theme=light]) .tiles-degrade.grad-pastel .tile { background: linear-gradient(135deg, color-mix(in srgb, var(--c) 32%, var(--surface)), var(--surface)); border-color: var(--line); }
+    html:not([data-theme=light]) .tiles-degrade.grad-pastel .tile .tap, html:not([data-theme=light]) .tiles-degrade.grad-pastel .tile .more { color: var(--ink); }
+    html:not([data-theme=light]) .tiles-degrade.grad-pastel .tile .tap .meta { color: var(--muted); }
+    html:not([data-theme=light]) .tiles-degrade.grad-pastel .tile .tap .meta b { color: var(--c-ink); }
+    html:not([data-theme=light]) .tiles-degrade.grad-pastel .tile .icon { background: color-mix(in srgb, var(--c) 30%, transparent); color: var(--c-ink); }
+    html:not([data-theme=light]) .tiles-degrade.grad-voile .tile { background: linear-gradient(90deg, color-mix(in srgb, var(--c) 30%, transparent), transparent 70%), var(--surface); }
+}
+html[data-theme=dark] .tiles-degrade.grad-pastel .tile { background: linear-gradient(135deg, color-mix(in srgb, var(--c) 32%, var(--surface)), var(--surface)); border-color: var(--line); }
+html[data-theme=dark] .tiles-degrade.grad-pastel .tile .tap, html[data-theme=dark] .tiles-degrade.grad-pastel .tile .more { color: var(--ink); }
+html[data-theme=dark] .tiles-degrade.grad-pastel .tile .tap .meta { color: var(--muted); }
+html[data-theme=dark] .tiles-degrade.grad-pastel .tile .tap .meta b { color: var(--c-ink); }
+html[data-theme=dark] .tiles-degrade.grad-pastel .tile .icon { background: color-mix(in srgb, var(--c) 30%, transparent); color: var(--c-ink); }
+html[data-theme=dark] .tiles-degrade.grad-voile .tile { background: linear-gradient(90deg, color-mix(in srgb, var(--c) 30%, transparent), transparent 70%), var(--surface); }
+
+/* Coin : triangle de couleur en haut à droite, sous la flèche des détails. */
+.tiles-coin .tile::after {
+    content: ""; position: absolute; top: 0; right: 0; width: 0; height: 0; pointer-events: none;
+    border-top: var(--tap) solid var(--c-solid); border-left: var(--tap) solid transparent;
+}
+.tiles-coin .tile .more { z-index: 1; color: var(--c-on); place-items: start end; padding: .2rem .25rem 0 0; }
+.tiles-coin .tile .more svg.ui { width: 1.15rem; height: 1.15rem; }
+.tiles-coin .tile .more:hover { background: none; color: var(--c-on); }
+
+/* Teinté : fond légèrement coloré, contour de la couleur. */
+.tiles-teinte .tile { background: color-mix(in srgb, var(--c) 12%, var(--surface)); border: 2px solid var(--c-ink); box-shadow: none; }
+.tiles-teinte .tile .tap .meta, .tiles-teinte .tile .tap .meta b { color: var(--c-tint-ink); }
+.tiles-teinte .tile .icon { background: var(--c-solid); color: var(--c-on); }
+@media (prefers-color-scheme: dark) {
+    html:not([data-theme=light]) .tiles-teinte .tile { background: color-mix(in srgb, var(--c) 22%, var(--surface)); }
+    html:not([data-theme=light]) .tiles-teinte .tile .tap .meta, html:not([data-theme=light]) .tiles-teinte .tile .tap .meta b { color: var(--c-ink); }
+}
+html[data-theme=dark] .tiles-teinte .tile { background: color-mix(in srgb, var(--c) 22%, var(--surface)); }
+html[data-theme=dark] .tiles-teinte .tile .tap .meta, html[data-theme=dark] .tiles-teinte .tile .tap .meta b { color: var(--c-ink); }
+
+/* Pastille : grande icône ronde colorée à gauche du texte. */
+.tiles-pastille .tile .tap {
+    display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-rows: 1fr auto auto 1fr;
+    column-gap: .75rem; align-items: center; padding-left: .9rem;
+}
+.tiles-pastille .tile .icon {
+    grid-row: 1 / -1; width: 3.1rem; height: 3.1rem; border-radius: 50%; font-size: 1.45rem;
+    background: var(--c-solid); color: var(--c-on);
+}
+.tiles-pastille .tile .icon svg { width: 1.6rem; height: 1.6rem; }
+.tiles-pastille .tile .name { grid-column: 2; grid-row: 2; }
+.tiles-pastille .tile .meta { grid-column: 2; grid-row: 3; margin-top: .15rem; }
+@media (max-width: 379px) {
+    .tiles-pastille .tile .icon { width: 2.5rem; height: 2.5rem; font-size: 1.2rem; }
+}
+
+/* Contrastes forcés : on revient à l'affichage système. */
+@media (forced-colors: active) {
+    .tile::before { forced-color-adjust: none; }
+    .tile { background: Canvas !important; border: 1px solid CanvasText !important; }
+    .tiles-coin .tile::after { display: none; }
+}
