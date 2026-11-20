@@ -34,12 +34,12 @@ if ($filtered) {
 }
 ?>
 <div class="tl-filter">
-    <a class="fchip fset<?= $filtered ? ' on' : '' ?>" href="<?= $tlUrl($filter['g'], $filter['c'], ['filter' => 1]) ?>" data-filter-open aria-haspopup="dialog">
-        <?= ui_icon('filter') ?> Filtrer<?php if ($filtered): ?><span aria-hidden="true"> · <?= count($filter['cats']) ?></span><span class="sr"> (<?= count($filter['cats']) ?> catégories cochées)</span><?php endif; ?></a>
+    <span class="fsplit<?= $filtered ? ' on' : '' ?>">
+        <a class="fs-main" href="<?= $tlUrl($filter['g'], $filter['c'], ['filter' => 1]) ?>" data-filter-open aria-haspopup="dialog">
+            <?= ui_icon('filter') ?> Filtrer<?php if ($filtered): ?><span aria-hidden="true"> · <?= count($filter['cats']) ?></span><span class="sr"> (<?= count($filter['cats']) ?> catégories cochées)</span><?php endif; ?></a>
+        <?php if ($filtered): ?><a class="fs-x" href="<?= url('timeline') ?>" aria-label="Effacer le filtre" title="Effacer le filtre"><?= ui_icon('close') ?></a><?php endif; ?>
+    </span>
     <p class="tl-sum" role="status"><?= e($summary) ?></p>
-    <?php if ($filtered): ?>
-        <a class="fchip fclear" href="<?= url('timeline') ?>" aria-label="Effacer le filtre" title="Effacer le filtre"><?= ui_icon('close') ?></a>
-    <?php endif; ?>
 </div>
 <?php if (isset($_GET['filter'])): ?>
     <section class="card tl-panel-inline"><?php $panelId = 'p1'; require __DIR__ . '/_timeline_filter.php'; ?></section>

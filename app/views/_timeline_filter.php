@@ -47,6 +47,7 @@ $many = count($cats) > 15;
     </div>
     <div class="form-actions tl-panel-actions">
         <button class="btn accent" data-filter-submit>Filtrer</button>
+        <?php if ($filter['cats']): ?><a class="btn ghost" href="<?= url('timeline') ?>">Tout afficher</a><?php endif; ?>
         <a class="btn ghost" href="<?= url('timeline', array_filter(['g' => implode(',', $filter['g']), 'c' => implode(',', $filter['c'])])) ?>" data-filter-close>Annuler</a>
     </div>
 </form>

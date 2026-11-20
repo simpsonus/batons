@@ -1,5 +1,11 @@
 # Journal des modifications
 
+## 0.25.2
+- **Chronologie** : plus de croix isolée en haut à droite. Quand un filtre est actif, la pastille « Filtrer · 3 »
+  est coupée en deux : la partie gauche ouvre le panneau, la croix à droite efface le filtre. « Tout afficher »
+  est aussi proposé dans le panneau.
+- Le titre « Filtrer la chronologie » (et celui du Menu) n'est plus encadré à l'ouverture du panneau.
+
 ## 0.25.1
 - **Filtre de la Chronologie simplifié** : un seul bouton « Filtrer » et une ligne qui résume ce qui est affiché
   (✕ pour tout effacer) ; la rangée de pastilles de groupes disparaît.

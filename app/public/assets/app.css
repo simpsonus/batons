@@ -934,7 +934,19 @@ html[data-theme=dark] .tiles-teinte .tile .tap .meta, html[data-theme=dark] .til
 .fchip:hover { border-color: var(--ink); }
 .fchip.on { background: var(--accent-bg); border-color: transparent; color: #fff; }
 .fchip svg.ui { width: 1.2rem; height: 1.2rem; }
-.fclear { padding: 0; width: var(--tap); justify-content: center; }
+.fsplit { flex: none; display: inline-flex; align-items: stretch; border-radius: 999px; border: 1px solid var(--field); background: var(--surface); overflow: hidden; }
+.fsplit.on { background: var(--accent-bg); border-color: transparent; }
+.fsplit a { display: inline-flex; align-items: center; gap: .35rem; min-height: var(--tap); color: var(--ink); text-decoration: none; font-weight: 600; font-size: .95rem; white-space: nowrap; }
+.fsplit.on a { color: #fff; }
+.fs-main { padding: 0 1rem; }
+.fsplit.on .fs-main { padding-right: .8rem; }
+.fs-x { justify-content: center; min-width: var(--tap); border-left: 1px solid rgb(255 255 255 / .5); }
+.fsplit a:hover { background: color-mix(in srgb, var(--ink) 8%, transparent); }
+.fsplit.on a:hover { background: rgb(255 255 255 / .14); }
+.fsplit a:focus-visible { outline-offset: -4px; }
+.fsplit svg.ui { width: 1.2rem; height: 1.2rem; }
+/* Titres qui reçoivent le focus par programme (ouverture d'un panneau) : annoncés, mais pas encadrés. */
+[tabindex="-1"]:focus { outline: none; }
 .tl-sum { flex: 1; min-width: 0; margin: 0; color: var(--muted); font-size: .9rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 @media (min-width: 641px) { .tl-filter { margin: 0 0 .8rem; padding: .3rem 0; } }
 .tl-panel h2 { font-size: 1.1rem; margin: 0; }
@@ -958,3 +970,6 @@ html[data-theme=dark] .tiles-teinte .tile .tap .meta, html[data-theme=dark] .til
     .filter-sheet::backdrop { background: rgb(0 0 0 / .4); }
 }
 .tl-panel-inline .tl-panel-actions { position: static; }
+.tl-panel-actions { flex-wrap: nowrap; gap: .4rem; }
+.tl-panel-actions .btn { flex: 1 1 auto; padding-inline: .7rem; white-space: nowrap; }
+@media (max-width: 379px) { .tl-panel-actions { flex-wrap: wrap; } }

@@ -88,6 +88,7 @@ Le nom vient des bâtons qu'on trace pour compter (IIII barrés). Slug technique
   listes « 1,2 » ; forme canonique calculée dans la route (groupes complets -> g), redirection depuis `c[]` du panneau.
   Bouton « Filtrer » + résumé (pas de pastilles, v0.25.1), panneau `views/_timeline_filter.php` (`<dialog>`, ou inline
   avec `filter=1` sans JS) : case de groupe et chevron dans deux zones séparées (jamais une case dans un `<summary>`).
+  Effacer le filtre = croix DANS la pastille coupée (`.fsplit`), jamais une croix isolée (réservée à « fermer la page »).
 - **Champs de saisie libre** (intitulés) : jamais `name="name"` ni d'id/libellé « name » — Safari y propose une
   fiche Contact malgré `autocomplete="off"`. Utiliser `name="label"` + autocomplete/autocorrect/spellcheck désactivés.
 - L'interface ne mentionne pas Home Assistant (l'app doit rester neutre).
@@ -209,6 +210,7 @@ docker build -f docker/Dockerfile -t batons . && docker run -p 8080:8080 -v $PWD
       publique). Jamais de synchro pour une catégorie masquée.
 - [x] v0.25 : filtre de la chronologie par groupes et catégories.
 - [x] v0.25.1 : filtre réduit au bouton + panneau, case de groupe réparée.
+- [x] v0.25.2 : pastille de filtre coupée (Filtrer · n | ✕), « Tout afficher » dans le panneau, titres focalisés sans cadre.
 - [ ] Recherche dans les notes et intervalle de dates dans la chronologie (à ajouter au panneau de filtre).
 - [ ] Rappels / objectifs (« au moins 3 par semaine »).
 - [ ] i18n (anglais).
