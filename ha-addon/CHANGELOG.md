@@ -1,5 +1,8 @@
 # Journal des modifications
 
+## 0.24.1
+- Correctif d'affichage : l'encadré en tête de la fiche d'une œuvre avait pris le style du message de la page Exporter.
+
 ## 0.24.0
 - **Option « Compter les bâtons à venir dans les statistiques »** dans chaque catégorie. Décochée, un bâton daté
   de plus tard (livraison prévue, rendez-vous…) n'entre dans les chiffres, le graphique et le calendrier qu'une fois

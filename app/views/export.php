@@ -32,7 +32,7 @@ $closeTo = from_url(url());
         le groupe, la valeur, la note et, pour les œuvres, le titre, l'épisode ou le tome et la note sur 10.
         Il peut être réimporté tel quel dans Bâtons, ici ou ailleurs.</p>
     <?php if ($hiddenLocked): ?>
-        <p class="notice small"><?= ui_icon('lock') ?> Les éléments masqués ne sont pas inclus tant qu'ils sont verrouillés.
+        <p class="export-note small"><?= ui_icon('lock') ?> Les éléments masqués ne sont pas inclus tant qu'ils sont verrouillés.
             <a href="<?= url('unlock', from_here([])) ?>">Les afficher</a> pour les exporter aussi.</p>
     <?php endif; ?>
     <div class="form-actions">

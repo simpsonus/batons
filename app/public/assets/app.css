@@ -922,7 +922,7 @@ html[data-theme=dark] .tiles-teinte .tile .tap .meta, html[data-theme=dark] .til
 .summary dt { margin: 0; }
 .summary dd { margin: 0; font-weight: 700; font-variant-numeric: tabular-nums; }
 .summary-names { margin: -.2rem 0 .3rem; color: var(--muted); font-size: .9rem; }
-.notice { display: block; padding: .6rem .8rem; border-radius: 10px; background: color-mix(in srgb, var(--accent) 10%, var(--surface)); }
+.export-note { display: block; padding: .6rem .8rem; border-radius: 10px; background: color-mix(in srgb, var(--accent) 10%, var(--surface)); }
 .export-cat { display: block; margin: .4rem 0 0 2rem; }
 .export-cat select { width: 100%; max-width: 22rem; }
-.notice > svg.ui { width: 1.1em; height: 1.1em; vertical-align: -.15em; margin-right: .3rem; }
+.export-note > svg.ui { width: 1.1em; height: 1.1em; vertical-align: -.15em; margin-right: .3rem; }
