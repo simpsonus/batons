@@ -59,8 +59,13 @@ final class Time
             'month' => $now->modify('first day of this month')->setTime(0, 0),
             'year'  => $now->setDate((int) $now->format('Y'), 1, 1)->setTime(0, 0),
         };
+        // Fin = fin de la période (et non « maintenant ») : un bâton daté de plus tard aujourd'hui
+        // (une livraison prévue à 10 h 30…) compte bien dans aujourd'hui, la semaine, le mois et l'année.
+        $end = $start->modify(match ($period) {
+            'today' => '+1 day', 'week' => '+1 week', 'month' => '+1 month', 'year' => '+1 year',
+        });
         $utc = new DateTimeZone('UTC');
-        return [$start->setTimezone($utc)->format('Y-m-d H:i:s'), $now->setTimezone($utc)->modify('+1 second')->format('Y-m-d H:i:s')];
+        return [$start->setTimezone($utc)->format('Y-m-d H:i:s'), $end->setTimezone($utc)->format('Y-m-d H:i:s')];
     }
 
     /** « à l'instant », « il y a 3 h », « il y a 2 j »… */

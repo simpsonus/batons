@@ -1,5 +1,10 @@
 # Journal des modifications
 
+## 0.23.1
+- **Correctif des statistiques** : un bâton daté de plus tard dans la journée (ou la semaine, le mois, l'année)
+  n'était pas compté dans « Aujourd'hui », « Cette semaine », « Ce mois » et « Cette année ». Il l'est
+  désormais ; le compteur du jour des tuiles en profite aussi.
+
 ## 0.23.0
 - **Nouvelle page « Apparence »** dans le Menu (elle quitte la page Compte) : choix illustrés par des vignettes,
   aperçu de tes catégories qui reste visible pendant que tu choisis.

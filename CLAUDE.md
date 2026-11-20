@@ -191,6 +191,7 @@ docker build -f docker/Dockerfile -t batons . && docker run -p 8080:8080 -v $PWD
 - [x] v0.22.1 : dégradés réellement appliqués (fond uni en `background-color`, dégradé en `background-image`).
 - [x] v0.23 : page Apparence (Menu) avec thème clair/sombre forcé, palette de 64 couleurs, textes colorés toujours
       contrastés (`cvars()`), focus du menu sur son titre.
+- [x] v0.23.1 : `Time::periodUtc()` va jusqu'à la fin de la période (bâtons datés plus tard aujourd'hui comptés).
 - [ ] Type de catégorie « Éléments » générique (éléments nommés sans catalogue, plusieurs en parallèle,
       début/fin/durée — mécanique des œuvres) : à faire si un cas concret apparaît (ex. « Traitements »).
 - [ ] Plus tard éventuellement : synchro BetaSeries / Trakt (pas SensCritique ni SerieBox : pas d'API
