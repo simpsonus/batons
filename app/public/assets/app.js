@@ -223,7 +223,7 @@
     const board = document.querySelector('[data-reorder]');
     if (board) {
         document.body.classList.add('dnd-on');
-        document.querySelectorAll('.js-only, [data-fold], [data-fold-all], .drag-handle').forEach((el) => { el.hidden = false; });
+        document.querySelectorAll('.js-only, [data-fold], [data-fold-view], .drag-handle').forEach((el) => { el.hidden = false; });
         const status = document.querySelector('[data-order-status]');
         const menu = document.querySelector('[data-move-menu]');
         const sections = () => [...board.querySelectorAll(':scope > section.order-group')];
@@ -246,8 +246,17 @@
         const saveFold = () => {
             folded = groupSections().filter((s) => s.classList.contains('folded')).map((s) => s.dataset.group);
             try { localStorage.setItem(FOLD_KEY, JSON.stringify(folded)); } catch (e) { /* stockage indisponible */ }
-            const all = document.querySelector('[data-fold-all]');
-            if (all) all.textContent = folded.length === groupSections().length ? 'Tout déplier' : 'Tout replier';
+            // Commutateur « Tout | Groupes seuls » : reflète l'état (aucun bouton enfoncé si mélangé).
+            const n = groupSections().length;
+            document.querySelectorAll('[data-fold-view-btn]').forEach((b) => {
+                const on = b.dataset.foldViewBtn === 'all' ? folded.length === 0 : n > 0 && folded.length === n;
+                b.setAttribute('aria-pressed', on ? 'true' : 'false');
+            });
+            // Nombre de catégories, affiché sur un groupe plié.
+            groupSections().forEach((sec) => {
+                const c = sec.querySelector('[data-count]');
+                if (c) c.textContent = String(sec.querySelectorAll('li[data-id]').length);
+            });
         };
         groupSections().forEach((s) => setFold(s, folded.includes(s.dataset.group)));
         saveFold();
@@ -258,8 +267,10 @@
             setFold(sec, !sec.classList.contains('folded'));
             saveFold();
         });
-        document.querySelector('[data-fold-all]')?.addEventListener('click', () => {
-            const fold = folded.length !== groupSections().length;
+        document.querySelector('[data-fold-view]')?.addEventListener('click', (ev) => {
+            const b = ev.target.closest('[data-fold-view-btn]');
+            if (!b) return;
+            const fold = b.dataset.foldViewBtn === 'groups';
             groupSections().forEach((s) => setFold(s, fold));
             saveFold();
         });

@@ -107,7 +107,7 @@ code { font-size: .85em; background: var(--line); padding: .05rem .3rem; border-
 svg.ui { width: 1.35rem; height: 1.35rem; fill: currentColor; flex: none; }
 
 /* Tactile : pas de sélection de texte ni de menu contextuel sur un appui long. */
-.tile, .tap, .more, .btn, .icon-btn, .seg a, .icon-choice, .swatch, .chip, .chip span, .act-btn, .topbar > nav a {
+.tile, .tap, .more, .btn, .icon-btn, .seg a, .seg button, .icon-choice, .swatch, .chip, .chip span, .act-btn, .topbar > nav a {
     -webkit-user-select: none;
     user-select: none;
     -webkit-touch-callout: none;

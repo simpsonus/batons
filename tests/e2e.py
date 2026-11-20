@@ -152,6 +152,14 @@ def run_flows(page, base):
         page.reload()
         names = page.eval_on_selector_all('li[data-id]', 'els => els.map(e => e.dataset.name)')
         check(names.index('Fioul') < names.index('Café'), 'ordre enregistré')
+        if page.locator('[data-fold-view]').count():
+            page.click('[data-fold-view-btn=groups]')
+            check(page.locator('section.order-group.folded').count() > 0, '« Groupes seuls » replie les groupes')
+            check(page.locator('section.order-group.folded [data-count]').first.is_visible(), 'nombre de catégories visible sur un groupe plié')
+            page.reload()
+            check(page.get_attribute('[data-fold-view-btn=groups]', 'aria-pressed') == 'true', 'choix mémorisé')
+            page.click('[data-fold-view-btn=all]')
+            check(page.locator('section.order-group.folded').count() == 0, '« Tout » déplie les groupes')
     reorder()
 
     @step('Apparence : style Dégradé appliqué')

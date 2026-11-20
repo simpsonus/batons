@@ -28,7 +28,6 @@ $moveButton = static function (string $route, int $id, string $dir, string $labe
 <div class="page-head">
     <h1>Réorganiser</h1>
     <div class="head-tools">
-        <?php if ($groupCount > 0): ?><button type="button" class="btn ghost fold-all" data-fold-all hidden>Tout replier</button><?php endif; ?>
         <?= close_link(from_url(url()), 'Fermer') ?>
     </div>
 </div>
@@ -37,6 +36,12 @@ $moveButton = static function (string $route, int $id, string $dir, string $labe
 <p class="muted js-only" hidden>Fais glisser la poignée <span aria-hidden="true">⠿</span> d'une catégorie (dans son groupe ou vers un autre) ou d'un groupe.
     Un simple appui sur la poignée propose aussi Monter, Descendre et Déplacer vers un groupe. L'ordre est enregistré aussitôt.</p>
 <p class="order-status" role="status" aria-live="polite" data-order-status></p>
+<?php if ($groupCount > 0): ?>
+<div class="seg order-view" role="group" aria-label="Affichage" data-fold-view hidden>
+    <button type="button" data-fold-view-btn="all" aria-pressed="true">Tout</button>
+    <button type="button" data-fold-view-btn="groups" aria-pressed="false">Groupes seuls</button>
+</div>
+<?php endif; ?>
 
 <div class="order-board" data-reorder="<?= e(url('reorder')) ?>" data-csrf="<?= e(Batons\Http::csrfToken()) ?>">
 <?php foreach ($sections as $gi => $sec): $label = $sec['name'] ?? 'Catégories'; ?>
@@ -46,7 +51,7 @@ $moveButton = static function (string $route, int $id, string $dir, string $labe
                 <button type="button" class="icon-btn fold-btn" data-fold aria-expanded="true" aria-controls="list-<?= $gi ?>"
                         aria-label="Replier le groupe <?= e($label) ?>" title="Replier / déplier" hidden><?= ui_icon('down') ?></button>
             <?php endif; ?>
-            <h2 id="grp-<?= $gi ?>"><?= e($label) ?></h2>
+            <h2 id="grp-<?= $gi ?>"><?= e($label) ?><?php if ($sec['id'] > 0): ?> <span class="order-count"><span data-count><?= count($sec['items']) ?></span><span class="sr"> catégories</span></span><?php endif; ?></h2>
             <?php if ($sec['id'] > 0): ?>
                 <a class="icon-btn rename-btn" href="<?= url('group_rename', from_here(['id' => $sec['id']])) ?>" data-rename
                    aria-label="Renommer le groupe <?= e($label) ?>" title="Renommer le groupe"><?= ui_icon('pencil') ?></a>

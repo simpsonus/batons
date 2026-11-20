@@ -22,7 +22,11 @@
 .rename-form { display: flex; flex-wrap: wrap; gap: .4rem; align-items: center; flex: 1 1 14rem; margin: 0; }
 .rename-form input[type=text] { flex: 1 1 10rem; width: auto; min-width: 0; }
 
-/* Plier / déplier (état en localStorage). */
+/* Plier / déplier (état en localStorage) ; commutateur « Tout | Groupes seuls » ; nombre de catégories d'un groupe plié. */
+.order-view { margin: 0 0 1rem; }
+.order-count { display: none; margin-left: .3rem; padding: .05rem .5rem; border-radius: 999px; background: var(--line);
+    font-size: .8125rem; font-weight: 600; color: var(--muted); vertical-align: .1em; font-variant-numeric: tabular-nums; }
+.order-group.folded .order-count { display: inline-block; }
 .fold-btn svg.ui { transition: transform .15s; }
 .order-group.folded .fold-btn svg.ui { transform: rotate(-90deg); }
 .order-group.folded .order-list { display: none; }

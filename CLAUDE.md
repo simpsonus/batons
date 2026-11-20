@@ -233,8 +233,8 @@ docker build -f docker/Dockerfile -t batons . && docker run -p 8080:8080 -v $PWD
       près vérifié par captures avant/après), `index.php` découpé en `routes/*.php` ; tests WebAuthn avec les jeux
       d'essai officiels du W3C (`tests/webauthn-vectors.php`) et CBOR avec l'annexe A de la RFC 8949 ; parcours
       « série » en e2e avec réponses de catalogue figées (`tests/fixtures.php`).
-- [ ] Réorganiser, option A (validée, à faire) : commutateur « Tout | Groupes seuls » au-dessus de la liste (remplace
-      le bouton « Tout replier » de l'en-tête), nombre de catégories affiché sur un groupe plié.
+- [x] v0.28 : Réorganiser : commutateur « Tout | Groupes seuls » (`[data-fold-view]`, boutons `aria-pressed` dans `.seg`)
+      au-dessus de la liste, nombre de catégories sur un groupe plié (`.order-count`).
 - [ ] Recherche dans les notes et intervalle de dates dans la chronologie (à ajouter au panneau de filtre).
 - [ ] Rappels / objectifs (« au moins 3 par semaine »).
 - [ ] i18n (anglais).

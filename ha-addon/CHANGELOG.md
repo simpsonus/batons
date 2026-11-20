@@ -1,5 +1,10 @@
 # Journal des modifications
 
+## 0.28.0
+- **Réorganiser** : un sélecteur « Tout | Groupes seuls » au-dessus de la liste remplace le bouton
+  « Tout replier ». « Groupes seuls » replie tous les groupes pour les déplacer facilement ; un groupe
+  replié affiche son nombre de catégories. Le choix est mémorisé sur l'appareil.
+
 ## 0.27.0
 - Version de rangement, **sans changement visible** : l'affichage est identique (vérifié écran par écran,
   en clair et en sombre, du téléphone à l'ordinateur).
