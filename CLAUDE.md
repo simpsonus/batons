@@ -86,7 +86,8 @@ Le nom vient des bâtons qu'on trace pour compter (IIII barrés). Slug technique
   annulée) -> import ; fichiers gardés dans `data_dir/import/<user>-<jeton>` (ménage après 24 h). **Export** : page de
   choix, fichier seulement avec `download=1`. Toutes les pages du Menu ont la ✕ (`from`).
 - **Filtre de la Chronologie** : paramètres `g` (groupes entiers, 0 = sans groupe) et `c` (catégories isolées),
-  listes « 1,2 » ; forme canonique calculée dans la route (groupes complets -> g), redirection depuis `c[]` du panneau.
+  listes « 1,2 » ; `q` (recherche), `p` (7 | 30 | 365 | dates) avec `du`/`au` ; forme canonique calculée dans la route
+  (groupes complets -> g), redirection depuis l'envoi du panneau (`f=1`). `Events::timeline(…, $opts)` / `timelineCount()`.
   Bouton « Filtrer » + résumé (pas de pastilles, v0.25.1), panneau `views/_timeline_filter.php` (`<dialog>`, ou inline
   avec `filter=1` sans JS) : case de groupe et chevron dans deux zones séparées (jamais une case dans un `<summary>`).
   Effacer le filtre = croix DANS la pastille coupée (`.fsplit`), jamais une croix isolée (réservée à « fermer la page »).
@@ -235,7 +236,9 @@ docker build -f docker/Dockerfile -t batons . && docker run -p 8080:8080 -v $PWD
       « série » en e2e avec réponses de catalogue figées (`tests/fixtures.php`).
 - [x] v0.28 : Réorganiser : commutateur « Tout | Groupes seuls » (`[data-fold-view]`, boutons `aria-pressed` dans `.seg`)
       au-dessus de la liste, nombre de catégories sur un groupe plié (`.order-count`).
-- [ ] Recherche dans les notes et intervalle de dates dans la chronologie (à ajouter au panneau de filtre).
+- [x] v0.29 : Chronologie : recherche (`q`, notes + titres d'œuvres, fonction SQLite `fold()` = minuscules sans accents,
+      `Db::fold()`, surlignage `highlight()`) et période (`p` = 7 | 30 | 365 jours glissants, ou `dates` + `du`/`au`
+      jours locaux, `Time::lastDaysUtc()` / `Time::daysUtc()`) dans le panneau Filtrer ; pastille = nombre de critères.
 - [ ] Rappels / objectifs (« au moins 3 par semaine »).
 - [ ] i18n (anglais).
 - [ ] Intégration HA facultative : capteurs (« temps depuis », « total du jour »), webhook/API pour ajouter

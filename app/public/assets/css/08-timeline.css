@@ -20,6 +20,26 @@
 /* --- Panneau : <dialog> (feuille sur téléphone, fenêtre au centre sur grand écran), ou inline sans JS --- */
 .tl-panel h2 { font-size: 1.1rem; margin: 0; }
 .tl-panel-head { display: flex; align-items: center; justify-content: space-between; gap: .5rem; margin-bottom: .6rem; }
+.tl-label { display: block; margin: .9rem 0 .4rem; font-size: .9rem; font-weight: 600; }
+.tl-panel-head + .tl-label { margin-top: .2rem; }
+.tl-q { position: relative; }
+.tl-q > svg.ui { position: absolute; left: .65rem; top: 50%; transform: translateY(-50%); width: 1.15rem; height: 1.15rem; color: var(--muted); pointer-events: none; }
+.tl-q input { padding-left: 2.3rem; }
+.tl-help { margin: .3rem 0 0; }
+.tl-period { margin: .9rem 0 0; }
+.tl-period > legend.tl-label { margin: 0 0 .4rem; }
+.tl-period .chip span { padding: 0 .65rem; }
+.tl-period .kind-choice { gap: .25rem; }
+.tl-dates { margin-top: .6rem; }
+.tl-dates label { margin-bottom: .2rem; }
+.tl-cats-head { margin: .9rem 0 .4rem; }
+.tl-cats-head .tl-label { margin: 0; }
+.tl-found { margin: 1rem 0 0; }
+/* Texte cherché, surligné dans les notes et les titres. */
+mark { background: color-mix(in srgb, #facc15 55%, transparent); color: inherit; border-radius: 3px; padding: 0 .1em; }
+@media (prefers-color-scheme: dark) { html:not([data-theme=light]) mark { background: color-mix(in srgb, #facc15 30%, transparent); } }
+html[data-theme=dark] mark { background: color-mix(in srgb, #facc15 30%, transparent); }
+@media (forced-colors: active) { mark { background: Mark; color: MarkText; } }
 .tl-search { display: flex; align-items: center; gap: .4rem; margin: 0 0 .6rem; font-weight: 400; }
 .tl-search input { flex: 1; }
 /* Groupe : case et chevron dans deux zones séparées (jamais une case dans un <summary>). */

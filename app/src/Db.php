@@ -36,6 +36,9 @@ final class Db
             $pdo->exec('PRAGMA journal_mode = WAL');
             $pdo->exec('PRAGMA foreign_keys = ON');
             $pdo->exec('PRAGMA busy_timeout = 5000');
+            // fold(texte) : minuscules sans accents, pour chercher « ecole » dans « École » (recherche de la Chronologie).
+            // En PostgreSQL, l'équivalent serait lower(unaccent(…)).
+            $pdo->sqliteCreateFunction('fold', static fn($v) => $v === null ? null : self::fold((string) $v), 1, PDO::SQLITE_DETERMINISTIC);
         }
 
         self::$pdo = $pdo;
@@ -98,5 +101,16 @@ final class Db
                 throw $e;
             }
         }
+    }
+
+    /** Minuscules sans accents (é -> e, œ -> oe…), pour comparer des textes saisis à la main. */
+    public static function fold(string $s): string
+    {
+        static $map = null;
+        $map ??= array_combine(
+            mb_str_split('àâäáãåçéèêëíìîïñóòôöõúùûüýÿ'),
+            str_split('aaaaaaceeeeiiiinooooouuuuyy')
+        ) + ['æ' => 'ae', 'œ' => 'oe', 'ß' => 'ss', '’' => "'"];
+        return strtr(mb_strtolower($s), $map);
     }
 }

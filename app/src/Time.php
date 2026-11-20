@@ -68,6 +68,32 @@ final class Time
         return [$start->setTimezone($utc)->format('Y-m-d H:i:s'), $end->setTimezone($utc)->format('Y-m-d H:i:s')];
     }
 
+    /** Début (UTC) des N derniers jours, aujourd'hui compris : minuit local il y a N-1 jours. */
+    public static function lastDaysUtc(int $days): string
+    {
+        $start = (new DateTimeImmutable('now', self::tz()))->setTime(0, 0)->modify('-' . max(0, $days - 1) . ' days');
+        return $start->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d H:i:s');
+    }
+
+    /** Bornes UTC [début, fin[ d'un intervalle de jours locaux 'Y-m-d' (fin incluse). Null si une date est invalide. */
+    public static function daysUtc(string $from, string $to): ?array
+    {
+        $parse = static function (string $d): ?DateTimeImmutable {
+            $x = DateTimeImmutable::createFromFormat('!Y-m-d', $d, self::tz());
+            return $x && $x->format('Y-m-d') === $d ? $x : null;
+        };
+        $a = $parse($from);
+        $b = $parse($to);
+        if (!$a || !$b) {
+            return null;
+        }
+        if ($b < $a) {
+            [$a, $b] = [$b, $a];
+        }
+        $utc = new DateTimeZone('UTC');
+        return [$a->setTimezone($utc)->format('Y-m-d H:i:s'), $b->modify('+1 day')->setTimezone($utc)->format('Y-m-d H:i:s')];
+    }
+
     /** « à l'instant », « il y a 3 h », « il y a 2 j »… */
     public static function ago(?string $utc): string
     {

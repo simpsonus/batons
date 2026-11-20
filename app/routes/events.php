@@ -83,13 +83,38 @@ switch ($route) {
             [$selected, $fullGroups, $looseCats] = [[], [], []];      // tout coché = pas de filtre
         }
         $filter = ['g' => $fullGroups, 'c' => array_values($looseCats), 'cats' => $selected];
-        if (is_array($_GET['c'] ?? null) || is_array($_GET['g'] ?? null)) {
-            // Envoi du panneau (c[]=…) : on redirige vers l'adresse courte, lisible et à garder en favori.
-            Http::redirect('timeline', array_filter(['g' => implode(',', $fullGroups), 'c' => implode(',', $filter['c'])], 'strlen'));
+
+        // Recherche (note, titre d'œuvre) et période : p = 7 | 30 | 365 jours glissants, ou dates du … au … (jours locaux).
+        $q = mb_substr(trim((string) ($_GET['q'] ?? '')), 0, 100);
+        $p = (string) ($_GET['p'] ?? '');
+        $du = (string) ($_GET['du'] ?? '');
+        $au = (string) ($_GET['au'] ?? '');
+        $range = null;
+        if ($p === 'dates' || ($p === '' && ($du !== '' || $au !== ''))) {
+            $range = Batons\Time::daysUtc($du !== '' ? $du : $au, $au !== '' ? $au : $du);
+            $p = $range ? 'dates' : '';
+            if ($range) {      // dates remises dans l'ordre (au avant du : échangées)
+                $du = Batons\Time::local($range[0])->format('Y-m-d');
+                $au = Batons\Time::local($range[1])->modify('-1 day')->format('Y-m-d');
+            }
+        } elseif (in_array($p, ['7', '30', '365'], true)) {
+            $range = [Batons\Time::lastDaysUtc((int) $p), null];
+        } else {
+            $p = '';
+        }
+        $crit = array_filter(['q' => $q, 'p' => $p, 'du' => $p === 'dates' ? $du : '', 'au' => $p === 'dates' ? $au : ''], 'strlen');
+        $filter += ['q' => $q, 'p' => $p, 'du' => $crit['du'] ?? '', 'au' => $crit['au'] ?? '', 'crit' => $crit];
+
+        if (isset($_GET['f']) || is_array($_GET['c'] ?? null) || is_array($_GET['g'] ?? null)) {
+            // Envoi du panneau : on redirige vers l'adresse courte, lisible et à garder en favori.
+            Http::redirect('timeline', array_filter(['g' => implode(',', $fullGroups), 'c' => implode(',', $filter['c'])], 'strlen') + $crit);
         }
         $page = max(0, (int) ($_GET['page'] ?? 0));
+        $opts = ['q' => $q, 'from' => $range[0] ?? null, 'to' => $range[1] ?? null];
+        $cid = $selected ? $selected : null;
         Http::render('timeline', [
-            'events' => Events::timeline($uid, 101, $page * 100, $selected ? $selected : null),
+            'events' => Events::timeline($uid, 101, $page * 100, $cid, $opts),
+            'found' => ($q !== '' || $range) ? Events::timelineCount($uid, $cid, $opts) : null,
             'page' => $page, 'filter' => $filter, 'cats' => $cats, 'byGroup' => $byGroup,
             'groups' => Categories::groups($uid), 'counts' => Events::countsByCategory($uid),
         ], 'Chronologie');

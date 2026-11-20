@@ -156,3 +156,39 @@ function help_box(string $title, array $items): string
     }
     return $html . '</ul></div></details>';
 }
+
+/**
+ * Texte échappé, avec les occurrences de $q surlignées (<mark>), sans tenir compte des majuscules ni des accents
+ * (même règle que la recherche de la Chronologie, Db::fold).
+ */
+function highlight(string $text, string $q): string
+{
+    $q = Batons\Db::fold(trim($q));
+    if ($q === '') {
+        return e($text);
+    }
+    $chars = mb_str_split($text);
+    $folded = '';
+    $src = [];                    // pour chaque caractère replié : indice du caractère d'origine
+    foreach ($chars as $i => $ch) {
+        foreach (mb_str_split(Batons\Db::fold($ch)) as $f) {
+            $folded .= $f;
+            $src[] = $i;
+        }
+    }
+    $out = '';
+    $done = 0;                    // caractères d'origine déjà écrits
+    $from = 0;
+    $len = mb_strlen($q);
+    while ($len > 0 && ($pos = mb_strpos($folded, $q, $from)) !== false) {
+        $a = $src[$pos];
+        $b = $src[$pos + $len - 1] + 1;
+        if ($a >= $done) {
+            $out .= e(implode('', array_slice($chars, $done, $a - $done)))
+                . '<mark>' . e(implode('', array_slice($chars, $a, $b - $a))) . '</mark>';
+            $done = $b;
+        }
+        $from = $pos + $len;
+    }
+    return $out . e(implode('', array_slice($chars, $done)));
+}

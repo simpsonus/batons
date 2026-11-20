@@ -1,6 +1,6 @@
 <?php
-// Panneau de réglage fin du filtre de la chronologie (feuille sur téléphone, page sans JS avec ?filter=1).
-// Variables : $cats, $byGroup, $groupNames, $filter, $counts, $panelId.
+// Panneau de filtre de la chronologie (feuille sur téléphone, fenêtre sur grand écran, page sans JS avec ?filter=1) :
+// recherche dans les notes, période, groupes et catégories. Variables : $cats, $byGroup, $groupNames, $filter, $counts, $panelId.
 $catById = [];
 foreach ($cats as $cat) {
     $catById[(int) $cat['id']] = $cat;
@@ -9,8 +9,31 @@ $many = count($cats) > 15;
 ?>
 <form method="get" action="./" class="tl-panel" data-filter-form>
     <input type="hidden" name="r" value="timeline">
+    <input type="hidden" name="f" value="1">
     <div class="tl-panel-head">
         <h2 id="filter-title-<?= $panelId ?>">Filtrer la chronologie</h2>
+    </div>
+    <label class="tl-label" for="tl-q-<?= $panelId ?>">Rechercher dans les notes</label>
+    <div class="tl-q">
+        <?= ui_icon('search') ?>
+        <input type="search" id="tl-q-<?= $panelId ?>" name="q" value="<?= e($filter['q']) ?>" maxlength="100" enterkeyhint="search"
+               autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-describedby="tl-q-help-<?= $panelId ?>" data-filter-q>
+    </div>
+    <p class="muted small tl-help" id="tl-q-help-<?= $panelId ?>">Dans les notes et les titres d'œuvres, sans tenir compte des accents ni des majuscules.</p>
+    <fieldset class="tl-period">
+        <legend class="tl-label">Période</legend>
+        <div class="kind-choice">
+            <?php foreach (['' => 'Tout', '7' => '7 jours', '30' => '30 jours', '365' => '12 mois', 'dates' => 'Dates…'] as $v => $lbl): ?>
+                <label class="chip wide"><input type="radio" name="p" value="<?= $v ?>" <?= $filter['p'] === (string) $v ? 'checked' : '' ?>><span><?= $lbl ?></span></label>
+            <?php endforeach; ?>
+        </div>
+        <div class="row tl-dates" data-filter-dates>
+            <label>Du <input type="date" name="du" value="<?= e($filter['du']) ?>"></label>
+            <label>Au <input type="date" name="au" value="<?= e($filter['au']) ?>"></label>
+        </div>
+    </fieldset>
+    <div class="tl-panel-head tl-cats-head">
+        <h3 class="tl-label">Groupes et catégories</h3>
         <button type="button" class="btn ghost small-btn" data-check-all hidden>Tout cocher</button>
     </div>
     <?php if ($many): ?>
@@ -47,7 +70,7 @@ $many = count($cats) > 15;
     </div>
     <div class="form-actions tl-panel-actions">
         <button class="btn accent" data-filter-submit>Filtrer</button>
-        <?php if ($filter['cats']): ?><a class="btn ghost" href="<?= url('timeline') ?>">Tout afficher</a><?php endif; ?>
-        <a class="btn ghost" href="<?= url('timeline', array_filter(['g' => implode(',', $filter['g']), 'c' => implode(',', $filter['c'])])) ?>" data-filter-close>Annuler</a>
+        <?php if ($filter['cats'] || $filter['crit']): ?><a class="btn ghost" href="<?= url('timeline') ?>">Tout afficher</a><?php endif; ?>
+        <a class="btn ghost" href="<?= url('timeline', array_filter(['g' => implode(',', $filter['g']), 'c' => implode(',', $filter['c'])]) + $filter['crit']) ?>" data-filter-close>Annuler</a>
     </div>
 </form>

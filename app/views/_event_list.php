@@ -6,6 +6,7 @@ use Batons\Chart;
 use Batons\Time;
 
 $showCategory ??= false;
+$highlight ??= '';      // texte cherché (Chronologie) : surligné dans la note et le titre de l'œuvre
 $dayLevel ??= 3;
 $day = null;
 ?>
@@ -28,7 +29,7 @@ $day = null;
                 <a class="cat" href="<?= url('category', from_here(['id' => $ev['category_id']])) ?>"><span class="icon sm" aria-hidden="true"><?= icon($ev['icon']) ?></span><?= e($ev['category_name']) ?><?php if (!empty($ev['is_hidden'])): ?> <span class="hidden-mark" title="Masquée"><?= ui_icon('eye-off') ?><span class="sr">(masquée)</span></span><?php endif; ?></a>
             <?php endif; ?>
             <?php if (!empty($ev['work_title'])): ?>
-                <span class="work-line"><?php if (empty($hideWork)): ?><strong><?= e($ev['work_title']) ?></strong><?php endif; ?>
+                <span class="work-line"><?php if (empty($hideWork)): ?><strong><?= highlight($ev['work_title'], $highlight) ?></strong><?php endif; ?>
                     <?php if ($p = Batons\Works::progress($ev['season'], $ev['episode'], $ev['volume'])): ?><span class="progress"><?= e($p) ?></span><?php endif; ?>
                     <?php if (!empty($hideWork) && empty($ev['milestone']) && !Batons\Works::progress($ev['season'], $ev['episode'], $ev['volume'])): ?>
                         <span class="muted"><?= ['jeu' => 'Partie', 'film' => 'Visionnage', 'livre' => 'Lecture', 'serie' => 'Épisode'][$c['kind'] ?? ''] ?? 'Bâton' ?></span>
@@ -42,7 +43,7 @@ $day = null;
             <?php if ($ev['value'] !== null): ?>
                 <span class="value"><?= e(Chart::num($ev['value'])) ?><?= ($u = $ev['unit'] ?? $c['unit'] ?? null) ? ' ' . e($u) : '' ?></span>
             <?php endif; ?>
-            <?php if ($ev['note'] !== null): ?><span class="note"><?= e($ev['note']) ?></span><?php endif; ?>
+            <?php if ($ev['note'] !== null): ?><span class="note"><?= highlight($ev['note'], $highlight) ?></span><?php endif; ?>
         </span>
         <span class="row-actions">
             <a class="icon-btn" href="<?= url('event_edit', from_here(['id' => $ev['id']])) ?>" aria-label="Modifier le bâton : <?= e($label) ?>" title="Modifier"><?= ui_icon('pencil') ?></a>

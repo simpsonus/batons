@@ -626,9 +626,20 @@
             const checked = boxes().filter((b) => b.checked);
             const n = checked.reduce((s, b) => s + Number(b.dataset.n || 0), 0);
             const none = checked.length === 0 || checked.length === boxes().length;
-            submit.textContent = none ? 'Afficher tous les bâtons' : 'Afficher ' + n.toLocaleString('fr-FR') + ' bâton' + (n > 1 ? 's' : '');
+            // Période « Dates… » : champs du / au visibles seulement quand elle est choisie.
+            const period = form.querySelector('input[name="p"]:checked')?.value || '';
+            const dates = form.querySelector('[data-filter-dates]');
+            if (dates) dates.hidden = period !== 'dates';
+            const q = (form.querySelector('[data-filter-q]')?.value || '').trim();
+            // Avec une recherche ou une période, le nombre n'est connu qu'après l'envoi.
+            submit.textContent = (q || period) ? 'Afficher' : none ? 'Afficher tous les bâtons' : 'Afficher ' + n.toLocaleString('fr-FR') + ' bâton' + (n > 1 ? 's' : '');
             if (all) all.textContent = checked.length === boxes().length ? 'Tout décocher' : 'Tout cocher';
         };
+        form.querySelector('[data-filter-q]')?.addEventListener('input', () => refresh());
+        form.querySelectorAll('[data-filter-dates] input').forEach((d) => d.addEventListener('input', () => {
+            const r = form.querySelector('input[name="p"][value="dates"]');
+            if (r) r.checked = true;
+        }));
         form.addEventListener('change', (ev) => {
             const box = ev.target.closest('[data-group-box]');
             if (box) box.closest('[data-group]').querySelectorAll('input[name="c[]"]').forEach((b) => { b.checked = box.checked; });

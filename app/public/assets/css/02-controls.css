@@ -39,13 +39,13 @@
 /* --- Formulaires -------------------------------------------------------------------------- */
 label { display: block; font-size: .9rem; font-weight: 600; margin-bottom: .8rem; flex: 1; min-width: 0; }
 label > input, label > .error { display: block; margin-top: .3rem; }
-input[type=text], input[type=search], input[type=datetime-local], input[type=number], input[type=password] {
+input[type=text], input[type=search], input[type=datetime-local], input[type=date], input[type=number], input[type=password] {
     font: inherit; font-size: max(1rem, 16px); /* ≥ 16 px : pas de zoom automatique sur iOS */
     font-weight: normal; min-height: var(--tap); padding: .5rem .7rem; border-radius: 9px;
     border: 1px solid var(--field); background: var(--bg); color: var(--ink); width: 100%; max-width: 100%;
 }
 input[aria-invalid="true"] { border-color: var(--danger); border-width: 2px; }
-input[type=datetime-local] { -webkit-appearance: none; appearance: none; }
+input[type=datetime-local], input[type=date] { -webkit-appearance: none; appearance: none; }
 input[type=file] { font: inherit; font-weight: normal; display: block; margin-top: .4rem; max-width: 100%; min-height: var(--tap); padding: .4rem 0; }
 .row { display: flex; gap: 0 .8rem; flex-wrap: wrap; }
 .row > label { flex: 1 1 12rem; }

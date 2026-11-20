@@ -182,6 +182,45 @@ function test_backup(): void
     same(1, count(Batons\Backup::list()), 'une seule par jour');
 }
 
+// --- Chronologie : recherche dans les notes, période ------------------------------------------------
+
+function test_timeline_search_and_dates(): void
+{
+    $uid = user();
+    $car = cat($uid, 'Voiture');
+    $home = cat($uid, 'Maison');
+    $secret = cat($uid, 'Secret', ['hidden' => true]);
+    Events::add($car, utc('-2 days'), null, 'Vidange + filtres');
+    Events::add($home, utc('-40 days'), null, 'École : réunion');
+    Events::add($home, utc('-1 day'), null, '50% de remise_ok');
+    Events::add($secret, utc('-1 day'), null, 'vidange secrète');
+    $notes = static fn(array $rows): array => array_column($rows, 'note');
+
+    same(['Vidange + filtres'], $notes(Events::timeline($uid, 10, 0, null, ['q' => 'VIDANGE'])), 'majuscules ignorées, masquée exclue');
+    same(['École : réunion'], $notes(Events::timeline($uid, 10, 0, null, ['q' => 'ecole'])), 'accents ignorés');
+    same(['50% de remise_ok'], $notes(Events::timeline($uid, 10, 0, null, ['q' => '0%'])), '% cherché tel quel');
+    same([], $notes(Events::timeline($uid, 10, 0, null, ['q' => 'e_r'])), '_ cherché tel quel (pas un joker)');
+    same(1, Events::timelineCount($uid, [$car], ['q' => 'filtre']), 'recherche combinée à une catégorie');
+    same(2, Events::timelineCount($uid, null, ['from' => Time::lastDaysUtc(7)]), '7 derniers jours');
+    same(3, Events::timelineCount($uid, null, ['from' => Time::lastDaysUtc(365)]), '12 derniers mois');
+
+    $d = static fn(string $rel): string => (new DateTimeImmutable($rel, Time::tz()))->format('Y-m-d');
+    [$from, $to] = Time::daysUtc($d('-41 days'), $d('-39 days'));
+    same(['École : réunion'], $notes(Events::timeline($uid, 10, 0, null, ['from' => $from, 'to' => $to])), 'intervalle de dates');
+    same(Time::daysUtc($d('-41 days'), $d('-39 days')), Time::daysUtc($d('-39 days'), $d('-41 days')), 'dates inversées remises dans l\'ordre');
+    check(Time::daysUtc('2026-02-30', '2026-03-01') === null, 'date impossible refusée');
+    [$a, $b] = Time::daysUtc('2026-03-29', '2026-03-29');
+    same(23, (strtotime($b . ' UTC') - strtotime($a . ' UTC')) / 3600, 'jour du passage à l\'heure d\'été : 23 h');
+}
+
+function test_highlight(): void
+{
+    same('<mark>École</mark> &amp; <mark>ecole</mark>', highlight('École & ecole', 'ÉCOLE'), 'accents et majuscules, sortie échappée');
+    same('a &lt;b&gt;', highlight('a <b>', 'zz'), 'rien trouvé : texte échappé');
+    same('<mark>œu</mark>vre', highlight('œuvre', 'oeu'), 'ligature');
+    same('x', highlight('x', '  '), 'recherche vide');
+}
+
 // --- CBOR : exemples de la RFC 8949, annexe A ----------------------------------------------------------
 
 function test_cbor_rfc8949_examples(): void

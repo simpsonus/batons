@@ -86,19 +86,58 @@ final class Events
     }
 
     /** Derniers bâtons toutes catégories confondues. */
-    public static function timeline(int $userId, int $limit = 100, int $offset = 0, ?array $categoryIds = null): array
+    /**
+     * Chronologie. $opts : 'cats' (ids, null = toutes), 'q' (texte cherché dans la note et le titre de l'œuvre,
+     * sans tenir compte des majuscules ni des accents), 'from' / 'to' (bornes UTC [from, to[).
+     */
+    public static function timeline(int $userId, int $limit = 100, int $offset = 0, ?array $categoryIds = null, array $opts = []): array
     {
-        $only = $categoryIds === null ? '' : ' AND e.category_id IN (' . (implode(',', array_map('intval', $categoryIds)) ?: '0') . ')';
+        [$where, $params] = self::timelineWhere($userId, $categoryIds, $opts);
         return Db::all(
             'SELECT e.*, c.name AS category_name, c.icon, c.color, c.unit, c.kind, w.title AS work_title,
                     CASE WHEN c.hidden = 1 OR g.hidden = 1 THEN 1 ELSE 0 END AS is_hidden
                FROM events e JOIN categories c ON c.id = e.category_id
                LEFT JOIN groups g ON g.id = c.group_id
                LEFT JOIN works w ON w.id = e.work_id
-              WHERE c.user_id = ?' . Privacy::visibleSql() . $only . '
+              WHERE ' . $where . '
               ORDER BY e.occurred_at DESC, e.id DESC LIMIT ? OFFSET ?',
-            [$userId, $limit, $offset]
+            [...$params, $limit, $offset]
         );
+    }
+
+    /** Nombre de bâtons de la chronologie pour les mêmes critères. */
+    public static function timelineCount(int $userId, ?array $categoryIds = null, array $opts = []): int
+    {
+        [$where, $params] = self::timelineWhere($userId, $categoryIds, $opts);
+        return (int) Db::value(
+            'SELECT COUNT(*) FROM events e JOIN categories c ON c.id = e.category_id
+               LEFT JOIN groups g ON g.id = c.group_id LEFT JOIN works w ON w.id = e.work_id WHERE ' . $where,
+            $params
+        );
+    }
+
+    private static function timelineWhere(int $userId, ?array $categoryIds, array $opts): array
+    {
+        $where = 'c.user_id = ?' . Privacy::visibleSql();
+        $params = [$userId];
+        if ($categoryIds !== null) {
+            $where .= ' AND e.category_id IN (' . (implode(',', array_map('intval', $categoryIds)) ?: '0') . ')';
+        }
+        $q = trim((string) ($opts['q'] ?? ''));
+        if ($q !== '') {
+            $like = '%' . strtr(Db::fold($q), ['\\' => '\\\\', '%' => '\\%', '_' => '\\_']) . '%';
+            $where .= " AND (fold(e.note) LIKE ? ESCAPE '\\' OR fold(w.title) LIKE ? ESCAPE '\\')";
+            array_push($params, $like, $like);
+        }
+        if (!empty($opts['from'])) {
+            $where .= ' AND e.occurred_at >= ?';
+            $params[] = $opts['from'];
+        }
+        if (!empty($opts['to'])) {
+            $where .= ' AND e.occurred_at < ?';
+            $params[] = $opts['to'];
+        }
+        return [$where, $params];
     }
 
     /** Nombre de bâtons par catégorie visible (filtre de la chronologie) : [id => n]. */

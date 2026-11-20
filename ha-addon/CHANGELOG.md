@@ -1,5 +1,14 @@
 # Journal des modifications
 
+## 0.29.0
+- **Chronologie : recherche dans les notes.** Dans « Filtrer », un champ cherche un mot dans les notes et
+  les titres d'œuvres, sans tenir compte des accents ni des majuscules (« ecole » trouve « École »). Le mot
+  trouvé est surligné dans la liste.
+- **Chronologie : période.** Tout, 7 jours, 30 jours, 12 mois, ou « Dates… » pour choisir du … au ….
+- La pastille « Filtrer » compte maintenant les critères actifs (catégories, recherche, période) et le
+  résumé à côté les reprend tous ; la croix efface tout d'un coup. L'adresse de la page garde le filtre :
+  on peut la mettre en favori.
+
 ## 0.28.0
 - **Réorganiser** : un sélecteur « Tout | Groupes seuls » au-dessus de la liste remplace le bouton
   « Tout replier ». « Groupes seuls » replie tous les groupes pour les déplacer facilement ; un groupe
