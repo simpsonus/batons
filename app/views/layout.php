@@ -78,7 +78,7 @@ $catRoutes = ['home', 'category_order', 'category', 'category_new', 'category_ed
 </main>
 
 <?php if ($authMethod !== null):
-    $menuRoutes = ['menu', 'appearance', 'archives', 'import', 'account', 'privacy', 'unlock']; ?>
+    $menuRoutes = ['menu', 'appearance', 'export', 'import_check', 'archives', 'import', 'account', 'privacy', 'unlock']; ?>
 <nav class="tabbar" aria-label="Navigation principale">
     <div class="tabbar-row">
         <a href="<?= url() ?>" <?= in_array($r, $catRoutes, true) ? 'aria-current="page"' : '' ?>><span class="tab-ico"><?= ui_icon('grid') ?></span>Catégories</a>

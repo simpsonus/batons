@@ -1,8 +1,9 @@
 <?php use Batons\Privacy; use Batons\Time; ?>
 <div class="page-head">
     <h1>Confidentialité</h1>
-    <div class="actions">
+    <div class="head-tools">
         <form method="post" action="<?= url('lock') ?>"><?= csrf() ?><button class="btn"><?= ui_icon('lock') ?> Verrouiller</button></form>
+        <?= close_link(from_url(url()), 'Fermer') ?>
     </div>
 </div>
 

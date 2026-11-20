@@ -100,8 +100,9 @@ final class Events
     }
 
     /** Tous les bâtons d'un utilisateur, pour l'export CSV. */
-    public static function allForExport(int $userId): \PDOStatement
+    public static function allForExport(int $userId, ?int $categoryId = null): \PDOStatement
     {
+        $only = $categoryId ? ' AND c.id = ' . (int) $categoryId : '';
         return Db::run(
             'SELECT e.occurred_at, c.name AS category, g.name AS grp, e.value, c.unit, e.note, c.kind,
                     w.title AS work, w.subtitle AS work_subtitle, w.year AS work_year, w.source AS work_source,
@@ -109,29 +110,39 @@ final class Events
                FROM events e JOIN categories c ON c.id = e.category_id
                LEFT JOIN groups g ON g.id = c.group_id
                LEFT JOIN works w ON w.id = e.work_id
-              WHERE c.user_id = ?' . Privacy::visibleSql() . ' ORDER BY e.occurred_at',
+              WHERE c.user_id = ?' . Privacy::visibleSql() . $only . ' ORDER BY e.occurred_at',
             [$userId]
         );
     }
 
-    /** Chiffres clés d'une catégorie. */
-    public static function stats(int $categoryId): array
+    /** Filtre SQL « jusqu'à maintenant » quand une catégorie ne compte pas les bâtons à venir. */
+    private static function futureCut(bool $countFuture): array
     {
+        return $countFuture ? ['', []] : [' AND occurred_at <= ?', [Time::nowUtc()]];
+    }
+
+    /** Chiffres clés d'une catégorie. */
+    public static function stats(int $categoryId, bool $countFuture = true): array
+    {
+        // Sans « compter les bâtons à venir », tout s'arrête à maintenant.
+        [$cut, $cutArgs] = self::futureCut($countFuture);
         $row = Db::one(
             'SELECT COUNT(*) AS total, SUM(value) AS total_value, COUNT(value) AS with_value,
                     MIN(occurred_at) AS first_at, MAX(occurred_at) AS last_at
-               FROM events WHERE category_id = ?',
-            [$categoryId]
+               FROM events WHERE category_id = ?' . $cut,
+            [$categoryId, ...$cutArgs]
         );
         $periods = [];
         foreach (['today', 'week', 'month', 'year'] as $p) {
             [$from, $to] = Time::periodUtc($p);
             $periods[$p] = Db::one(
                 'SELECT COUNT(*) AS n, SUM(value) AS v FROM events
-                  WHERE category_id = ? AND occurred_at >= ? AND occurred_at < ?',
-                [$categoryId, $from, $to]
+                  WHERE category_id = ? AND occurred_at >= ? AND occurred_at < ?' . $cut,
+                [$categoryId, $from, $to, ...$cutArgs]
             );
         }
+        $row['next_at'] = $countFuture ? null
+            : Db::value('SELECT MIN(occurred_at) FROM events WHERE category_id = ? AND occurred_at > ?', [$categoryId, Time::nowUtc()]);
         $avgInterval = null;
         if ((int) $row['total'] > 1) {
             $span = strtotime($row['last_at'] . ' UTC') - strtotime($row['first_at'] . ' UTC');
@@ -144,13 +155,14 @@ final class Events
      * Nombre de bâtons par jour local ('Y-m-d' => n) depuis le lundi d'il y a $weeks semaines,
      * et ce lundi de départ. Sert à la vue calendrier.
      */
-    public static function daily(int $categoryId, int $weeks = 52): array
+    public static function daily(int $categoryId, int $weeks = 52, bool $countFuture = true): array
     {
+        [$cut, $cutArgs] = self::futureCut($countFuture);
         $tz = Time::tz();
         $start = (new DateTimeImmutable('now', $tz))->modify('monday this week')->setTime(0, 0)->modify('-' . ($weeks - 1) . ' weeks');
         $fromUtc = $start->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d H:i:s');
         $counts = [];
-        foreach (Db::all('SELECT occurred_at FROM events WHERE category_id = ? AND occurred_at >= ?', [$categoryId, $fromUtc]) as $r) {
+        foreach (Db::all('SELECT occurred_at FROM events WHERE category_id = ? AND occurred_at >= ?' . $cut, [$categoryId, $fromUtc, ...$cutArgs]) as $r) {
             $d = Time::local($r['occurred_at'])->format('Y-m-d');
             $counts[$d] = ($counts[$d] ?? 0) + 1;
         }
@@ -162,8 +174,9 @@ final class Events
      * $scale : 'day' (30 derniers jours), 'week' (12 semaines), 'month' (12 mois).
      * Renvoie une liste de ['label' => …, 'count' => int, 'sum' => float].
      */
-    public static function series(int $categoryId, string $scale = 'day'): array
+    public static function series(int $categoryId, string $scale = 'day', bool $countFuture = true): array
     {
+        [$cut, $cutArgs] = self::futureCut($countFuture);
         $tz = Time::tz();
         $now = new DateTimeImmutable('now', $tz);
         [$n, $start, $step, $keyFmt] = match ($scale) {
@@ -185,7 +198,7 @@ final class Events
         }
 
         $fromUtc = $start->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d H:i:s');
-        $rows = Db::all('SELECT occurred_at, value FROM events WHERE category_id = ? AND occurred_at >= ?', [$categoryId, $fromUtc]);
+        $rows = Db::all('SELECT occurred_at, value FROM events WHERE category_id = ? AND occurred_at >= ?' . $cut, [$categoryId, $fromUtc, ...$cutArgs]);
         foreach ($rows as $r) {
             $key = Time::local($r['occurred_at'])->format($keyFmt);
             if (isset($buckets[$key])) {

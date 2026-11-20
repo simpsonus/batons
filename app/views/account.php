@@ -1,5 +1,5 @@
 <?php use Batons\Auth; use Batons\Time; ?>
-<div class="page-head"><h1>Compte</h1></div>
+<div class="page-head"><h1>Compte</h1><div class="head-tools"><?= close_link(from_url(url()), 'Fermer') ?></div></div>
 
 <section class="card">
     <h2>Identité</h2>

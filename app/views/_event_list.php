@@ -1,4 +1,5 @@
 <?php
+$nowUtc = Batons\Time::nowUtc();
 // Liste de bâtons groupés par jour local.
 // Variables : $events, $showCategory (bool, facultatif), $c (catégorie, facultatif), $dayLevel (2 ou 3, facultatif).
 use Batons\Chart;
@@ -21,7 +22,7 @@ $day = null;
         <ul class="events">
     <?php endif; ?>
     <li style="<?= cvars($ev['color'] ?? $c['color']) ?>">
-        <span class="time"><time datetime="<?= e($local->format(DATE_ATOM)) ?>"><?= $local->format('H:i') ?></time></span>
+        <span class="time"><time datetime="<?= e($local->format(DATE_ATOM)) ?>"><?= $local->format('H:i') ?></time><?php if ($ev['occurred_at'] > $nowUtc): ?> <span class="badge upcoming">à venir</span><?php endif; ?></span>
         <span class="body">
             <?php if ($showCategory): ?>
                 <a class="cat" href="<?= url('category', from_here(['id' => $ev['category_id']])) ?>"><span class="icon sm" aria-hidden="true"><?= icon($ev['icon']) ?></span><?= e($ev['category_name']) ?><?php if (!empty($ev['is_hidden'])): ?> <span class="hidden-mark" title="Masquée"><?= ui_icon('eye-off') ?><span class="sr">(masquée)</span></span><?php endif; ?></a>

@@ -883,3 +883,46 @@ html[data-theme=dark] .tiles-teinte .tile .tap .meta, html[data-theme=dark] .til
 .vis-shape-un .vis-ic { border-radius: 2px 2px 14px 2px; }
 .vis-shape-casse .vis-ic { border-radius: 2px; clip-path: polygon(0 0, 100% 0, 100% calc(100% - .7rem), calc(100% - .7rem) 100%, 0 100%); }
 @media (forced-colors: active) { .app-opt:has(input:checked) { outline: 2px solid Highlight; } }
+
+/* Bâton daté de plus tard */
+.badge.upcoming { display: block; width: max-content; margin-top: .15rem; background: color-mix(in srgb, var(--accent) 15%, var(--surface)); color: var(--ink); }
+
+/* --- Import en étapes, Exporter -------------------------------------------------------- */
+.steps { display: flex; gap: .35rem; list-style: none; padding: 0; margin: 0 0 1rem; }
+.steps li { flex: 1; height: 5px; border-radius: 3px; background: var(--line); }
+.steps li.on { background: var(--accent); }
+.step-q { font-weight: 700; font-size: 1.05rem; margin: 0 0 .8rem; }
+.choice-list { display: flex; flex-direction: column; gap: .6rem; margin-bottom: 1rem; }
+.choice-card {
+    display: flex; align-items: center; gap: .8rem; padding: .9rem 1rem; min-height: var(--tap);
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow);
+    color: var(--ink); text-decoration: none;
+}
+.choice-card:hover { border-color: var(--field); }
+.choice-card b { display: block; font-size: 1.05rem; }
+.choice-card .muted { display: block; font-size: .9rem; }
+.choice-card > svg.ui { color: var(--muted); flex: none; }
+.choice-ic { display: grid; place-items: center; width: 2.6rem; height: 2.6rem; flex: none; border-radius: 12px; background: color-mix(in srgb, var(--accent) 15%, var(--surface)); color: var(--accent); }
+.choice-ic svg.ui { width: 1.4rem; height: 1.4rem; }
+.file-list { list-style: none; padding: 0; margin: 0 0 1rem; }
+.file-list li { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .2rem .8rem; padding: .5rem 0; border-top: 1px solid var(--line); font-size: .9rem; }
+.file-list li span:first-child { display: inline-flex; align-items: center; gap: .4rem; overflow-wrap: anywhere; }
+.file-list li.ok span:first-child svg.ui { color: #15803d; }
+.drop-zone {
+    position: relative; display: flex; flex-direction: column; align-items: center; gap: .4rem; text-align: center;
+    padding: 1.3rem 1rem; border: 2px dashed color-mix(in srgb, var(--ink) 30%, var(--bg)); border-radius: 14px; cursor: pointer; font-weight: 400;
+}
+.drop-zone:hover, .drop-zone:focus-within { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 6%, transparent); }
+.drop-zone > svg.ui { width: 1.8rem; height: 1.8rem; color: var(--accent); }
+.drop-zone b { display: block; font-size: 1.05rem; }
+.drop-zone input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; }
+.drop-zone:focus-within { outline: 3px solid var(--focus); outline-offset: 2px; }
+.summary { margin: .4rem 0 1rem; }
+.summary > div { display: flex; justify-content: space-between; gap: 1rem; padding: .45rem 0; border-top: 1px solid var(--line); }
+.summary dt { margin: 0; }
+.summary dd { margin: 0; font-weight: 700; font-variant-numeric: tabular-nums; }
+.summary-names { margin: -.2rem 0 .3rem; color: var(--muted); font-size: .9rem; }
+.notice { display: block; padding: .6rem .8rem; border-radius: 10px; background: color-mix(in srgb, var(--accent) 10%, var(--surface)); }
+.export-cat { display: block; margin: .4rem 0 0 2rem; }
+.export-cat select { width: 100%; max-width: 22rem; }
+.notice > svg.ui { width: 1.1em; height: 1.1em; vertical-align: -.15em; margin-right: .3rem; }

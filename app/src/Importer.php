@@ -55,7 +55,13 @@ final class Importer
 
     public array $report = [
         'categories_created' => [], 'categories_existing' => [], 'events_imported' => 0,
-        'events_skipped' => 0, 'errors' => [],
+        'events_skipped' => 0, 'errors' => [], 'files' => [],
+    ];
+
+    /** Libellé de chaque type de fichier reconnu. */
+    public const KINDS = [
+        'chronicling_events' => 'Chronicling : bâtons', 'chronicling_categories' => 'Chronicling : catégories',
+        'chronicling_groups' => 'Chronicling : groupes', 'batons' => 'Sauvegarde Bâtons',
     ];
 
     public function __construct(int $userId)
@@ -71,7 +77,7 @@ final class Importer
      * Importe une liste de fichiers CSV (chemin => nom d'origine), dans un ordre logique :
      * groupes, puis catégories, puis événements. Le type de chaque fichier est reconnu à son en-tête.
      */
-    public function importFiles(array $files): void
+    public function importFiles(array $files, bool $dryRun = false): void
     {
         $parsed = [];
         foreach ($files as $path => $originalName) {
@@ -86,6 +92,7 @@ final class Importer
                 continue;
             }
             $parsed[$kind][] = $rows;
+            $this->report['files'][] = ['name' => $originalName, 'kind' => $kind, 'rows' => count($rows)];
         }
 
         Db::pdo()->beginTransaction();
@@ -105,7 +112,8 @@ final class Importer
             foreach ($parsed['batons'] ?? [] as $rows) {
                 $this->importBatonsExport($rows);
             }
-            Db::pdo()->commit();
+            // Vérification (« dry run ») : on calcule tout, puis on annule ; rien n'est écrit.
+            $dryRun ? Db::pdo()->rollBack() : Db::pdo()->commit();
         } catch (\Throwable $e) {
             Db::pdo()->rollBack();
             $this->report['errors'][] = 'Import annulé : ' . $e->getMessage();

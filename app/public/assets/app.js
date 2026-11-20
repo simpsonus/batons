@@ -546,6 +546,28 @@
         apply();
     }
 
+    // Import : noms des fichiers choisis sous la zone de dépôt.
+    document.querySelectorAll('[data-file-input]').forEach((input) => {
+        const out = input.closest('form').querySelector('[data-file-names]');
+        input.addEventListener('change', () => {
+            const names = [...input.files].map((f) => f.name);
+            if (out) out.textContent = names.length ? 'Choisi' + (names.length > 1 ? 's' : '') + ' : ' + names.join(', ') : '';
+        });
+    });
+
+    // Exporter : la liste des catégories ne sert qu'avec « Une seule catégorie ».
+    const exportCat = document.querySelector('[data-export-cat]');
+    if (exportCat) {
+        const form = exportCat.closest('form');
+        const sync = () => {
+            const one = form.querySelector('input[name=what]:checked')?.value === 'one';
+            exportCat.closest('label').hidden = !one;
+            exportCat.disabled = !one;
+        };
+        form.addEventListener('change', sync);
+        sync();
+    }
+
     // Aides « ? » : fermeture par Échap ou clic à l'extérieur.
     document.addEventListener('click', (ev) => {
         document.querySelectorAll('details.help-box[open]').forEach((d) => { if (!d.contains(ev.target)) d.open = false; });

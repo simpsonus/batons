@@ -1,5 +1,5 @@
 <?php use Batons\Privacy; ?>
-<div class="page-head"><h1>Éléments masqués</h1></div>
+<div class="page-head"><h1>Éléments masqués</h1><div class="head-tools"><?= close_link(from_url(url()), 'Fermer') ?></div></div>
 
 <?php if (!$hasPin): ?>
     <section class="card narrow-card">

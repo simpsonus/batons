@@ -78,6 +78,12 @@ Le nom vient des bâtons qu'on trace pour compter (IIII barrés). Slug technique
   texte coloré = `var(--c-ink)`, bouton coloré = `--c-solid` + `--c-on`, jamais la couleur brute ni du blanc en dur.
   Tuiles : `Theme::tileVars()` en plus. Palette : `Theme::palette()` (couleurs vives permises grâce à ces variantes).
   Le calendrier colore avec `--c-cal` (éclairci en sombre).
+- **Bâtons à venir** : `categories.count_future` (1 = comptés). Toute nouvelle statistique / série passe le drapeau
+  (`Events::stats/series/daily(…, $countFuture)`, `Categories::listWithSummary()` filtre déjà). `Time::periodUtc()`
+  couvre la période entière.
+- **Import** : provenance -> fichiers -> vérification (`Importer::importFiles($files, dryRun: true)` = transaction
+  annulée) -> import ; fichiers gardés dans `data_dir/import/<user>-<jeton>` (ménage après 24 h). **Export** : page de
+  choix, fichier seulement avec `download=1`. Toutes les pages du Menu ont la ✕ (`from`).
 - **Champs de saisie libre** (intitulés) : jamais `name="name"` ni d'id/libellé « name » — Safari y propose une
   fiche Contact malgré `autocomplete="off"`. Utiliser `name="label"` + autocomplete/autocorrect/spellcheck désactivés.
 - L'interface ne mentionne pas Home Assistant (l'app doit rester neutre).
@@ -192,6 +198,7 @@ docker build -f docker/Dockerfile -t batons . && docker run -p 8080:8080 -v $PWD
 - [x] v0.23 : page Apparence (Menu) avec thème clair/sombre forcé, palette de 64 couleurs, textes colorés toujours
       contrastés (`cvars()`), focus du menu sur son titre.
 - [x] v0.23.1 : `Time::periodUtc()` va jusqu'à la fin de la période (bâtons datés plus tard aujourd'hui comptés).
+- [x] v0.24 : option « bâtons à venir », import en 3 étapes avec vérification, page Exporter, ✕ sur les pages du Menu.
 - [ ] Type de catégorie « Éléments » générique (éléments nommés sans catalogue, plusieurs en parallèle,
       début/fin/durée — mécanique des œuvres) : à faire si un cas concret apparaît (ex. « Traitements »).
 - [ ] Plus tard éventuellement : synchro BetaSeries / Trakt (pas SensCritique ni SerieBox : pas d'API

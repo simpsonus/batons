@@ -1,5 +1,5 @@
 <?php use Batons\Time; ?>
-<div class="page-head"><h1>Archives</h1></div>
+<div class="page-head"><h1>Archives</h1><div class="head-tools"><?= close_link(from_url(url()), 'Fermer') ?></div></div>
 
 <?php if (!$categories): ?>
     <p class="muted">Aucune catégorie archivée. Archiver une catégorie la retire de l'accueil sans perdre ses bâtons.</p>

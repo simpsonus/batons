@@ -81,6 +81,14 @@ $palette = Batons\Theme::palette();
     </div>
 
     <div class="check">
+        <input type="checkbox" name="count_future" value="1" id="f-future" <?= !empty($c['count_future']) ? 'checked' : '' ?> aria-describedby="f-future-help">
+        <label for="f-future">Compter les bâtons à venir dans les statistiques</label>
+    </div>
+    <p class="muted small field-help" id="f-future-help">Un bâton daté de plus tard (une livraison prévue, un rendez-vous) compte-t-il déjà
+        dans « Aujourd'hui », « Ce mois », le total, le graphique et le calendrier ? Décoché, il n'y entre qu'une fois son heure passée ;
+        la page de la catégorie l'annonce alors comme « Prochain bâton ».</p>
+
+    <div class="check">
         <input type="checkbox" name="hidden" value="1" id="f-hidden" <?= !empty($c['hidden']) ? 'checked' : '' ?>
                aria-describedby="f-hidden-help<?= isset($errors['hidden']) ? ' err-hidden' : '' ?>" <?= isset($errors['hidden']) ? 'aria-invalid="true"' : '' ?>>
         <label for="f-hidden"><?= ui_icon('eye-off') ?> Masquer cette catégorie</label>

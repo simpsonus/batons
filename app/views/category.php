@@ -161,6 +161,13 @@ $events = array_slice($events, 0, 50);
         <span class="v"><?= e(Time::ago($stats['last_at'])) ?></span>
         <?php if ($stats['last_at']): ?><span class="s"><?= e(Time::longDate(Time::local($stats['last_at']))) ?> à <?= Time::local($stats['last_at'])->format('H:i') ?></span><?php endif; ?>
     </div>
+    <?php if (!empty($stats['next_at'])): ?>
+        <div class="stat wide">
+            <span class="k">Prochain bâton <span class="muted">(pas encore compté)</span></span>
+            <span class="v"><?= e(Time::ago($stats['next_at'])) ?></span>
+            <span class="s"><?= e(Time::longDate(Time::local($stats['next_at']))) ?> à <?= Time::local($stats['next_at'])->format('H:i') ?></span>
+        </div>
+    <?php endif; ?>
     <div class="stat"><span class="k">Aujourd'hui</span><span class="v"><?= e($fmt($stats['periods']['today'])) ?></span></div>
     <div class="stat"><span class="k">Cette semaine</span><span class="v"><?= e($fmt($stats['periods']['week'])) ?></span></div>
     <div class="stat"><span class="k">Ce mois</span><span class="v"><?= e($fmt($stats['periods']['month'])) ?></span></div>
@@ -170,7 +177,7 @@ $events = array_slice($events, 0, 50);
 </section>
 
 <?php
-[$calStart, $calCounts] = Batons\Events::daily($id);
+[$calStart, $calCounts] = Batons\Events::daily($id, 52, (bool) $c['count_future']);
 if ($c['periods']) {
     // Jours couverts par une période : au moins le premier niveau de couleur.
     foreach (Batons\Periods::coveredDays(Batons\Periods::list($id)) as $d => $_) {

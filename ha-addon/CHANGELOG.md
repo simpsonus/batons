@@ -1,5 +1,17 @@
 # Journal des modifications
 
+## 0.24.0
+- **Option « Compter les bâtons à venir dans les statistiques »** dans chaque catégorie. Décochée, un bâton daté
+  de plus tard (livraison prévue, rendez-vous…) n'entre dans les chiffres, le graphique et le calendrier qu'une fois
+  son heure passée ; la page l'annonce comme « Prochain bâton ». Cochée pour tes catégories existantes (rien ne
+  change), décochée par défaut pour les nouvelles. Dans l'historique, ces bâtons portent l'étiquette « à venir ».
+- **Importer en trois étapes** : d'abord la provenance (Chronicling ou sauvegarde Bâtons), puis les fichiers
+  attendus, puis une **vérification** de ce qui sera importé (catégories, nombre de bâtons, doublons) avant de
+  confirmer. Rien n'est écrit avant « Importer ».
+- **Nouvelle page Exporter** : tout, ou une seule catégorie, puis « Télécharger le fichier CSV ».
+- **Croix ✕ sur toutes les pages du Menu** (Archives, Importer, Exporter, Compte, Confidentialité, éléments
+  masqués…) : elle ramène à l'écran d'où tu avais ouvert le menu.
+
 ## 0.23.1
 - **Correctif des statistiques** : un bâton daté de plus tard dans la journée (ou la semaine, le mois, l'année)
   n'était pas compté dans « Aujourd'hui », « Cette semaine », « Ce mois » et « Cette année ». Il l'est
