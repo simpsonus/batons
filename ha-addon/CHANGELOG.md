@@ -1,5 +1,10 @@
 # Journal des modifications
 
+## 0.32.2
+- **Sur téléphone, le message (« Bâton ajouté… », « Annuler ») s'affiche en bas**, juste au-dessus de la
+  barre d'onglets, à portée du pouce. En haut, il passait sous la barre d'état floutée de l'iPhone quand
+  la page était descendue, et on ne pouvait plus appuyer sur « Annuler ».
+
 ## 0.32.1
 - **Ajouter un bâton depuis l'accueil ne fait plus remonter la page en haut** : la tuile est mise à jour
   sur place et le message apparaît en haut de l'écran. Même chose pour « Annuler » et pour les boutons

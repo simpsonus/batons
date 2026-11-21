@@ -255,6 +255,8 @@ docker build -f docker/Dockerfile -t batons . && docker run -p 8080:8080 -v $PWD
       (le + = l'action, la loupe = le champ de recherche).
 - [x] v0.32.1 : envoi « doux » (`form[data-soft]`, app.js) : POST en arrière-plan, remplacement de `<main>` et du message
       si la réponse est la même page (pas de retour en haut) ; sinon navigation normale. Sans JS : tap -> `./#t-ID`.
+- [x] v0.32.2 : message flash sur téléphone en bas (fixe, au-dessus de la barre d'onglets) : avec `viewport-fit=cover`,
+      `top: 0` passait sous la barre d'état iOS ; ailleurs `top: env(safe-area-inset-top)`.
 - [ ] Rappels / objectifs (« au moins 3 par semaine »).
 - [ ] i18n (anglais).
 - [ ] Intégration HA facultative : capteurs (« temps depuis », « total du jour »), webhook/API pour ajouter
