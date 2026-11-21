@@ -167,6 +167,20 @@ def run_flows(page, base):
         check('Toute la chronologie' in page.inner_text('.tl-sum'), 'tout effacé')
     timeline_search()
 
+    @step('Graphique : changer d\'échelle sans remonter en haut')
+    def chart_scale():
+        page.goto(base)
+        page.locator('.tile', has_text='Fioul').locator('.more').click()
+        page.set_viewport_size({'width': 390, 'height': 700})
+        page.locator('[data-chart-card]').scroll_into_view_if_needed()
+        y = page.evaluate('scrollY')
+        page.click('[data-chart-card] .seg a:has-text("12 mois")')
+        page.locator('[data-chart-card] .seg a[aria-current]', has_text='12 mois').wait_for()
+        check(page.evaluate('scrollY') == y and y > 0, 'la page reste à la même hauteur')
+        check('scale=month' in page.url, 'adresse mise à jour')
+        page.set_viewport_size({'width': 1280, 'height': 900})
+    chart_scale()
+
     @step('Réorganiser au clavier')
     def reorder():
         page.goto(base + '?r=category_order')

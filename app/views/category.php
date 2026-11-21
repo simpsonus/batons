@@ -217,18 +217,18 @@ krsort($byMonth);
     </table></div>
 </section>
 
-<section class="card" aria-labelledby="chart-title">
+<section class="card chart-card" id="graph" aria-labelledby="chart-title" data-chart-card>
     <h2 class="sr" id="chart-title">Graphique</h2>
     <div class="chart-head">
         <nav class="seg" aria-label="Échelle">
             <?php foreach (['day' => '30 jours', 'week' => '12 semaines', 'month' => '12 mois'] as $k => $label): ?>
-                <a href="<?= url('category', keep_from(['id' => $id, 'scale' => $k, 'metric' => $metric])) ?>" <?= $scale === $k ? 'aria-current="true"' : '' ?>><?= $label ?></a>
+                <a href="<?= url('category', keep_from(['id' => $id, 'scale' => $k, 'metric' => $metric])) ?>#graph" <?= $scale === $k ? 'aria-current="true"' : '' ?>><?= $label ?></a>
             <?php endforeach; ?>
         </nav>
         <?php if ($hasValues): ?>
             <nav class="seg" aria-label="Mesure">
-                <a href="<?= url('category', keep_from(['id' => $id, 'scale' => $scale, 'metric' => 'count'])) ?>" <?= $metric === 'count' ? 'aria-current="true"' : '' ?>>Nombre</a>
-                <a href="<?= url('category', keep_from(['id' => $id, 'scale' => $scale, 'metric' => 'sum'])) ?>" <?= $metric === 'sum' ? 'aria-current="true"' : '' ?>>Somme<?= $c['unit'] ? ' (' . e($c['unit']) . ')' : '' ?></a>
+                <a href="<?= url('category', keep_from(['id' => $id, 'scale' => $scale, 'metric' => 'count'])) ?>#graph" <?= $metric === 'count' ? 'aria-current="true"' : '' ?>>Nombre</a>
+                <a href="<?= url('category', keep_from(['id' => $id, 'scale' => $scale, 'metric' => 'sum'])) ?>#graph" <?= $metric === 'sum' ? 'aria-current="true"' : '' ?>>Somme<?= $c['unit'] ? ' (' . e($c['unit']) . ')' : '' ?></a>
             </nav>
         <?php endif; ?>
     </div>

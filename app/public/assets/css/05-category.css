@@ -74,3 +74,6 @@ html[data-theme=dark] .cal-wrap, html[data-theme=dark] .cal-legend { --c-cal: co
 .stats-link > svg.ui { color: var(--muted); }
 .stats-main { display: block; font-weight: 600; }
 .stats-sub { display: block; font-size: .875rem; color: var(--muted); }
+
+/* Ancre #graph (changement d'échelle sans JS) : le graphique ne se cale pas sous le bord de l'écran. */
+.chart-card { scroll-margin-top: 1rem; }

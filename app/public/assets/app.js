@@ -692,3 +692,32 @@
         close.addEventListener('click', () => { flash.remove(); document.getElementById('contenu')?.focus(); });
     }
 })();
+
+/* Graphique d'une catégorie : changer d'échelle (30 jours, 12 semaines, 12 mois) ou de mesure sans recharger
+   la page, donc sans remonter en haut. Sans JS : lien normal, avec #graph pour revenir au graphique. */
+(() => {
+    const card = document.querySelector('[data-chart-card]');
+    if (!card || !window.fetch || !window.DOMParser) return;
+    card.addEventListener('click', async (ev) => {
+        const a = ev.target.closest('.seg a');
+        if (!a || ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.altKey) return;
+        ev.preventDefault();
+        if (a.getAttribute('aria-current')) return;
+        const label = a.textContent;
+        const group = a.closest('.seg')?.getAttribute('aria-label');
+        try {
+            const res = await fetch(a.href, { credentials: 'same-origin' });
+            if (!res.ok) throw new Error(String(res.status));
+            const doc = new DOMParser().parseFromString(await res.text(), 'text/html');
+            const fresh = doc.querySelector('[data-chart-card]');
+            if (!fresh) throw new Error('graphique absent');
+            card.innerHTML = fresh.innerHTML;
+            history.replaceState(null, '', a.href.replace(/#.*$/, ''));
+            // Le focus reste sur le bouton choisi (lecteurs d'écran, clavier).
+            [...card.querySelectorAll('.seg')].find((n) => n.getAttribute('aria-label') === group)
+                ?.querySelectorAll('a').forEach((l) => { if (l.textContent === label) l.focus({ preventScroll: true }); });
+        } catch (e) {
+            location.href = a.href;      // en cas d'échec : navigation normale (avec #graph)
+        }
+    });
+})();
