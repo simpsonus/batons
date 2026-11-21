@@ -187,7 +187,7 @@ def run_flows(page, base):
         h = page.locator('li[data-name="Fioul"] [data-handle]')
         h.focus()
         page.keyboard.press('ArrowUp')
-        page.wait_for_function("document.querySelector('[data-order-status]').textContent.length > 0")
+        page.locator('[data-order-status]:not(:empty)').wait_for()   # pas de wait_for_function : la CSP interdit eval
         check('Fioul' in page.inner_text('[data-order-status]'), 'déplacement annoncé')
         page.reload()
         names = page.eval_on_selector_all('li[data-id]', 'els => els.map(e => e.dataset.name)')
