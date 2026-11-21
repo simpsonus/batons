@@ -239,6 +239,9 @@ docker build -f docker/Dockerfile -t batons . && docker run -p 8080:8080 -v $PWD
 - [x] v0.29 : Chronologie : recherche (`q`, notes + titres d'œuvres, fonction SQLite `fold()` = minuscules sans accents,
       `Db::fold()`, surlignage `highlight()`) et période (`p` = 7 | 30 | 365 jours glissants, ou `dates` + `du`/`au`
       jours locaux, `Time::lastDaysUtc()` / `Time::daysUtc()`) dans le panneau Filtrer ; pastille = nombre de critères.
+- [ ] Tuiles « coin » (proposé, en attente) : triangle 64 px, › centré dans le triangle (~15 px des bords), zone
+      cliquable = le triangle seul (`clip-path`), retour visuel à l'appui ; aujourd'hui › collé dans l'angle et carré
+      de 44 px dont la moitié blanche ouvre la page de la catégorie.
 - [ ] Rappels / objectifs (« au moins 3 par semaine »).
 - [ ] i18n (anglais).
 - [ ] Intégration HA facultative : capteurs (« temps depuis », « total du jour »), webhook/API pour ajouter
