@@ -10,23 +10,23 @@ $kindLabel = ['film' => 'un film', 'serie' => 'une série', 'livre' => 'un livre
         <h1><?= e($c['name']) ?></h1>
         <?= help_box('Comment ça marche', [
     'serie' => [
-        '<strong>Une série commencée :</strong> cherche-la, choisis-la dans les résultats, indique la saison et l\'épisode, puis « + Ajouter le bâton ».',
+        '<strong>Une série commencée :</strong> cherche-la, choisis-la dans les résultats, indique la saison et l\'épisode, puis « J\'ai vu cet épisode ».',
         '<strong>▶ S02E05 vu</strong> : ajoute cet épisode, vu maintenant.',
         '<strong>Un autre épisode ou une autre date :</strong> ouvre la fiche de la série (son titre dans « Continuer »), puis « + Ajouter un épisode… ».',
     ],
     'film' => [
-        '<strong>Un film vu :</strong> cherche-le, choisis-le dans les résultats, puis « + Ajouter le bâton ». La date est réglée sur maintenant, la note sur 10 est facultative.',
+        '<strong>Un film vu :</strong> cherche-le, choisis-le dans les résultats, puis « J\'ai vu ce film ». La date est réglée sur maintenant, la note sur 10 est facultative.',
         '<strong>Vu un autre jour :</strong> change la date dans ce même écran avant d\'ajouter.',
         '<strong>Un film déjà noté :</strong> ouvre sa fiche depuis « Statistiques et historique », en bas de cet écran (historique, note, nouveau visionnage).',
     ],
     'livre' => [
-        '<strong>Un livre commencé :</strong> cherche-le, choisis-le dans les résultats, puis « + Ajouter le bâton » (il est marqué « commencé »).',
+        '<strong>Un livre commencé :</strong> cherche-le, choisis-le dans les résultats, puis « J\'ai commencé ce livre ».',
         '<strong>J\'ai fini ce livre</strong> (ou <strong>J\'ai fini le tome 1</strong>) : le marque comme lu aujourd\'hui.',
         '<strong>Commencer le tome 2</strong> : apparaît une fois le tome 1 fini ; le message en haut de l\'écran le propose aussi tout de suite.',
         '<strong>Tu ne liras pas la suite ?</strong> Ouvre la fiche du livre (son titre dans « Continuer »), puis « Ne pas lire la suite ».',
     ],
     'jeu' => [
-        '<strong>Un jeu commencé :</strong> cherche-le, choisis-le dans les résultats, puis « + Ajouter le bâton » (il est marqué « commencé »).',
+        '<strong>Un jeu commencé :</strong> cherche-le, choisis-le dans les résultats, puis « J\'ai commencé ce jeu ».',
         '<strong>Partie jouée</strong> : ajoute une partie jouée maintenant.',
         '<strong>J\'ai fini ce jeu</strong> : le marque comme terminé aujourd\'hui (la durée est calculée depuis son début).',
         '<strong>Tu abandonnes le jeu ?</strong> Ouvre sa fiche (son titre dans « Continuer »), puis « J\'arrête là ».',

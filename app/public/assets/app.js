@@ -197,6 +197,18 @@
     // Calendrier : afficher d'emblée les semaines les plus récentes (à droite).
     document.querySelectorAll('[data-scroll-end]').forEach((el) => { el.scrollLeft = el.scrollWidth; });
 
+    // Saisie d'un bâton d'œuvre : le bouton dit ce que l'on fait, selon « Ce bâton marque » (début, fin, séance…).
+    const logBtn = document.querySelector('[data-log-submit]');
+    if (logBtn) {
+        const form = logBtn.closest('form');
+        const sync = () => {
+            const m = form.querySelector('input[name="milestone"]:checked')?.value ?? '';
+            logBtn.querySelectorAll('.log-label').forEach((l) => { l.hidden = l.dataset.for !== m; });
+        };
+        form.addEventListener('change', (ev) => { if (ev.target.name === 'milestone') sync(); });
+        sync();
+    }
+
     // Œuvres : suggestions pendant la frappe (le formulaire marche aussi sans JS).
     const workSearch = document.querySelector('[data-work-search]');
     const workResults = document.querySelector('[data-work-results]');

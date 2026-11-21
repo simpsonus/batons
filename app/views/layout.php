@@ -10,7 +10,7 @@ $catRoutes = ['home', 'category_order', 'category', 'category_new', 'category_ed
 <html lang="fr"<?= $themeAttr ?>>
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <?php if ($themeAttr === ''): ?>
     <meta name="theme-color" content="#f7f4ee" media="(prefers-color-scheme: light)">
     <meta name="theme-color" content="#161412" media="(prefers-color-scheme: dark)">

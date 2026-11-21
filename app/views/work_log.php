@@ -65,7 +65,25 @@ $maxSeason = $seasons ? max(array_keys($seasons)) : null;
     </label>
     <?php if ($w['source'] === 'rawg'): ?><p class="muted small">Données de jeux : <a href="https://rawg.io" target="_blank" rel="noopener">RAWG<span class="sr"> (nouvel onglet)</span></a>.</p><?php endif; ?>
     <div class="form-actions">
-        <button class="btn accent">+ Ajouter le bâton</button>
+        <?php
+        // Libellé = ce que tu fais (passé : la date peut être ancienne). Livres / jeux : suit « Ce bâton marque » (app.js).
+        $isBookL = $c['kind'] === 'livre';
+        $btnLabels = match ($c['kind']) {
+            'film' => ['' => ['check', 'J\'ai vu ce film']],
+            'serie' => ['' => ['check', 'J\'ai vu cet épisode']],
+            default => [
+                '' => ['plus', $isBookL ? 'Ajouter la séance de lecture' : 'Ajouter la partie'],
+                'start' => ['check', $isBookL ? 'J\'ai commencé ce livre' : 'J\'ai commencé ce jeu'],
+                'finish' => ['check', $isBookL ? 'J\'ai fini ce livre' : 'J\'ai fini ce jeu'],
+            ],
+        };
+        $defM = in_array($c['kind'], Works::TRACKED, true) ? ($last ? '' : 'start') : '';
+        ?>
+        <button class="btn accent work-act" data-log-submit>
+            <?php foreach ($btnLabels as $m => [$ico, $txt]): ?>
+                <span class="log-label" data-for="<?= $m ?>" <?= $m === $defM ? '' : 'hidden' ?>><?= ui_icon($ico) ?><span><?= e($txt) ?></span></span>
+            <?php endforeach; ?>
+        </button>
         <a class="btn ghost" href="<?= $last ? url('work', ['id' => $c['id'], 'work' => $w['id']]) : url('work_add', ['id' => $c['id']]) ?>">Annuler</a>
     </div>
 </form>

@@ -1,5 +1,12 @@
 # Journal des modifications
 
+## 0.33.2
+- **iPhone : plus de flou en haut de l'écran.** La page ne passe plus sous la barre d'état (heure, batterie),
+  que Safari floute.
+- **Saisie d'un film, d'un épisode, d'un livre ou d'un jeu** : le bouton dit ce que tu fais au lieu de
+  « + Ajouter le bâton » : « J'ai vu ce film », « J'ai vu cet épisode », « J'ai commencé ce livre »,
+  « J'ai fini ce jeu », « Ajouter la séance de lecture »… Il suit le choix « Ce bâton marque ».
+
 ## 0.33.1
 - Sur téléphone, un bouton touché (« Nouvelle catégorie », « Réorganiser », une tuile, une ✕…) ne reste
   plus « allumé » en blanc après coup : l'effet de survol est réservé à la souris.

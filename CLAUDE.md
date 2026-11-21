@@ -261,6 +261,8 @@ docker build -f docker/Dockerfile -t batons . && docker run -p 8080:8080 -v $PWD
 - [x] v0.33 : messages flash à disparition automatique (8 s avec action, 4 s sinon ; `data-timeout`, `armFlash()` dans
       app.js : minuteur en pause sur pointerenter/focusin ; barre `.flash-bar` qui se vide) ; réglage `flash_auto`
       (Apparence › Messages : « Disparaissent seuls » / « Restent affichés »).
+- [x] v0.33.2 : plus de `viewport-fit=cover` (Safari iOS 26 floute ce qui passe sous la barre d'état) ; bouton de
+      `work_log` libellé selon le type et « Ce bâton marque » (`[data-log-submit]` / `.log-label`).
 - [ ] Rappels / objectifs (« au moins 3 par semaine »).
 - [ ] i18n (anglais).
 - [ ] Intégration HA facultative : capteurs (« temps depuis », « total du jour »), webhook/API pour ajouter

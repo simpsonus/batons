@@ -87,6 +87,7 @@ html[data-theme=dark] .rating { color: #fbbf24; }
 .work-actions .work-btns { margin-left: 0; justify-content: flex-start; }
 .work-act { gap: .45rem; padding: .4rem .9rem; font-variant-numeric: tabular-nums; }
 .work-act svg.ui { width: 1.2rem; height: 1.2rem; }
+.log-label { display: inline-flex; align-items: center; gap: .45rem; }
 @media (max-width: 480px) {
     /* Téléphone : le bouton passe sous le titre, aligné avec le texte (après l'affiche). */
     .work-list li > .work-btns { flex: 1 0 100%; margin-left: 0; padding-left: calc(46px + .7rem); justify-content: flex-start; }
