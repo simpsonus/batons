@@ -110,6 +110,8 @@ Le nom vient des bâtons qu'on trace pour compter (IIII barrés). Slug technique
 - **Actions des œuvres** : une seule action par livre, écrite comme ce qui va se passer (« J'ai fini le tome 1 »,
   « Commencer le tome 2 »), icône à gauche du texte, jamais deux boutons qui se recouvrent ; ▶ réservé aux séries.
   À l'ouverture d'un `<dialog>`, le focus va sur son titre (`tabindex="-1"`), pas sur le premier bouton.
+  Cadre de focus réservé au clavier : `html[data-input=pointer|key]` (app.js) + règles en tête de `01-base.css` ;
+  un nouveau style `:focus-visible` « maison » (sur un voisin, `:has()`…) doit être ajouté à ces deux listes.
 - **Catégories « œuvre »** (`categories.kind` = `serie` | `film` | `livre` | `jeu`, sinon `simple`) : chaque bâton
   pointe vers une œuvre (`works`) avec saison/épisode (séries), tome (livres) et note 1–10 facultative.
   La tuile ouvre `work_add` (« Continuer » = épisode/tome suivant en un tap, puis recherche). Catalogues
@@ -263,6 +265,8 @@ docker build -f docker/Dockerfile -t batons . && docker run -p 8080:8080 -v $PWD
       (Apparence › Messages : « Disparaissent seuls » / « Restent affichés »).
 - [x] v0.33.2 : plus de `viewport-fit=cover` (Safari iOS 26 floute ce qui passe sous la barre d'état) ; bouton de
       `work_log` libellé selon le type et « Ce bâton marque » (`[data-log-submit]` / `.log-label`).
+- [x] v0.33.3 : cadre de focus seulement au clavier (`html[data-input]`, coarse pointer sans clavier = pas de cadre) ;
+      renommer un groupe : sélecteur `input[name=label]` corrigé dans app.js.
 - [ ] Rappels / objectifs (« au moins 3 par semaine »).
 - [ ] i18n (anglais).
 - [ ] Intégration HA facultative : capteurs (« temps depuis », « total du jour »), webhook/API pour ajouter

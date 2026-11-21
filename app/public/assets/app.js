@@ -1,3 +1,14 @@
+/* Mode de saisie (html[data-input]) : « pointer » après un appui ou un clic, « key » après une touche du clavier.
+   Le cadre de focus n'est montré qu'au clavier (CSS 01-base) : sur iPhone, les focus posés par programme
+   (champ autofocus, retour sur un bouton après un dialogue ou un envoi « doux »…) n'encadrent plus rien. */
+(() => {
+    const root = document.documentElement;
+    addEventListener('pointerdown', () => { root.dataset.input = 'pointer'; }, true);
+    addEventListener('keydown', (ev) => {
+        if (!ev.metaKey && !ev.ctrlKey && !ev.altKey) root.dataset.input = 'key';
+    }, true);
+})();
+
 // Bâtons — un peu de JS, jamais indispensable : tout fonctionne sans.
 (() => {
     // Confirmation avant les actions destructrices.
@@ -311,7 +322,7 @@
                 a.hidden = true;
                 const f = head.querySelector('.rename-form');
                 f.hidden = false;
-                const input = f.querySelector('input[name=name]');
+                const input = f.querySelector('input[name=label]');
                 input.focus();
                 input.select();
                 return;

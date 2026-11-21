@@ -92,6 +92,23 @@ code { font-size: .85em; background: var(--line); padding: .05rem .3rem; border-
 
 /* Focus clavier bien visible partout. */
 :focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; border-radius: 4px; }
+/* Cadre de focus réservé au clavier : après un appui ou un clic (html[data-input=pointer], app.js), et sur écran
+   tactile tant qu'aucune touche n'a été frappée, les focus posés par programme (autofocus, retour sur un bouton…)
+   ne s'encadrent pas. Avec un clavier (Tab…), tous les cadres reviennent. */
+html[data-input=pointer] :focus-visible,
+html[data-input=pointer] .chip input:focus-visible + span,
+html[data-input=pointer] .swatch input:focus-visible + span,
+html[data-input=pointer] .app-opt:has(input:focus-visible),
+html[data-input=pointer] .tiles-coin .tile .more:focus-visible svg.ui,
+html[data-input=pointer] .drop-zone:focus-within { outline: none; }
+@media (pointer: coarse) {
+    html:not([data-input=key]) :focus-visible,
+    html:not([data-input=key]) .chip input:focus-visible + span,
+    html:not([data-input=key]) .swatch input:focus-visible + span,
+    html:not([data-input=key]) .app-opt:has(input:focus-visible),
+    html:not([data-input=key]) .tiles-coin .tile .more:focus-visible svg.ui,
+    html:not([data-input=key]) .drop-zone:focus-within { outline: none; }
+}
 /* Titres qui reçoivent le focus par programme (ouverture d'un panneau) : annoncés, mais pas encadrés. */
 [tabindex="-1"]:focus { outline: none; }
 

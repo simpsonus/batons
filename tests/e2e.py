@@ -350,6 +350,32 @@ def run_flows(page, base):
         page.set_viewport_size({'width': 1280, 'height': 900})
     tap_keeps_scroll()
 
+    @step('Écran tactile : pas de cadre de focus posé par programme ; au clavier, le cadre revient')
+    def focus_rings():
+        ctx2 = page.context.browser.new_context(viewport={'width': 390, 'height': 800}, has_touch=True, is_mobile=True)
+        m = ctx2.new_page()
+        m.goto(base + '?r=timeline')
+        m.tap('[data-filter-open]')
+        m.tap('[data-filter-sheet] [data-filter-close]')
+        check(m.evaluate("getComputedStyle(document.activeElement).outlineStyle") == 'none', 'retour sur « Filtrer » sans cadre')
+        m.goto(base)
+        m.locator('.tile:has(button.tap)').first.locator('button.tap').tap()
+        m.locator('.flash').wait_for()
+        check(m.evaluate("getComputedStyle(document.activeElement).outlineStyle") == 'none', 'tuile sans cadre après un bâton')
+        m.keyboard.press('Tab')
+        check(m.evaluate("getComputedStyle(document.activeElement).outlineStyle") == 'solid', 'cadre visible au clavier')
+        ctx2.close()
+    focus_rings()
+
+    @step('Réorganiser : renommer un groupe (crayon)')
+    def rename_group():
+        page.goto(base + '?r=category_order')
+        btn = page.locator('[data-rename]').first
+        if btn.count():
+            btn.click()
+            check(page.evaluate("document.activeElement.name") == 'label', 'le champ du nouveau nom reçoit le focus')
+    rename_group()
+
     @step('Pages du menu : croix pour fermer')
     def close_links():
         for r in ['archives', 'import', 'export', 'account', 'appearance', 'unlock', 'menu']:

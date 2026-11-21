@@ -1,5 +1,12 @@
 # Journal des modifications
 
+## 0.33.3
+- **Plus de cadre bleu inattendu sur iPhone** : le champ de recherche à l'ouverture d'« Ajouter un film »
+  (ou un livre…), le bouton « Filtrer » après avoir fermé le panneau, la tuile après un bâton, la poignée après
+  un déplacement dans Réorganiser, le code de déverrouillage… Le cadre de focus n'apparaît plus qu'au clavier
+  (où il reste indispensable pour savoir où l'on est).
+- Correctif : renommer un groupe (crayon, dans Réorganiser) place de nouveau le curseur dans le champ.
+
 ## 0.33.2
 - **iPhone : plus de flou en haut de l'écran.** La page ne passe plus sous la barre d'état (heure, batterie),
   que Safari floute.
