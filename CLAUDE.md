@@ -242,6 +242,10 @@ docker build -f docker/Dockerfile -t batons . && docker run -p 8080:8080 -v $PWD
 - [ ] Tuiles « coin » (proposé, en attente) : triangle 64 px, › centré dans le triangle (~15 px des bords), zone
       cliquable = le triangle seul (`clip-path`), retour visuel à l'appui ; aujourd'hui › collé dans l'angle et carré
       de 44 px dont la moitié blanche ouvre la page de la catégorie.
+- [ ] Tuiles « pastille » (option A validée, en attente) : sur téléphone (≤ 480 px), pastille ronde ~40 px AU-DESSUS du
+      texte (texte sur toute la largeur, ~150 px au lieu de 55) ; disposition côte à côte gardée sur grand écran.
+      Pour tous les styles : plus de coupure en plein mot dans les noms de tuiles (`hyphens: auto`, `lang="fr"`,
+      pas d'`overflow-wrap: anywhere/break-word` sur `.name`). À livrer avec la correction « coin ».
 - [ ] Rappels / objectifs (« au moins 3 par semaine »).
 - [ ] i18n (anglais).
 - [ ] Intégration HA facultative : capteurs (« temps depuis », « total du jour »), webhook/API pour ajouter
