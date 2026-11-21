@@ -1,5 +1,19 @@
 # Journal des modifications
 
+## 0.31.0
+- **Livres : une seule action à la fois, écrite en clair.** « J'ai fini ce livre » ou « J'ai fini le tome 1 »,
+  puis, une fois le tome fini, « Commencer le tome 2 ». Fini les deux boutons qui faisaient presque la même
+  chose et le ▶ qui faisait penser à une vidéo. Le message qui suit « J'ai fini le tome 1 » propose aussi
+  « Commencer le tome 2 » tout de suite ; « Annuler « lu » » défait le marquage, ✕ ferme sans rien faire.
+- **« Ne pas lire la suite »** (dans la fiche d'un livre dont le tome est fini) : la série est rangée dans
+  « Lus », et non plus dans « Arrêtés » (réservé aux livres abandonnés en cours de lecture).
+- **Jeux** : « Partie jouée » et « J'ai fini ce jeu ». **Séries** : « ▶ S02E05 vu ».
+- Icône toujours à gauche du texte ; ligne d'état raccourcie (« Tome 1 · commencé il y a 12 jours ») ;
+  « + Ajouter » devient « Ajouter un livre » (ou un jeu, un film, une série).
+- Réorganiser : le menu « Déplacer » n'encadre plus « Monter » à l'ouverture.
+- Correctif : le tome proposé est bien celui qui suit le dernier tome commencé ; fermer la fiche après
+  « J'arrête là » ramène à la page d'origine.
+
 ## 0.30.0
 - **Livres et jeux** : la liste en haut de la catégorie ne montre plus que ce qui est **en cours**.
   Les livres lus (ou jeux terminés) sont rangés dans une section « Lus » / « Terminés », repliée, avec

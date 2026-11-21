@@ -66,19 +66,13 @@ html[data-theme=dark] .rating { color: #fbbf24; }
 .dates dd.big { font-size: 1.35rem; font-weight: 700; }
 .game-status form { margin: 0 0 .5rem; }
 
-/* --- Boutons d'action avec libellé + sous-titre (views/_work_actions.php) ----------------- */
+/* --- Action d'une œuvre (views/_work_actions.php) : une phrase, icône à gauche ---------------- */
 .work-btns { display: flex; gap: .4rem; margin-left: auto; flex-wrap: wrap; justify-content: flex-end; }
 .work-btns form { margin: 0; }
 .work-actions .work-btns { margin-left: 0; justify-content: flex-start; }
-.next-btn, .finish-btn { flex-direction: column; gap: 0; line-height: 1.15; padding: .35rem .8rem; }
-.next-btn { white-space: nowrap; font-variant-numeric: tabular-nums; }
-.finish-btn { font-size: 1.2rem; }
-.btn-main { font-weight: 700; white-space: nowrap; }
-.btn-sub { font-size: .8125rem; font-weight: 500; white-space: nowrap; }
+.work-act { gap: .45rem; padding: .4rem .9rem; font-variant-numeric: tabular-nums; }
+.work-act svg.ui { width: 1.2rem; height: 1.2rem; }
 @media (max-width: 480px) {
-    /* Téléphone : deux boutons de même largeur sous le titre, texte autorisé à passer à la ligne. */
-    .work-btns { width: 100%; flex-wrap: nowrap; justify-content: stretch; }
-    .work-btns form { flex: 1 1 0; min-width: 0; }
-    .work-btns .btn { width: 100%; height: 100%; padding: .35rem .5rem; }
-    .work-btns .btn-main, .work-btns .btn-sub { white-space: normal; text-align: center; }
+    /* Téléphone : le bouton passe sous le titre, aligné avec le texte (après l'affiche). */
+    .work-list li > .work-btns { flex: 1 0 100%; margin-left: 0; padding-left: calc(46px + .7rem); justify-content: flex-start; }
 }

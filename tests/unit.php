@@ -221,6 +221,26 @@ function test_highlight(): void
     same('x', highlight('x', '  '), 'recherche vide');
 }
 
+// --- Livres en tomes : tome suivant ------------------------------------------------------------------
+
+function test_book_next_volume(): void
+{
+    $uid = user();
+    $c = cat($uid, 'Livres', ['kind' => 'livre']);
+    $w = Batons\Works::manual($uid, 'livre', '1Q84');
+    $work = Batons\Works::find($uid, $w);
+    Events::addWork($c, utc('-12 days'), $w, null, null, 1, null, null, 'start');
+    same(['volume' => 2], Batons\Works::next($uid, $work, Batons\Works::lastEvent($w, $c)), 'tome 1 commencé : suivant = tome 2');
+    Events::addWork($c, utc('-1 day'), $w, null, null, 1, null, null, 'finish');
+    same('done', Batons\Works::status($w, $c)['state'], 'tome 1 fini');
+    same(['volume' => 2], Batons\Works::next($uid, $work, Batons\Works::lastEvent($w, $c)), 'tome 1 fini : on propose le tome 2');
+    // Bâtons ordinaires d'un tome antérieur saisis après coup : le tome suivant reste celui qui suit le tome commencé.
+    Events::addWork($c, utc('-30 days'), $w, null, null, 3, null, null);
+    Events::addWork($c, utc('-2 hours'), $w, null, null, 4, null, null, 'start');
+    Events::addWork($c, utc('-1 hour'), $w, null, null, 2, null, null);
+    same(['volume' => 5], Batons\Works::next($uid, $work, Batons\Works::lastEvent($w, $c)), 'suivant = tome commencé + 1');
+}
+
 // --- CBOR : exemples de la RFC 8949, annexe A ----------------------------------------------------------
 
 function test_cbor_rfc8949_examples(): void

@@ -49,10 +49,12 @@ $events = array_slice($events, 0, 50);
         $w['_last'] = Batons\Works::lastEvent((int) $w['id'], $id);
         $w['_next'] = Batons\Works::next($uid, $w, $w['_last']);
         $st = $statuses[$w['id']] ?? null;
-        if ($tracked && $w['stopped_at']) {
-            $groupsW['stopped'][] = $w;
-        } elseif ($tracked && $st && $st['state'] === 'done' && !($c['kind'] === 'livre' && isset($w['_next']['volume']))) {
-            $groupsW['done'][] = $w;      // un livre en tomes dont le suivant reste à commencer reste « En cours »
+        $finished = $tracked && $st && $st['state'] === 'done';
+        if ($tracked && $w['stopped_at'] && !$finished) {
+            $groupsW['stopped'][] = $w;   // arrêté en cours de route
+        } elseif ($finished && ($w['stopped_at'] || !($c['kind'] === 'livre' && isset($w['_next']['volume'])))) {
+            $groupsW['done'][] = $w;      // fini ; un livre en tomes dont le suivant reste à commencer reste « En cours »,
+                                          // sauf « Ne pas lire la suite » (stopped_at après un tome fini)
         } else {
             $groupsW['open'][] = $w;
         }
@@ -75,10 +77,14 @@ $events = array_slice($events, 0, 50);
             $bits = [($vW ? 'Tome ' . $vW . ' ' : '') . $inDays((int) $stW['days'], $doneWord), $dateShort($stW['finish'])];
         } elseif ($mode === 'stopped') {
             $bits = ['arrêté le ' . $dateShort($w['stopped_at']), Batons\Works::progress($lastW['season'] ?? null, $lastW['episode'] ?? null, $lastW['volume'] ?? null)];
+        } elseif ($stW) {
+            // Livre / jeu : l'essentiel, sans répétition (« Tome 1 · commencé il y a 12 jours »).
+            $since = static fn(int $d): string => $d === 0 ? 'commencé aujourd\'hui' : 'commencé il y a ' . Batons\Works::daysLabel($d);
+            $bits = $stW['state'] === 'done'
+                ? [($vW ? 'Tome ' . $vW . ' ' : '') . 'lu le ' . $dateShort($stW['finish']), trim($inDays((int) $stW['days'], ''))]
+                : [$vW ? 'Tome ' . $vW : null, $vW ? $since((int) $stW['days']) : ucfirst($since((int) $stW['days']))];
         } else {
             $bits = [
-                $stW ? ($vW ? 'Tome ' . $vW . ' ' : '') . ($stW['state'] === 'done' ? $inDays((int) $stW['days'], $vW ? 'lu' : $doneWord)
-                    : ($vW ? 'en cours' : 'En cours') . ' depuis ' . Batons\Works::daysLabel((int) $stW['days'])) : null,
                 Batons\Works::progress($lastW['season'] ?? null, $lastW['episode'] ?? null, $lastW['volume'] ?? null),
                 Time::ago($w['last_at']),
                 (int) $w['n'] > 1 ? $w['n'] . ' bâtons' : null,
@@ -98,7 +104,7 @@ $events = array_slice($events, 0, 50);
     <section class="card" style="<?= cvars($c['color']) ?>" aria-labelledby="works-title">
         <div class="card-head">
             <h2 id="works-title" class="card-title"><?= $tracked ? 'En cours' : e(Batons\Catalog::KINDS[$c['kind']]) ?> <span class="muted small"><?= count($tracked ? $groupsW['open'] : $works) ?></span></h2>
-            <a class="btn accent" href="<?= url('work_add', ['id' => $id]) ?>">+ Ajouter</a>
+            <a class="btn ghost" href="<?= url('work_add', ['id' => $id]) ?>"><?= ui_icon('search') ?> Ajouter <?= ['film' => 'un film', 'serie' => 'une série', 'livre' => 'un livre', 'jeu' => 'un jeu'][$c['kind']] ?></a>
         </div>
         <?php if (!$works): ?>
             <p class="muted">Rien pour l'instant : « + Ajouter » pour chercher <?= ['film' => 'un film', 'serie' => 'une série', 'livre' => 'un livre', 'jeu' => 'un jeu'][$c['kind']] ?>.</p>
@@ -112,8 +118,9 @@ $events = array_slice($events, 0, 50);
         <?php if ($groupsW['done']): ?>
             <details class="works-more">
                 <summary><?= ui_icon('chevron') ?><span><strong><?= $isBook ? 'Lus' : 'Terminés' ?></strong>
-                    <span class="muted"> · <?= e($plural(count($groupsW['done']), $isBook ? 'livre' : 'jeu', $isBook ? 'livres' : 'jeux')) ?><?php if (!empty($doneDays)): ?>,
-                        <?= e(Batons\Works::daysLabel((int) round(array_sum($doneDays) / count($doneDays)))) ?> en moyenne<?php endif; ?></span></span></summary>
+                    <?php $avgD = $doneDays ? array_sum($doneDays) / count($doneDays) : null; ?>
+                    <span class="muted"> · <?= e($plural(count($groupsW['done']), $isBook ? 'livre' : 'jeu', $isBook ? 'livres' : 'jeux')) ?><?php if ($avgD !== null): ?>
+                        · <?= e($avgD < 1 ? 'moins d\'un jour' : Batons\Works::daysLabel((int) round($avgD))) ?> en moyenne<?php endif; ?></span></span></summary>
                 <ul class="work-list">
                     <?php foreach (array_slice($groupsW['done'], 0, 200) as $w) { $workRow($w, 'done'); } ?>
                 </ul>

@@ -125,9 +125,22 @@ switch ($route) {
         }
         $evId = Events::addWork((int) $c['id'], Time::nowUtc(), (int) $w['id'], null, null, $vol, null, null, $m);
         $st = Batons\Works::status((int) $w['id'], (int) $c['id']);
-        Http::flash($m === 'finish'
-            ? '« ' . $w['title'] . ' » ' . ($c['kind'] === 'livre' ? 'lu' : 'terminé') . ' en ' . Batons\Works::daysLabel((int) $st['days']) . '. Bravo !'
-            : '« ' . $w['title'] . ' » commencé aujourd\'hui.', $evId);
+        if ($m === 'finish') {
+            $isBook = $c['kind'] === 'livre';
+            $d = (int) $st['days'];
+            $inDays = $d === 0 ? 'le jour même' : 'en ' . Batons\Works::daysLabel($d);
+            if ($isBook && $vol !== null) {
+                // Tome fini : on propose d'enchaîner, sans l'imposer (le message se ferme avec ✕).
+                Http::flash('Tome ' . $vol . ' de « ' . $w['title'] . ' » marqué comme lu, ' . $inDays . '.', $evId,
+                    ['label' => 'Commencer le tome ' . ($vol + 1), 'route' => 'work_next', 'params' => ['id' => $c['id'], 'work' => $w['id']]],
+                    'Annuler « lu »');
+            } else {
+                Http::flash('« ' . $w['title'] . ' » marqué comme ' . ($isBook ? 'lu' : 'terminé') . ', ' . $inDays . '.', $evId, null,
+                    $isBook ? 'Annuler « lu »' : 'Annuler « terminé »');
+            }
+        } else {
+            Http::flash('« ' . $w['title'] . ' » commencé aujourd\'hui.', $evId);
+        }
         Http::back('work', ['id' => $c['id'], 'work' => $w['id']]);
 
     case 'work_stop':
@@ -136,10 +149,13 @@ switch ($route) {
         $w = Batons\Works::find($uid, (int) Http::intInput('work')) ?? Http::notFound('Œuvre');
         Batons\Db::run('UPDATE works SET stopped_at = ? WHERE id = ? AND user_id = ?',
             [$route === 'work_stop' ? Time::nowUtc() : null, $w['id'], $uid]);
+        $stS = in_array($c['kind'], Batons\Works::TRACKED, true) ? Batons\Works::status((int) $w['id'], (int) $c['id']) : null;
+        $afterDone = $stS && $stS['state'] === 'done';   // arrêté après un tome / un livre fini : rangé dans « Lus »
         Http::flash($route === 'work_stop'
-            ? '« ' . $w['title'] . ' » ne sera plus proposé dans « Continuer ».'
+            ? ($afterDone ? '« ' . $w['title'] . ' » : la suite ne sera plus proposée. Rangé dans « ' . ($c['kind'] === 'livre' ? 'Lus' : 'Terminés') . ' ».'
+                          : '« ' . $w['title'] . ' » arrêté : il n\'est plus proposé dans « Continuer ».')
             : '« ' . $w['title'] . ' » est de nouveau proposé dans « Continuer ».');
-        Http::redirect('work', ['id' => $c['id'], 'work' => $w['id']]);
+        Http::back('work', ['id' => $c['id'], 'work' => $w['id']]);   // reste sur la fiche, sans perdre son « from »
 
     case 'work_next':
         $c = $category(Http::intInput('id'));

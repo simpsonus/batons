@@ -22,11 +22,10 @@ $avg = $ratings ? (int) round(array_sum($ratings) / count($ratings)) : null;
     <div class="head-tools">
         <?= help_box('Comment ça marche', array_filter([
             $c['kind'] === 'serie' ? '<strong>▶ S02E05</strong> : ajoute l\'épisode suivant, vu maintenant.' : null,
-            $c['kind'] === 'livre' ? '<strong>▶ Tome 2</strong> (« tome 1 lu ») : marque le tome en cours comme lu aujourd\'hui et commence le suivant.' : null,
-            $c['kind'] === 'livre' ? '<strong>Tome 1 lu ✓</strong> : marque seulement le tome en cours comme lu ; la suite reste proposée.' : null,
-            $c['kind'] === 'jeu' ? '<strong>▶ Partie</strong> : ajoute une partie jouée maintenant. <strong>Terminé ✓</strong> : le jeu est fini aujourd\'hui.' : null,
+            $c['kind'] === 'livre' ? '<strong>J\'ai fini…</strong> : marque le livre (ou le tome en cours) comme lu aujourd\'hui. Ensuite, <strong>Commencer le tome 2</strong> enchaîne.' : null,
+            $c['kind'] === 'jeu' ? '<strong>Partie jouée</strong> : ajoute une partie maintenant. <strong>J\'ai fini ce jeu</strong> : le jeu est terminé aujourd\'hui.' : null,
             '<strong>+ Ajouter ' . e($verb) . '…</strong> : choisir la date, ' . ($c['kind'] === 'serie' ? 'l\'épisode, ' : ($c['kind'] === 'livre' ? 'le tome, ' : '')) . (in_array($c['kind'], Works::TRACKED, true) ? 'le début ou la fin, ' : '') . 'une note sur 10.',
-            $c['kind'] !== 'film' ? '<strong>J\'arrête là</strong> : ne plus proposer ce titre dans « Continuer » (tu peux reprendre quand tu veux).' : null,
+            $c['kind'] !== 'film' ? '<strong>J\'arrête là</strong> (ou <strong>Ne pas lire la suite</strong> après un tome fini) : ne plus proposer ce titre dans « Continuer » (tu peux reprendre quand tu veux).' : null,
             'Le crayon de l\'historique corrige un bâton (date, épisode, note…), la corbeille le supprime.',
         ])) ?>
         <?= close_link(from_url(url('work_add', ['id' => $c['id']])), 'Fermer la fiche') ?>
@@ -38,6 +37,7 @@ $avg = $ratings ? (int) round(array_sum($ratings) / count($ratings)) : null;
         <p>Tu as arrêté ce titre le <?= e(Time::longDate(Time::local($w['stopped_at']))) ?> : il n'est plus proposé dans « Continuer ».</p>
         <form method="post" action="<?= url('work_resume', ['id' => $c['id'], 'work' => $w['id']]) ?>">
             <?= csrf() ?>
+            <input type="hidden" name="back" value="<?= e(here()) ?>">
             <button class="btn ghost" title="Proposer de nouveau ce titre dans « Continuer »">Reprendre</button>
         </form>
     </section>
@@ -58,10 +58,11 @@ $avg = $ratings ? (int) round(array_sum($ratings) / count($ratings)) : null;
         <?php endif; ?>
         <form method="post" action="<?= url('work_mark', ['id' => $c['id'], 'work' => $w['id']]) ?>">
             <?= csrf() ?>
+            <input type="hidden" name="back" value="<?= e(here()) ?>">
             <?php if ($st['state'] === 'playing'): ?>
                 <input type="hidden" name="milestone" value="finish">
-                <?php $finTxt = $curVol ? 'Tome ' . $curVol . ' lu' : $ml['done']; ?>
-                <button class="btn accent" title="<?= e($curVol ? 'Marque le tome ' . $curVol . ' comme lu aujourd\'hui ; le tome ' . ($curVol + 1) . ' restera proposé' : 'Marque ' . ($c['kind'] === 'livre' ? 'le livre comme lu' : 'le jeu comme terminé') . ' aujourd\'hui') ?>"><?= e($finTxt) ?> ✓ aujourd'hui</button>
+                <?php $finTxt = $curVol ? 'J\'ai fini le tome ' . $curVol : ($c['kind'] === 'livre' ? 'J\'ai fini ce livre' : 'J\'ai fini ce jeu'); ?>
+                <button class="btn accent work-act" title="<?= e($curVol ? 'Marque le tome ' . $curVol . ' comme lu aujourd\'hui' : 'Marque ' . ($c['kind'] === 'livre' ? 'le livre comme lu' : 'le jeu comme terminé') . ' aujourd\'hui') ?>"><?= ui_icon('check') ?><span><?= e($finTxt) ?></span></button>
             <?php else: ?>
                 <input type="hidden" name="milestone" value="start">
                 <button class="btn <?= $st['state'] === 'done' ? 'ghost' : 'accent' ?>" title="<?= $st['state'] === 'done' ? 'Recommence ce titre depuis le début, aujourd\'hui' : 'Marque le début aujourd\'hui' ?>"><?= $st['state'] === 'done' ? 'Recommencer aujourd\'hui' : 'Commencé aujourd\'hui' ?></button>
@@ -90,10 +91,13 @@ $avg = $ratings ? (int) round(array_sum($ratings) / count($ratings)) : null;
     <?php if ($last): $n = $next; $back = here(); $hideFinish = true; require __DIR__ . '/_work_actions.php'; endif; ?>
     <a class="btn <?= $next && $last ? 'ghost' : 'accent' ?>" href="<?= url('work_log', ['id' => $c['id'], 'work' => $w['id']]) ?>"
        title="Ajouter <?= e($verb) ?> en choisissant la date<?= $c['kind'] === 'serie' ? ', l\'épisode' : ($c['kind'] === 'livre' ? ', le tome' : '') ?> ou une note">+ Ajouter <?= $verb ?>…</a>
-    <?php if ($last && $c['kind'] !== 'film' && !$w['stopped_at']): ?>
+    <?php if ($last && $c['kind'] !== 'film' && !$w['stopped_at']):
+        // Livre en tomes dont le dernier tome est fini : « Ne pas lire la suite » (rangé dans « Lus »), sinon « J'arrête là ».
+        $afterTome = $c['kind'] === 'livre' && isset($next['volume']) && isset($st) && $st['state'] === 'done'; ?>
         <form method="post" action="<?= url('work_stop', ['id' => $c['id'], 'work' => $w['id']]) ?>">
             <?= csrf() ?>
-            <button class="btn ghost" title="Ne plus proposer ce titre dans « Continuer » (ex. : tu ne liras pas la suite). Tu pourras reprendre.">J'arrête là</button>
+            <input type="hidden" name="back" value="<?= e(here()) ?>">
+            <button class="btn ghost" title="<?= $afterTome ? 'La suite ne sera plus proposée ; le livre est rangé dans « Lus ». Tu pourras reprendre.' : 'Ne plus proposer ce titre dans « Continuer ». Tu pourras reprendre.' ?>"><?= $afterTome ? 'Ne pas lire la suite' : 'J\'arrête là' ?></button>
         </form>
     <?php endif; ?>
 </div>

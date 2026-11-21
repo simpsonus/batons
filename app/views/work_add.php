@@ -11,7 +11,7 @@ $kindLabel = ['film' => 'un film', 'serie' => 'une série', 'livre' => 'un livre
         <?= help_box('Comment ça marche', [
     'serie' => [
         '<strong>Une série commencée :</strong> cherche-la, choisis-la dans les résultats, indique la saison et l\'épisode, puis « + Ajouter le bâton ».',
-        '<strong>▶ S02E05</strong> : ajoute cet épisode, vu maintenant.',
+        '<strong>▶ S02E05 vu</strong> : ajoute cet épisode, vu maintenant.',
         '<strong>Un autre épisode ou une autre date :</strong> ouvre la fiche de la série (son titre dans « Continuer »), puis « + Ajouter un épisode… ».',
     ],
     'film' => [
@@ -21,14 +21,14 @@ $kindLabel = ['film' => 'un film', 'serie' => 'une série', 'livre' => 'un livre
     ],
     'livre' => [
         '<strong>Un livre commencé :</strong> cherche-le, choisis-le dans les résultats, puis « + Ajouter le bâton » (il est marqué « commencé »).',
-        '<strong>▶ Tome 2</strong> (« tome 1 lu ») : marque le tome en cours comme lu aujourd\'hui et commence le suivant.',
-        '<strong>Tome 1 lu ✓</strong> : marque seulement le tome en cours comme lu ; le tome suivant reste proposé.',
-        '<strong>Tu ne liras pas la suite ?</strong> Ouvre la fiche du livre (son titre dans « Continuer »), puis « J\'arrête là ».',
+        '<strong>J\'ai fini ce livre</strong> (ou <strong>J\'ai fini le tome 1</strong>) : le marque comme lu aujourd\'hui.',
+        '<strong>Commencer le tome 2</strong> : apparaît une fois le tome 1 fini ; le message en haut de l\'écran le propose aussi tout de suite.',
+        '<strong>Tu ne liras pas la suite ?</strong> Ouvre la fiche du livre (son titre dans « Continuer »), puis « Ne pas lire la suite ».',
     ],
     'jeu' => [
         '<strong>Un jeu commencé :</strong> cherche-le, choisis-le dans les résultats, puis « + Ajouter le bâton » (il est marqué « commencé »).',
-        '<strong>▶ Partie</strong> : ajoute une partie jouée maintenant.',
-        '<strong>Terminé ✓</strong> : marque le jeu comme fini aujourd\'hui (la durée est calculée depuis son début).',
+        '<strong>Partie jouée</strong> : ajoute une partie jouée maintenant.',
+        '<strong>J\'ai fini ce jeu</strong> : le marque comme terminé aujourd\'hui (la durée est calculée depuis son début).',
         '<strong>Tu abandonnes le jeu ?</strong> Ouvre sa fiche (son titre dans « Continuer »), puis « J\'arrête là ».',
     ],
 ][$c['kind']] + ['x' => $c['kind'] === 'film' ? null : '<strong>Une autre date</strong> (hier, la semaine dernière) : change la date dans l\'écran d\'ajout, ou ouvre la fiche du titre puis « + Ajouter… ».',
@@ -50,7 +50,8 @@ $kindLabel = ['film' => 'un film', 'serie' => 'une série', 'livre' => 'un livre
                         $stC = in_array($c['kind'], Works::TRACKED, true) ? Works::status((int) $w['id'], (int) $c['id']) : null;
                         $volC = $c['kind'] === 'livre' ? Works::currentVolume((int) $w['id'], (int) $c['id']) : null;
                         ?>
-                        <span class="muted small"><?php if ($stC && $stC['state'] === 'playing'): ?><?= $volC ? 'Tome ' . $volC . ' en cours' : 'En cours' ?> depuis <?= e(Works::daysLabel((int) $stC['days'])) ?><?php elseif ($stC && $stC['state'] === 'done'): ?><?= $volC ? 'Tome ' . $volC . ' lu' : 'Terminé' ?> · <?= e(Batons\Time::ago($w['last_at'])) ?><?php else: ?>dernier : <?= e(Batons\Time::ago($w['last_at'])) ?><?php endif; ?></span>
+                        <?php $dC = (int) ($stC['days'] ?? 0); $sinceC = $dC === 0 ? 'commencé aujourd\'hui' : 'commencé il y a ' . Works::daysLabel($dC); ?>
+                        <span class="muted small"><?php if ($stC && $stC['state'] === 'playing'): ?><?= e($volC ? 'Tome ' . $volC . ' · ' . $sinceC : ucfirst($sinceC)) ?><?php elseif ($stC && $stC['state'] === 'done'): ?><?= e(($volC ? 'Tome ' . $volC . ' lu' : ($c['kind'] === 'livre' ? 'Lu' : 'Terminé')) . ' le ' . Batons\Time::shortDate(Batons\Time::local($stC['finish']))) ?><?php else: ?>dernier : <?= e(Batons\Time::ago($w['last_at'])) ?><?php endif; ?></span>
                     </span>
                     <?php $back = here(); require __DIR__ . '/_work_actions.php'; ?>
                 </li>

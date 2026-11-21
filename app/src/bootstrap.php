@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Batons;
 
-const VERSION = '0.30.0';
+const VERSION = '0.31.0';
 
 // Autoloader minimal : Batons\Foo -> src/Foo.php (pas de Composer nécessaire).
 spl_autoload_register(static function (string $class): void {

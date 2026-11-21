@@ -104,9 +104,11 @@ final class Works
         }
         if ($work['kind'] === 'livre') {
             // Dernier tome renseigné (le tout dernier bâton peut être un « Lu » sans tome).
-            $vol = $last ? ($last['volume'] ?: Db::value(
+            // Tome suivant = celui qui suit le tome commencé en dernier (« Commencé », tome N) ; à défaut, le dernier tome renseigné.
+            $cur = $last ? self::currentVolume((int) $last['work_id'], (int) $last['category_id']) : null;
+            $vol = $cur ?? ($last ? ($last['volume'] ?: Db::value(
                 'SELECT volume FROM events WHERE work_id = ? AND category_id = ? AND volume IS NOT NULL
-                  ORDER BY occurred_at DESC, id DESC LIMIT 1', [$last['work_id'], $last['category_id']])) : null;
+                  ORDER BY occurred_at DESC, id DESC LIMIT 1', [$last['work_id'], $last['category_id']])) : null);
             return $vol ? ['volume' => (int) $vol + 1] : null;
         }
         if ($work['kind'] !== 'serie') {

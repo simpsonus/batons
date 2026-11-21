@@ -105,6 +105,9 @@ Le nom vient des bâtons qu'on trace pour compter (IIII barrés). Slug technique
   bibliothèque (ES256/RS256, attestation « none », vérification utilisateur requise, rpId enregistré avec la clé).
   État en session, expiration après `BATONS_HIDDEN_TIMEOUT` s d'inactivité (300). Masquer exige un code défini.
   Ce n'est pas du chiffrement (le dire dans l'interface).
+- **Actions des œuvres** : une seule action par livre, écrite comme ce qui va se passer (« J'ai fini le tome 1 »,
+  « Commencer le tome 2 »), icône à gauche du texte, jamais deux boutons qui se recouvrent ; ▶ réservé aux séries.
+  À l'ouverture d'un `<dialog>`, le focus va sur son titre (`tabindex="-1"`), pas sur le premier bouton.
 - **Catégories « œuvre »** (`categories.kind` = `serie` | `film` | `livre` | `jeu`, sinon `simple`) : chaque bâton
   pointe vers une œuvre (`works`) avec saison/épisode (séries), tome (livres) et note 1–10 facultative.
   La tuile ouvre `work_add` (« Continuer » = épisode/tome suivant en un tap, puis recherche). Catalogues
@@ -242,6 +245,10 @@ docker build -f docker/Dockerfile -t batons . && docker run -p 8080:8080 -v $PWD
 - [x] v0.30 : livres/jeux : carte « En cours » + sections repliées « Lus/Terminés » et « Arrêtés » (`views/category.php`,
       `$workRow`) ; graphique sans rechargement (`[data-chart-card]`, fetch, `#graph` sans JS) ; tuiles « coin » (triangle
       64 px, zone cliquable = triangle via `clip-path`) ; « pastille » sur téléphone : rond au-dessus du nom.
+- [x] v0.31 : actions des œuvres (`views/_work_actions.php`) : UNE action par livre, libellée comme ce qui va se passer,
+      icône à gauche (`.work-act`) ; pas de ▶ hors séries ; `Http::flash(…, $action, $undoLabel)` (bouton d'enchaînement
+      dans le message, « Annuler « lu » ») ; `stopped_at` après un tome/livre fini = rangé dans « Lus » (« Ne pas lire
+      la suite ») ; `Works::next()` livre = tome commencé + 1. Dialogues : focus sur le titre (`tabindex="-1"`).
 - [ ] Rappels / objectifs (« au moins 3 par semaine »).
 - [ ] i18n (anglais).
 - [ ] Intégration HA facultative : capteurs (« temps depuis », « total du jour »), webhook/API pour ajouter

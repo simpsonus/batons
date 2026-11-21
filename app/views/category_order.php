@@ -103,7 +103,7 @@ $moveButton = static function (string $route, int $id, string $dir, string $labe
 </div>
 
 <dialog class="move-menu" data-move-menu aria-labelledby="move-menu-title">
-    <h2 id="move-menu-title" class="move-menu-title"></h2>
+    <h2 id="move-menu-title" class="move-menu-title" tabindex="-1"></h2>
     <div class="move-menu-actions" data-move-actions></div>
     <form method="dialog"><button class="btn ghost move-menu-close">Fermer</button></form>
 </dialog>

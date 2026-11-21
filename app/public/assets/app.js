@@ -411,6 +411,8 @@
             }
             menu.addEventListener('close', () => h.isConnected && document.activeElement === document.body && h.focus(), { once: true });
             menu.showModal();
+            // Focus sur le titre : annoncé par les lecteurs d'écran, sans encadrer « Monter » (Safari iOS).
+            menu.querySelector('.move-menu-title')?.focus();
         };
         menu?.addEventListener('click', (ev) => { if (ev.target === menu) menu.close(); });
 
