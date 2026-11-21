@@ -249,6 +249,9 @@ docker build -f docker/Dockerfile -t batons . && docker run -p 8080:8080 -v $PWD
       icône à gauche (`.work-act`) ; pas de ▶ hors séries ; `Http::flash(…, $action, $undoLabel)` (bouton d'enchaînement
       dans le message, « Annuler « lu » ») ; `stopped_at` après un tome/livre fini = rangé dans « Lus » (« Ne pas lire
       la suite ») ; `Works::next()` livre = tome commencé + 1. Dialogues : focus sur le titre (`tabindex="-1"`).
+- [x] v0.32 : écran d'ajout d'une œuvre allégé (`.work-q` : loupe + ✕, libellé visuellement masqué, « Chercher » masqué
+      avec JS car résultats en direct ; « Pas trouvé ? Saisir à la main » en bouton `.manual-btn`) ; « + Ajouter un … »
+      (le + = l'action, la loupe = le champ de recherche).
 - [ ] Rappels / objectifs (« au moins 3 par semaine »).
 - [ ] i18n (anglais).
 - [ ] Intégration HA facultative : capteurs (« temps depuis », « total du jour »), webhook/API pour ajouter

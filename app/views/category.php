@@ -104,7 +104,7 @@ $events = array_slice($events, 0, 50);
     <section class="card" style="<?= cvars($c['color']) ?>" aria-labelledby="works-title">
         <div class="card-head">
             <h2 id="works-title" class="card-title"><?= $tracked ? 'En cours' : e(Batons\Catalog::KINDS[$c['kind']]) ?> <span class="muted small"><?= count($tracked ? $groupsW['open'] : $works) ?></span></h2>
-            <a class="btn ghost" href="<?= url('work_add', ['id' => $id]) ?>"><?= ui_icon('search') ?> Ajouter <?= ['film' => 'un film', 'serie' => 'une série', 'livre' => 'un livre', 'jeu' => 'un jeu'][$c['kind']] ?></a>
+            <a class="btn ghost" href="<?= url('work_add', ['id' => $id]) ?>"><?= ui_icon('plus') ?> Ajouter <?= ['film' => 'un film', 'serie' => 'une série', 'livre' => 'un livre', 'jeu' => 'un jeu'][$c['kind']] ?></a>
         </div>
         <?php if (!$works): ?>
             <p class="muted">Rien pour l'instant : « + Ajouter » pour chercher <?= ['film' => 'un film', 'serie' => 'une série', 'livre' => 'un livre', 'jeu' => 'un jeu'][$c['kind']] ?>.</p>

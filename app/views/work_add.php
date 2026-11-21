@@ -69,22 +69,28 @@ $kindLabel = ['film' => 'un film', 'serie' => 'une série', 'livre' => 'un livre
         <form method="get" action="./" role="search" data-work-search>
             <input type="hidden" name="r" value="work_add">
             <input type="hidden" name="id" value="<?= (int) $c['id'] ?>">
-            <label for="work-q">Titre</label>
+            <?php $phW = ['livre' => 'Titre ou auteur', 'film' => 'Titre du film', 'serie' => 'Titre de la série', 'jeu' => 'Titre du jeu'][$c['kind']]; ?>
+            <label for="work-q" class="sr">Rechercher <?= $kindLabel ?> : <?= e(mb_strtolower($phW)) ?></label>
             <div class="search-row">
-                <input type="search" id="work-q" name="q" value="<?= e($q) ?>" autocomplete="off" placeholder="Rechercher <?= $kindLabel ?>…" <?= $continue ? '' : 'autofocus' ?>>
-                <button class="btn">Chercher</button>
+                <span class="work-q">
+                    <?= ui_icon('search') ?>
+                    <input type="search" id="work-q" name="q" value="<?= e($q) ?>" autocomplete="off" autocorrect="off" spellcheck="false"
+                           enterkeyhint="search" placeholder="<?= e($phW) ?>" <?= $continue ? '' : 'autofocus' ?>>
+                    <button type="button" class="work-q-clear" data-work-clear aria-label="Effacer la recherche" hidden><?= ui_icon('close') ?></button>
+                </span>
+                <button class="btn" data-work-submit>Chercher</button>
             </div>
         </form>
         <div data-work-results aria-live="polite">
             <?php require __DIR__ . '/_work_results.php'; ?>
         </div>
-        <p class="muted small">Recherche via <?= e(implode(', ', $sources)) ?> : le texte tapé est envoyé à ce service.
+        <p class="muted small work-src">Recherche envoyée à <?= e(preg_replace('/, ([^,]+)$/', ' et $1', implode(', ', $sources))) ?>.
             <?php if (in_array('TMDB', $sources, true)): ?>Ce produit utilise l'API TMDB mais n'est ni approuvé ni certifié par TMDB.<?php endif; ?>
             <?php if (in_array('RAWG', $sources, true)): ?>Données de jeux : <a href="https://rawg.io" target="_blank" rel="noopener">RAWG<span class="sr"> (nouvel onglet)</span></a>.<?php endif; ?></p>
     <?php endif; ?>
 
     <details class="manual" <?= !$sources || ($q !== '' && !$results) ? 'open' : '' ?>>
-        <summary>Saisir à la main</summary>
+        <summary class="btn ghost manual-btn"><?= ui_icon('down') ?><span>Pas trouvé ? Saisir à la main</span></summary>
         <form method="post" action="<?= url('work_manual', ['id' => $c['id']]) ?>">
             <?= csrf() ?>
             <div class="row">

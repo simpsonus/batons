@@ -36,7 +36,22 @@
 .work-pick:hover { background: var(--bg); }
 [data-work-results] { margin: .6rem 0; }
 .manual { margin-top: .8rem; }
-.manual summary { cursor: pointer; min-height: var(--tap); display: flex; align-items: center; font-weight: 600; }
+/* « Pas dans le catalogue ? Saisir à la main » : un vrai bouton (cadre + flèche qui s'ouvre). */
+.manual > summary.manual-btn { list-style: none; display: inline-flex; justify-content: flex-start; gap: .45rem; font-weight: 600; text-align: left; }
+.manual > summary::-webkit-details-marker { display: none; }
+.manual-btn svg.ui { width: 1.2rem; height: 1.2rem; transition: transform .15s; }
+.manual[open] > .manual-btn svg.ui { transform: rotate(180deg); }
+.manual[open] > summary { margin-bottom: .8rem; }
+
+/* Champ de recherche d'une œuvre : loupe à gauche, ✕ pour effacer ; « Chercher » masqué avec JS (résultats en direct). */
+.work-q { position: relative; flex: 1; min-width: 0; display: block; }
+.work-q > svg.ui { position: absolute; left: .7rem; top: 50%; transform: translateY(-50%); width: 1.2rem; height: 1.2rem; color: var(--muted); pointer-events: none; }
+.work-q input { padding-left: 2.4rem; padding-right: 2.6rem; }
+.work-q input::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; }
+.work-q-clear { position: absolute; right: 0; top: 50%; transform: translateY(-50%); width: var(--tap); height: var(--tap);
+    display: grid; place-items: center; border: 0; background: none; color: var(--muted); cursor: pointer; border-radius: 9px; }
+.work-q-clear svg.ui { width: 1.1rem; height: 1.1rem; }
+.work-src { margin: .5rem 0 0; }
 
 /* Sections repliées « Lus / Terminés » et « Arrêtés » (livres, jeux). */
 .works-more { border-top: 1px solid var(--line); margin-top: .6rem; }

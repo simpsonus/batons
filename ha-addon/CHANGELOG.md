@@ -1,5 +1,15 @@
 # Journal des modifications
 
+## 0.32.0
+- **Ajouter un livre (ou un film, une série, un jeu) plus léger** : un seul champ avec une loupe
+  (« Titre ou auteur » pour les livres), les résultats s'affichent pendant la frappe, ✕ pour effacer.
+  Plus de libellé « Titre » ni de bouton « Chercher » (la touche Rechercher du clavier suffit).
+  La mention des catalogues tient en une ligne.
+- **« Pas trouvé ? Saisir à la main »** est maintenant un vrai bouton ; il reprend le texte déjà tapé
+  comme titre.
+- Le bouton de la page d'une catégorie redevient « + Ajouter un livre » (le + dit ce qu'on fait ;
+  la loupe est réservée au champ de recherche).
+
 ## 0.31.0
 - **Livres : une seule action à la fois, écrite en clair.** « J'ai fini ce livre » ou « J'ai fini le tome 1 »,
   puis, une fois le tome fini, « Commencer le tome 2 ». Fini les deux boutons qui faisaient presque la même

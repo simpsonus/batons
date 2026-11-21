@@ -202,8 +202,22 @@
     const workResults = document.querySelector('[data-work-results]');
     if (workSearch && workResults) {
         const input = workSearch.querySelector('input[name="q"]');
+        const clear = workSearch.querySelector('[data-work-clear]');
+        // Résultats pendant la frappe : le bouton « Chercher » devient inutile (la touche Entrée lance aussi la recherche).
+        const submitBtn = workSearch.querySelector('[data-work-submit]');
+        if (submitBtn) submitBtn.hidden = true;
+        const syncClear = () => { if (clear) clear.hidden = input.value === ''; };
+        syncClear();
+        clear?.addEventListener('click', () => { input.value = ''; syncClear(); input.focus(); });
+        // « Saisir à la main » : reprend le texte cherché comme titre, s'il n'y en a pas déjà un.
+        const manual = document.querySelector('details.manual');
+        manual?.addEventListener('toggle', () => {
+            const title = manual.querySelector('input[name="title"]');
+            if (manual.open && title && !title.value) title.value = input.value.trim();
+        });
         let t, seqW = 0;
         input.addEventListener('input', () => {
+            syncClear();
             clearTimeout(t);
             t = setTimeout(async () => {
                 const q = input.value.trim();
