@@ -1,5 +1,17 @@
 # Journal des modifications
 
+## 0.30.0
+- **Livres et jeux** : la liste en haut de la catégorie ne montre plus que ce qui est **en cours**.
+  Les livres lus (ou jeux terminés) sont rangés dans une section « Lus » / « Terminés », repliée, avec
+  leur nombre et la durée moyenne ; ceux arrêtés (« J'arrête là ») dans une section « Arrêtés ».
+  Un livre en tomes dont le suivant reste à commencer reste dans « En cours ».
+- **Graphique d'une catégorie** : choisir 30 jours, 12 semaines, 12 mois (ou Nombre / Somme) ne fait
+  plus remonter la page en haut.
+- **Apparence « Coin »** : triangle plus grand et › placé au milieu du triangle, plus facile à viser ;
+  seul le triangle ouvre la catégorie, le reste de la tuile ajoute un bâton. Il fonce à l'appui.
+- **Apparence « Pastille »** sur téléphone : le rond coloré passe au-dessus du nom, qui a toute la
+  largeur de la tuile — fini les mots coupés en plein milieu (« Vidan-ge »).
+
 ## 0.29.0
 - **Chronologie : recherche dans les notes.** Dans « Filtrer », un champ cherche un mot dans les notes et
   les titres d'œuvres, sans tenir compte des accents ni des majuscules (« ecole » trouve « École »). Le mot

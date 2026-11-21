@@ -38,6 +38,14 @@
 .manual { margin-top: .8rem; }
 .manual summary { cursor: pointer; min-height: var(--tap); display: flex; align-items: center; font-weight: 600; }
 
+/* Sections repliées « Lus / Terminés » et « Arrêtés » (livres, jeux). */
+.works-more { border-top: 1px solid var(--line); margin-top: .6rem; }
+.works-more > summary { list-style: none; display: flex; align-items: center; gap: .5rem; min-height: var(--tap); cursor: pointer; }
+.works-more > summary::-webkit-details-marker { display: none; }
+.works-more > summary svg.ui { color: var(--muted); transition: transform .15s; }
+.works-more[open] > summary svg.ui { transform: rotate(90deg); }
+.works-more .work-list li:first-child { border-top: 1px solid var(--line); }
+
 /* --- Note sur 10 -------------------------------------------------------------------------- */
 .rating { font-size: .85rem; font-weight: 700; color: #a16207; white-space: nowrap; }
 @media (prefers-color-scheme: dark) { html:not([data-theme=light]) .rating { color: #fbbf24; } }

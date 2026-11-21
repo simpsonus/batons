@@ -19,7 +19,7 @@ a.tap { text-decoration: none; }
 .tap:hover { background: color-mix(in srgb, var(--c) 6%, transparent); }
 .tap:active { background: color-mix(in srgb, var(--c) 16%, transparent); }
 .tap:focus-visible { outline-offset: -3px; border-radius: var(--radius); }
-.tap .name { font-weight: 650; line-height: 1.2; }
+.tap .name { font-weight: 650; line-height: 1.2; max-width: 100%; overflow-wrap: break-word; word-break: normal; }
 .tap .meta { display: block; width: 100%; min-width: 0; overflow: hidden; font-size: .85rem; color: var(--muted); margin-top: auto; }
 .tap .meta b { color: var(--c-ink); font-size: 1rem; }
 .more {
@@ -121,14 +121,22 @@ html[data-theme=dark] .tiles-degrade.grad-pastel .tile .tap .meta b { color: var
 html[data-theme=dark] .tiles-degrade.grad-pastel .tile .icon { background: color-mix(in srgb, var(--c) 30%, transparent); color: var(--c-ink); }
 html[data-theme=dark] .tiles-degrade.grad-voile .tile { background: linear-gradient(90deg, color-mix(in srgb, var(--c) 30%, transparent), transparent 70%), var(--surface); }
 
-/* Coin : triangle de couleur en haut à droite, sous la flèche des détails. */
+/* Coin : triangle de couleur en haut à droite ; c'est lui, et lui seul, qui ouvre la page de la catégorie.
+   64 px, › au centre du triangle (pas collé dans l'angle : un doigt posé dessus reste dans la tuile),
+   zone cliquable découpée en triangle (clip-path) : la partie blanche de la tuile ajoute un bâton. */
 .tiles-coin .tile::after {
     content: ""; position: absolute; top: 0; right: 0; width: 0; height: 0; pointer-events: none;
-    border-top: var(--tap) solid var(--c-solid); border-left: var(--tap) solid transparent;
+    border-top: 4rem solid var(--c-solid); border-left: 4rem solid transparent;
 }
-.tiles-coin .tile .more { z-index: 1; color: var(--c-on); place-items: start end; padding: .2rem .25rem 0 0; }
-.tiles-coin .tile .more svg.ui { width: 1.15rem; height: 1.15rem; }
-.tiles-coin .tile .more:hover { background: none; color: var(--c-on); }
+.tiles-coin .tile .more {
+    z-index: 1; width: 4rem; height: 4rem; color: var(--c-on); place-items: start end; padding: .7rem .7rem 0 0;
+    clip-path: polygon(0 0, 100% 0, 100% 100%);
+}
+.tiles-coin .tile .more svg.ui { width: 1.2rem; height: 1.2rem; }
+.tiles-coin .tile .more:hover { background: color-mix(in srgb, var(--c-on) 12%, transparent); color: var(--c-on); }
+.tiles-coin .tile .more:active { background: color-mix(in srgb, var(--c-on) 24%, transparent); }
+.tiles-coin .tile .more:focus-visible { outline: none; background: color-mix(in srgb, var(--c-on) 24%, transparent); }
+.tiles-coin .tile .more:focus-visible svg.ui { outline: 3px solid var(--c-on); outline-offset: 2px; border-radius: 4px; }
 
 /* Teinté : fond légèrement coloré, contour de la couleur. */
 .tiles-teinte .tile { background: color-mix(in srgb, var(--c) 12%, var(--surface)); border: 2px solid var(--c-ink); box-shadow: none; }
@@ -153,8 +161,13 @@ html[data-theme=dark] .tiles-teinte .tile .tap .meta, html[data-theme=dark] .til
 .tiles-pastille .tile .icon svg { width: 1.6rem; height: 1.6rem; }
 .tiles-pastille .tile .name { grid-column: 2; grid-row: 2; }
 .tiles-pastille .tile .meta { grid-column: 2; grid-row: 3; margin-top: .15rem; }
-@media (max-width: 379px) {
-    .tiles-pastille .tile .icon { width: 2.5rem; height: 2.5rem; font-size: 1.2rem; }
+/* Téléphone : la pastille passe AU-DESSUS du texte, qui garde toute la largeur de la tuile
+   (côte à côte, il ne restait que ~55 px pour le nom : mots coupés en plein milieu). */
+@media (max-width: 480px) {
+    .tiles-pastille .tile .tap { display: flex; flex-direction: column; align-items: flex-start; padding-left: .95rem; }
+    .tiles-pastille .tile .icon { width: 2.6rem; height: 2.6rem; font-size: 1.25rem; }
+    .tiles-pastille .tile .icon svg { width: 1.4rem; height: 1.4rem; }
+    .tiles-pastille .tile .meta { margin-top: auto; }
 }
 
 /* Contrastes forcés : on revient à l'affichage système. */
