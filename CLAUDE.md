@@ -39,7 +39,8 @@ Le nom vient des bâtons qu'on trace pour compter (IIII barrés). Slug technique
   pour l'affichage et la saisie (`app/src/Time.php`).
 - **Front : HTML + CSS + un peu de JS vanilla**, mobile d'abord, clair/sombre automatique. CSS rangé par composant dans
   `public/assets/css/NN-nom.css` (ajouter une règle dans la feuille du composant ; nouvelle feuille = nouveau numéro).
-  Tout doit marcher sans JS (formulaires POST + redirection 303). Graphiques en **SVG générés en PHP**.
+  Tout doit marcher sans JS (formulaires POST + redirection 303). Formulaire qui revient sur la même page (bâton
+  éclair, Annuler, actions des œuvres) : ajouter `data-soft` pour ne pas remonter en haut (app.js). Graphiques en **SVG générés en PHP**.
 - Sécurité : échapper toute sortie avec `e()`, jeton CSRF sur tout POST (`csrf()` dans les formulaires),
   requêtes toujours filtrées par `user_id`.
 - **Icônes** : émoji libre, ou `mdi:nom` (Material Design Icons, comme Home Assistant), rendues en SVG inline
@@ -252,6 +253,8 @@ docker build -f docker/Dockerfile -t batons . && docker run -p 8080:8080 -v $PWD
 - [x] v0.32 : écran d'ajout d'une œuvre allégé (`.work-q` : loupe + ✕, libellé visuellement masqué, « Chercher » masqué
       avec JS car résultats en direct ; « Pas trouvé ? Saisir à la main » en bouton `.manual-btn`) ; « + Ajouter un … »
       (le + = l'action, la loupe = le champ de recherche).
+- [x] v0.32.1 : envoi « doux » (`form[data-soft]`, app.js) : POST en arrière-plan, remplacement de `<main>` et du message
+      si la réponse est la même page (pas de retour en haut) ; sinon navigation normale. Sans JS : tap -> `./#t-ID`.
 - [ ] Rappels / objectifs (« au moins 3 par semaine »).
 - [ ] i18n (anglais).
 - [ ] Intégration HA facultative : capteurs (« temps depuis », « total du jour »), webhook/API pour ajouter

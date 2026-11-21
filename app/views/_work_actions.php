@@ -36,7 +36,7 @@ if ($c['kind'] === 'livre') {
 <?php if ($acts): ?>
 <span class="work-btns">
     <?php foreach ($acts as [$route, $fields, $ico, $label, $tip, $main]): ?>
-        <form method="post" action="<?= url($route, ['id' => $c['id'], 'work' => $w['id']]) ?>">
+        <form method="post" action="<?= url($route, ['id' => $c['id'], 'work' => $w['id']]) ?>" data-soft>
             <?= csrf() ?>
             <?php foreach ($fields as $k => $v): ?><input type="hidden" name="<?= e($k) ?>" value="<?= e($v) ?>"><?php endforeach; ?>
             <input type="hidden" name="back" value="<?= e($back) ?>">

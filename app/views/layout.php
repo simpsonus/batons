@@ -65,14 +65,14 @@ $catRoutes = ['home', 'category_order', 'category', 'category_new', 'category_ed
     <div class="flash" role="status" data-flash>
         <span class="flash-msg"><?= e($flash['message']) ?></span>
         <?php if (!empty($flash['action'])): ?>
-            <form method="post" action="<?= url($flash['action']['route'], $flash['action']['params'] ?? []) ?>">
+            <form method="post" action="<?= url($flash['action']['route'], $flash['action']['params'] ?? []) ?>" data-soft>
                 <?= csrf() ?>
                 <input type="hidden" name="back" value="<?= e(here()) ?>">
                 <button class="flash-btn"><?= e($flash['action']['label']) ?></button>
             </form>
         <?php endif; ?>
         <?php if ($flash['undo']): ?>
-            <form method="post" action="<?= url('undo') ?>">
+            <form method="post" action="<?= url('undo') ?>" data-soft>
                 <?= csrf() ?>
                 <input type="hidden" name="ids" value="<?= e($flash['undo']) ?>">
                 <input type="hidden" name="back" value="<?= e(here()) ?>">

@@ -696,17 +696,54 @@
     });
 
     // Retour haptique discret sur mobile lors d'un tap.
-    document.querySelectorAll('.tap').forEach((btn) => {
-        btn.addEventListener('click', () => navigator.vibrate?.(15));
-    });
+    document.addEventListener('click', (ev) => { if (ev.target.closest('.tap')) navigator.vibrate?.(15); });
 
     // Message flash : bouton de fermeture (pas de disparition automatique, pour laisser le temps de lire / annuler).
-    const flash = document.querySelector('[data-flash]');
-    const close = flash?.querySelector('[data-flash-close]');
-    if (close) {
-        close.hidden = false;
-        close.addEventListener('click', () => { flash.remove(); document.getElementById('contenu')?.focus(); });
-    }
+    // Délégué : le message peut être remplacé sans rechargement (envoi « doux » ci-dessous).
+    document.querySelectorAll('[data-flash-close]').forEach((b) => { b.hidden = false; });
+    document.addEventListener('click', (ev) => {
+        if (!ev.target.closest('[data-flash-close]')) return;
+        document.querySelector('[data-flash]')?.remove();
+        document.getElementById('contenu')?.focus();
+    });
+
+    // Envoi « doux » (form[data-soft] : bâton éclair, Annuler, actions des œuvres) : le formulaire part en
+    // arrière-plan ; si la réponse est la même page, on remplace le contenu et le message SANS revenir en haut.
+    // Sinon (autre page) ou en cas d'échec : navigation normale. Sans JS : formulaire classique.
+    const sameView = (a, b) => { const u = new URL(a, location.href), v = new URL(b, location.href);
+        return u.pathname === v.pathname && u.search === v.search; };
+    document.addEventListener('submit', async (ev) => {
+        const form = ev.target.closest('form[data-soft]');
+        if (!form || ev.defaultPrevented || !window.fetch || !window.DOMParser) return;
+        ev.preventDefault();
+        const btn = ev.submitter;
+        // Pour remettre le focus au même endroit après remplacement (même bouton, repéré par son formulaire).
+        const keyOf = (f) => f.getAttribute('action') + '|' + (f.querySelector('[name=id]')?.value || '');
+        const key = keyOf(form);
+        if (btn) btn.disabled = true;
+        try {
+            const res = await fetch(form.action, { method: 'POST', body: new FormData(form), credentials: 'same-origin' });
+            if (!res.ok) throw new Error(String(res.status));
+            if (!sameView(res.url, location.href)) { location.href = res.url; return; }
+            const doc = new DOMParser().parseFromString(await res.text(), 'text/html');
+            const freshMain = doc.querySelector('main');
+            if (!freshMain) throw new Error('page inattendue');
+            const y = window.scrollY;
+            document.querySelector('main').innerHTML = freshMain.innerHTML;
+            const oldFlash = document.querySelector('[data-flash]');
+            const newFlash = doc.querySelector('[data-flash]');
+            if (newFlash) {
+                newFlash.querySelectorAll('[data-flash-close]').forEach((b) => { b.hidden = false; });
+                if (oldFlash) oldFlash.replaceWith(newFlash); else document.querySelector('main').before(newFlash);
+            } else oldFlash?.remove();
+            window.scrollTo(0, y);
+            const again = [...document.querySelectorAll('main form[data-soft]')].find((f) => keyOf(f) === key);
+            again?.querySelector('button')?.focus({ preventScroll: true });
+        } catch (e) {
+            form.removeAttribute('data-soft');
+            form.submit();
+        }
+    });
 })();
 
 /* Graphique d'une catégorie : changer d'échelle (30 jours, 12 semaines, 12 mois) ou de mesure sans recharger

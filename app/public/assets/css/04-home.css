@@ -176,3 +176,6 @@ html[data-theme=dark] .tiles-teinte .tile .tap .meta, html[data-theme=dark] .til
     .tile { background: Canvas !important; border: 1px solid CanvasText !important; }
     .tiles-coin .tile::after { display: none; }
 }
+
+/* Retour sur la tuile après un bâton éclair sans JS (#t-ID) : pas collée au bord de l'écran. */
+.tile { scroll-margin: 5rem 0 6rem; }

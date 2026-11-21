@@ -280,7 +280,8 @@ def run_flows(page, base):
         nxt = page.locator('button.work-act').first
         check(nxt.count() == 1 and 'E02' in nxt.inner_text(), '« Continuer » propose l\'épisode suivant')
         nxt.click()
-        check('The Bear' in page.inner_text('.flash'), 'épisode suivant enregistré')
+        page.locator('.flash', has_text='The Bear').wait_for()
+        check(True, 'épisode suivant enregistré')
     series()
 
     @step('Livre en tomes : une action à la fois, « Ne pas lire la suite » range dans « Lus »')
@@ -298,13 +299,15 @@ def run_flows(page, base):
         acts = page.locator('.work-list button.work-act')
         check(acts.count() == 1 and 'J\'ai fini le tome 1' in acts.first.inner_text(), 'une seule action : « J\'ai fini le tome 1 »')
         acts.first.click()
+        page.locator('.flash', has_text='marqué comme lu').wait_for()
         flash = page.inner_text('.flash')
         check('Tome 1' in flash and 'marqué comme lu' in flash, 'message : tome 1 lu')
         check(page.locator('.flash button', has_text='Annuler « lu »').count() == 1, 'annuler dit ce qu\'il défait')
         acts = page.locator('.work-list button.work-act')
         check(acts.count() == 1 and 'Commencer le tome 2' in acts.first.inner_text(), 'puis une seule action : « Commencer le tome 2 »')
         page.click('.flash button:has-text("Commencer le tome 2")')
-        check('tome 2 commencé' in page.inner_text('.flash'), 'tome 2 commencé depuis le message')
+        page.locator('.flash', has_text='tome 2 commencé').wait_for()   # envoi « doux » : pas de rechargement
+        check(True, 'tome 2 commencé depuis le message')
         page.locator('.work-list button.work-act', has_text='J\'ai fini le tome 2').click()
         page.locator('.work-list .work-title', has_text='Astérix').first.click()
         page.click('button:has-text("Ne pas lire la suite")')
@@ -312,6 +315,23 @@ def run_flows(page, base):
         check(page.locator('.works-more summary', has_text='Lus').count() == 1, 'rangé dans « Lus »')
         check(page.locator('.works-more summary', has_text='Arrêtés').count() == 0, 'pas dans « Arrêtés »')
     books()
+
+    @step('Bâton éclair : la page reste à la même hauteur (accueil sur téléphone)')
+    def tap_keeps_scroll():
+        page.set_viewport_size({'width': 390, 'height': 500})
+        page.goto(base)
+        tile = page.locator('.tile:has(button.tap)').last
+        tile.scroll_into_view_if_needed()
+        y = page.evaluate('scrollY')
+        before = page.locator('.flash').count()
+        tile.locator('button.tap').click()
+        page.locator('.flash', has_text='Bâton ajouté').wait_for()
+        check(y > 0 and page.evaluate('scrollY') == y, 'pas de retour en haut après un bâton')
+        page.click('.flash button:has-text("Annuler")')
+        page.locator('.flash', has_text='annulé').wait_for()
+        check(page.evaluate('scrollY') == y, 'ni après « Annuler »')
+        page.set_viewport_size({'width': 1280, 'height': 900})
+    tap_keeps_scroll()
 
     @step('Pages du menu : croix pour fermer')
     def close_links():

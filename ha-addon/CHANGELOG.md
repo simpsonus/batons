@@ -1,5 +1,10 @@
 # Journal des modifications
 
+## 0.32.1
+- **Ajouter un bâton depuis l'accueil ne fait plus remonter la page en haut** : la tuile est mise à jour
+  sur place et le message apparaît en haut de l'écran. Même chose pour « Annuler » et pour les boutons
+  des livres, jeux et séries (« J'ai fini… », « Commencer le tome 2 », « ▶ S02E05 vu »).
+
 ## 0.32.0
 - **Ajouter un livre (ou un film, une série, un jeu) plus léger** : un seul champ avec une loupe
   (« Titre ou auteur » pour les livres), les résultats s'affichent pendant la frappe, ✕ pour effacer.

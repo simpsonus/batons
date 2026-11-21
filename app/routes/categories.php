@@ -30,6 +30,8 @@ switch ($route) {
         if ($c['kind'] !== 'simple') {
             Http::redirect('work_add', ['id' => $c['id']]); // une œuvre se choisit
         }
+        // Sans JS, retour sur la tuile (#t-ID) plutôt qu'en haut de l'accueil ; avec JS, l'envoi est « doux » (app.js).
+        $_POST['back'] ??= url('home') . '#t-' . (int) $c['id'];
         if ($c['periods']) {
             // Option « périodes » : un tap commence la période, le suivant la termine.
             $open = Batons\Periods::open((int) $c['id']);
