@@ -21,7 +21,7 @@
 .work-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: .1rem; }
 .work-text strong { overflow-wrap: anywhere; line-height: 1.25; }
 .work-title { font-weight: 700; text-decoration: none; overflow-wrap: anywhere; line-height: 1.25; }
-.work-title:hover { text-decoration: underline; }
+@media (hover: hover) { .work-title:hover { text-decoration: underline; } }
 .work-line { display: inline-flex; flex-wrap: wrap; align-items: baseline; gap: .1rem .45rem; }
 .progress { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--c-ink, var(--ink)); }
 .meta-work { display: block; color: var(--ink); font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
@@ -33,7 +33,7 @@
     display: flex; align-items: center; gap: .7rem; width: 100%; padding: .45rem .3rem; min-height: var(--tap);
     background: none; border: 0; color: inherit; font: inherit; text-align: left; cursor: pointer; border-radius: 8px;
 }
-.work-pick:hover { background: var(--bg); }
+@media (hover: hover) { .work-pick:hover { background: var(--bg); } }
 [data-work-results] { margin: .6rem 0; }
 .manual { margin-top: .8rem; }
 /* « Pas dans le catalogue ? Saisir à la main » : un vrai bouton (cadre + flèche qui s'ouvre). */

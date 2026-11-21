@@ -16,7 +16,7 @@ h2.group { font-size: .8125rem; text-transform: uppercase; letter-spacing: .08em
     transition: background .15s;
 }
 a.tap { text-decoration: none; }
-.tap:hover { background: color-mix(in srgb, var(--c) 6%, transparent); }
+@media (hover: hover) { .tap:hover { background: color-mix(in srgb, var(--c) 6%, transparent); } }
 .tap:active { background: color-mix(in srgb, var(--c) 16%, transparent); }
 .tap:focus-visible { outline-offset: -3px; border-radius: var(--radius); }
 .tap .name { font-weight: 650; line-height: 1.2; max-width: 100%; overflow-wrap: break-word; word-break: normal; }
@@ -26,7 +26,7 @@ a.tap { text-decoration: none; }
     position: absolute; top: 0; right: 0; width: var(--tap); height: var(--tap);
     display: grid; place-items: center; text-decoration: none; color: var(--muted); border-radius: 0 var(--radius) 0 10px;
 }
-.more:hover { color: var(--ink); background: var(--bg); }
+@media (hover: hover) { .more:hover { color: var(--ink); background: var(--bg); } }
 
 /* Icône d'une catégorie (émoji ou MDI), aussi en tête des pages de catégorie. */
 .icon {
@@ -56,7 +56,7 @@ a.tap { text-decoration: none; }
     border: 2px dashed color-mix(in srgb, var(--ink) 30%, var(--bg)); border-radius: 12px;
     color: var(--muted); font-weight: 600; text-decoration: none; text-align: center;
 }
-.act-btn:hover { color: var(--ink); border-color: var(--ink); background: var(--surface); }
+@media (hover: hover) { .act-btn:hover { color: var(--ink); border-color: var(--ink); background: var(--surface); } }
 .act-btn svg.ui { width: 1.25rem; height: 1.25rem; }
 @media (max-width: 480px) {
     .home-actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(9rem, 100%), 1fr)); }
@@ -90,9 +90,9 @@ body.shape-casse { --tile-r: 3px;  --tile-r-tr: 3px; }
 .tiles-plein .tile .icon, .tiles-degrade:not(.grad-pastel):not(.grad-voile) .tile .icon {
     background: color-mix(in srgb, var(--c-on) 18%, transparent); color: var(--c-on);
 }
-.tiles-plein .tile .tap:hover, .tiles-degrade:not(.grad-pastel):not(.grad-voile) .tile .tap:hover { background: color-mix(in srgb, var(--c-on) 10%, transparent); }
+@media (hover: hover) { .tiles-plein .tile .tap:hover, .tiles-degrade:not(.grad-pastel):not(.grad-voile) .tile .tap:hover { background: color-mix(in srgb, var(--c-on) 10%, transparent); } }
 .tiles-plein .tile .tap:active, .tiles-degrade:not(.grad-pastel):not(.grad-voile) .tile .tap:active { background: color-mix(in srgb, var(--c-on) 18%, transparent); }
-.tiles-plein .tile .more:hover, .tiles-degrade:not(.grad-pastel):not(.grad-voile) .tile .more:hover { background: color-mix(in srgb, var(--c-on) 15%, transparent); }
+@media (hover: hover) { .tiles-plein .tile .more:hover, .tiles-degrade:not(.grad-pastel):not(.grad-voile) .tile .more:hover { background: color-mix(in srgb, var(--c-on) 15%, transparent); } }
 .tiles-plein .tile::before, .tiles-degrade .tile::before, .tiles-coin .tile::before,
 .tiles-teinte .tile::before, .tiles-pastille .tile::before { display: none; }
 
@@ -133,7 +133,7 @@ html[data-theme=dark] .tiles-degrade.grad-voile .tile { background: linear-gradi
     clip-path: polygon(0 0, 100% 0, 100% 100%);
 }
 .tiles-coin .tile .more svg.ui { width: 1.2rem; height: 1.2rem; }
-.tiles-coin .tile .more:hover { background: color-mix(in srgb, var(--c-on) 12%, transparent); color: var(--c-on); }
+@media (hover: hover) { .tiles-coin .tile .more:hover { background: color-mix(in srgb, var(--c-on) 12%, transparent); color: var(--c-on); } }
 .tiles-coin .tile .more:active { background: color-mix(in srgb, var(--c-on) 24%, transparent); }
 .tiles-coin .tile .more:focus-visible { outline: none; background: color-mix(in srgb, var(--c-on) 24%, transparent); }
 .tiles-coin .tile .more:focus-visible svg.ui { outline: 3px solid var(--c-on); outline-offset: 2px; border-radius: 4px; }

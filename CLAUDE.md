@@ -48,6 +48,7 @@ Le nom vient des bâtons qu'on trace pour compter (IIII barrés). Slug technique
   générée par `php app/bin/fetch-icons.php` (téléchargement jsDelivr, version épinglée), automatiquement au
   build Docker. Sans elle, l'app marche avec les émojis seuls.
 - Tactile : pas de sélection de texte ni de menu contextuel sur un appui long (CSS `user-select`/`touch-callout`).
+  Tout `:hover` s'écrit dans `@media (hover: hover) { … }` : sur iOS, le survol « colle » au dernier élément touché.
 - **Responsive et accessible (exigence, WCAG 2.2 AA visé)** : vérifier de 320 px à grand écran sans défilement
   horizontal ; cibles tactiles ≥ 44 px (`--tap`) ; contrastes AA (couleur de catégorie en texte via `--c-ink`,
   éclaircie en sombre) ; focus visible ; lien d'évitement ; boutons-icônes avec `aria-label` explicite

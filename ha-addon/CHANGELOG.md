@@ -1,5 +1,9 @@
 # Journal des modifications
 
+## 0.33.1
+- Sur téléphone, un bouton touché (« Nouvelle catégorie », « Réorganiser », une tuile, une ✕…) ne reste
+  plus « allumé » en blanc après coup : l'effet de survol est réservé à la souris.
+
 ## 0.33.0
 - **Les messages disparaissent tout seuls** : au bout de 8 secondes quand ils proposent « Annuler » (ou
   « Commencer le tome 2 »), de 4 secondes sinon (« Bâton annulé »). Une barre en bas du message montre le

@@ -56,7 +56,7 @@ html[data-theme=dark] .cal-wrap, html[data-theme=dark] .cal-legend { --c-cal: co
 .events .time { font-variant-numeric: tabular-nums; font-weight: 600; flex: none; }
 .events .body { flex: 1; display: flex; flex-wrap: wrap; gap: .1rem .6rem; align-items: baseline; min-width: 0; }
 .events .cat { text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; min-height: 2rem; }
-.events .cat:hover { text-decoration: underline; }
+@media (hover: hover) { .events .cat:hover { text-decoration: underline; } }
 .events .value { font-weight: 700; color: var(--c-ink); }
 .events .note { color: var(--muted); overflow-wrap: anywhere; }
 /* Bâton daté de plus tard. */
@@ -70,7 +70,7 @@ html[data-theme=dark] .cal-wrap, html[data-theme=dark] .cal-legend { --c-cal: co
     background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow);
     text-decoration: none; color: var(--ink);
 }
-.stats-link:hover { border-color: var(--field); }
+@media (hover: hover) { .stats-link:hover { border-color: var(--field); } }
 .stats-link > svg.ui { color: var(--muted); }
 .stats-main { display: block; font-weight: 600; }
 .stats-sub { display: block; font-size: .875rem; color: var(--muted); }

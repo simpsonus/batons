@@ -11,8 +11,8 @@
 .fsplit.on .fs-main { padding-right: .8rem; }
 /* Effacer le filtre : croix DANS la pastille, jamais une croix isolée (réservée à « fermer la page »). */
 .fs-x { justify-content: center; min-width: var(--tap); border-left: 1px solid rgb(255 255 255 / .5); }
-.fsplit a:hover { background: color-mix(in srgb, var(--ink) 8%, transparent); }
-.fsplit.on a:hover { background: rgb(255 255 255 / .14); }
+@media (hover: hover) { .fsplit a:hover { background: color-mix(in srgb, var(--ink) 8%, transparent); } }
+@media (hover: hover) { .fsplit.on a:hover { background: rgb(255 255 255 / .14); } }
 .fsplit a:focus-visible { outline-offset: -4px; }
 .fsplit svg.ui { width: 1.2rem; height: 1.2rem; }
 .tl-sum { flex: 1; min-width: 0; margin: 0; color: var(--muted); font-size: .9rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
