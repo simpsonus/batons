@@ -96,11 +96,13 @@ switch ($route) {
     case 'appearance':
         if (Http::isPost()) {
             Batons\Theme::save($uid, Http::input('tile_style'), Http::input('tile_grad'), Http::input('tile_shape'), Http::input('theme'));
+            Batons\Settings::set($uid, 'flash_auto', Http::input('flash_auto') === '0' ? '0' : '1');
             Http::flash('Apparence enregistrée.');
             Http::back('appearance');
         }
         Http::render('appearance', [
             'theme' => Batons\Theme::current($uid),
+            'flashAuto' => Batons\Settings::get($uid, 'flash_auto', '1') === '1',
             'previewCats' => array_slice(Categories::listWithSummary($uid), 0, 4),
         ], 'Apparence');
 

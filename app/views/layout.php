@@ -61,8 +61,12 @@ $catRoutes = ['home', 'category_order', 'category', 'category_new', 'category_ed
     <?php endif; ?>
 </header>
 
-<?php if ($flash): ?>
-    <div class="flash" role="status" data-flash>
+<?php if ($flash):
+    // Disparition automatique (réglage « Messages » d'Apparence, activé par défaut) : 8 s s'il y a une action
+    // (Annuler, Commencer le tome 2…), 4 s sinon. Pause au doigt, à la souris et au focus (app.js).
+    $flashAuto = $authMethod === null || Batons\Settings::get(Batons\Auth::id(), 'flash_auto', '1') === '1';
+    $flashMs = ($flash['undo'] || !empty($flash['action'])) ? 8000 : 4000; ?>
+    <div class="flash" role="status" data-flash<?= $flashAuto ? ' data-timeout="' . $flashMs . '" style="--flash-ms: ' . $flashMs . 'ms"' : '' ?>>
         <span class="flash-msg"><?= e($flash['message']) ?></span>
         <?php if (!empty($flash['action'])): ?>
             <form method="post" action="<?= url($flash['action']['route'], $flash['action']['params'] ?? []) ?>" data-soft>
@@ -80,6 +84,7 @@ $catRoutes = ['home', 'category_order', 'category', 'category_new', 'category_ed
             </form>
         <?php endif; ?>
         <button type="button" class="flash-close" data-flash-close aria-label="Fermer le message" hidden><?= ui_icon('close') ?></button>
+        <?php if ($flashAuto): ?><span class="flash-bar" aria-hidden="true" hidden></span><?php endif; ?>
     </div>
 <?php endif; ?>
 

@@ -67,6 +67,17 @@ $section = static fn(string $icon, string $title): string =>
         <?= $options('tile_shape', Theme::SHAPES, $theme['shape'], static fn($v) => 'vis-shape-' . $v) ?>
     </fieldset>
 
+    <fieldset class="card app-sec">
+        <?= $section('clock', 'Messages') ?>
+        <div class="kind-choice">
+            <label class="chip wide"><input type="radio" name="flash_auto" value="1" <?= $flashAuto ? 'checked' : '' ?>><span>Disparaissent seuls</span></label>
+            <label class="chip wide"><input type="radio" name="flash_auto" value="0" <?= $flashAuto ? '' : 'checked' ?>><span>Restent affichés</span></label>
+        </div>
+        <p class="muted small">Le message en haut ou en bas de l'écran (« Bâton ajouté… », « Annuler ») disparaît au bout de quelques
+            secondes ; une barre montre le temps restant. Il reste tant que le doigt, la souris ou le clavier est dessus.
+            Un bâton peut toujours être supprimé depuis son historique.</p>
+    </fieldset>
+
     <p class="muted small">Le réglage suit ton compte, sur tous tes appareils. Le texte des tuiles reste lisible quelle que soit la couleur d'une catégorie.</p>
     <div class="form-actions">
         <button class="btn accent">Enregistrer</button>

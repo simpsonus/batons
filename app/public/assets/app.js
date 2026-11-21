@@ -701,6 +701,33 @@
     // Message flash : bouton de fermeture (pas de disparition automatique, pour laisser le temps de lire / annuler).
     // Délégué : le message peut être remplacé sans rechargement (envoi « doux » ci-dessous).
     document.querySelectorAll('[data-flash-close]').forEach((b) => { b.hidden = false; });
+
+    // Disparition automatique (data-timeout, réglage d'Apparence) : compte à rebours mis en pause tant que le doigt,
+    // la souris ou le focus clavier est sur le message (WCAG 2.2.1 : on n'est jamais coupé au moment d'agir).
+    // La barre ne fait que montrer le temps restant ; c'est le minuteur JS qui décide (marche aussi sans animation).
+    const armFlash = (el) => {
+        const ms = Number(el?.dataset.timeout || 0);
+        if (!el || !ms) return;
+        const bar = el.querySelector('.flash-bar');
+        if (bar) bar.hidden = false;
+        let left = ms, started = Date.now(), timer = null, holds = 0;
+        const end = () => {
+            if (!el.isConnected) return;
+            const hadFocus = el.contains(document.activeElement);
+            el.remove();
+            if (hadFocus) document.getElementById('contenu')?.focus();
+        };
+        const run = () => { started = Date.now(); timer = setTimeout(end, left); el.classList.remove('paused'); };
+        const hold = () => { if (holds++ === 0) { clearTimeout(timer); left -= Date.now() - started; el.classList.add('paused'); } };
+        const release = () => { if (--holds <= 0) { holds = 0; run(); } };
+        el.addEventListener('pointerenter', hold);
+        el.addEventListener('pointerleave', release);
+        el.addEventListener('focusin', hold);
+        el.addEventListener('focusout', (ev) => { if (!el.contains(ev.relatedTarget)) release(); });
+        run();
+    };
+    armFlash(document.querySelector('[data-flash]'));
+    window.batonsArmFlash = armFlash;
     document.addEventListener('click', (ev) => {
         if (!ev.target.closest('[data-flash-close]')) return;
         document.querySelector('[data-flash]')?.remove();
@@ -735,6 +762,7 @@
             if (newFlash) {
                 newFlash.querySelectorAll('[data-flash-close]').forEach((b) => { b.hidden = false; });
                 if (oldFlash) oldFlash.replaceWith(newFlash); else document.querySelector('main').before(newFlash);
+                window.batonsArmFlash?.(newFlash);
             } else oldFlash?.remove();
             window.scrollTo(0, y);
             const again = [...document.querySelectorAll('main form[data-soft]')].find((f) => keyOf(f) === key);

@@ -135,6 +135,14 @@
     background: none; border: 0; color: #fff; cursor: pointer; border-radius: 8px;
 }
 .flash :focus-visible { outline-color: #fff; }
+/* Temps restant avant disparition : barre qui se vide (en pause au doigt / à la souris / au focus). */
+.flash { overflow: hidden; }
+.flash-bar {
+    position: absolute; left: 0; right: 0; bottom: 0; height: 4px; background: rgb(255 255 255 / .85);
+    transform-origin: left; animation: flash-bar var(--flash-ms, 8000ms) linear forwards;
+}
+.flash.paused .flash-bar { animation-play-state: paused; }
+@keyframes flash-bar { from { transform: scaleX(1); } to { transform: scaleX(0); } }
 @keyframes flash-in { from { transform: translateY(-100%); } }
 .flash { top: env(safe-area-inset-top); }   /* viewport-fit=cover : jamais sous la barre d'état */
 /* Téléphone : le message se pose en bas, juste au-dessus de la barre d'onglets, à portée du pouce

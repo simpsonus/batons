@@ -52,8 +52,8 @@ Le nom vient des bâtons qu'on trace pour compter (IIII barrés). Slug technique
   horizontal ; cibles tactiles ≥ 44 px (`--tap`) ; contrastes AA (couleur de catégorie en texte via `--c-ink`,
   éclaircie en sombre) ; focus visible ; lien d'évitement ; boutons-icônes avec `aria-label` explicite
   (`ui_icon()` pour les pictos d'interface) ; icônes décoratives `aria-hidden` ; erreurs de formulaire liées par
-  `aria-describedby` + `aria-invalid` ; graphique doublé d'un tableau pour lecteurs d'écran ; pas de message
-  qui disparaît tout seul ; `prefers-reduced-motion` respecté ; un seul `h1` et pas de saut de niveau de titre
+  `aria-describedby` + `aria-invalid` ; graphique doublé d'un tableau pour lecteurs d'écran ; message flash qui
+  disparaît seul seulement avec pause au doigt/souris/focus et réglage pour le garder (WCAG 2.2.1, v0.33) ; `prefers-reduced-motion` respecté ; un seul `h1` et pas de saut de niveau de titre
   (sur Catégories et Chronologie, le `h1` a la classe `.tab-title` : visuellement masqué partout car l'onglet actif
   le montre déjà). Texte jamais sous 13 px (11 px dans les SVG).
 - **Navigation** : en haut sur grand écran (logo = menu ; barre claire au même style que celle du bas : icône + texte,
@@ -257,6 +257,9 @@ docker build -f docker/Dockerfile -t batons . && docker run -p 8080:8080 -v $PWD
       si la réponse est la même page (pas de retour en haut) ; sinon navigation normale. Sans JS : tap -> `./#t-ID`.
 - [x] v0.32.2 : message flash sur téléphone en bas (fixe, au-dessus de la barre d'onglets) : avec `viewport-fit=cover`,
       `top: 0` passait sous la barre d'état iOS ; ailleurs `top: env(safe-area-inset-top)`.
+- [x] v0.33 : messages flash à disparition automatique (8 s avec action, 4 s sinon ; `data-timeout`, `armFlash()` dans
+      app.js : minuteur en pause sur pointerenter/focusin ; barre `.flash-bar` qui se vide) ; réglage `flash_auto`
+      (Apparence › Messages : « Disparaissent seuls » / « Restent affichés »).
 - [ ] Rappels / objectifs (« au moins 3 par semaine »).
 - [ ] i18n (anglais).
 - [ ] Intégration HA facultative : capteurs (« temps depuis », « total du jour »), webhook/API pour ajouter

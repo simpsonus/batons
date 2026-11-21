@@ -1,5 +1,12 @@
 # Journal des modifications
 
+## 0.33.0
+- **Les messages disparaissent tout seuls** : au bout de 8 secondes quand ils proposent « Annuler » (ou
+  « Commencer le tome 2 »), de 4 secondes sinon (« Bâton annulé »). Une barre en bas du message montre le
+  temps restant. Le compte à rebours s'arrête tant que le doigt, la souris ou le clavier est sur le message.
+- Nouveau réglage dans **Menu › Apparence › Messages** : « Disparaissent seuls » (par défaut) ou
+  « Restent affichés » (fermeture avec ✕, comme avant).
+
 ## 0.32.2
 - **Sur téléphone, le message (« Bâton ajouté… », « Annuler ») s'affiche en bas**, juste au-dessus de la
   barre d'onglets, à portée du pouce. En haut, il passait sous la barre d'état floutée de l'iPhone quand
