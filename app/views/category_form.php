@@ -2,6 +2,7 @@
 $isEdit = !empty($c['id']);
 $closeTo = from_url($isEdit ? url('category', ['id' => $c['id']]) : url());
 $palette = Batons\Theme::palette();
+$hues = Batons\Theme::hues();
 ?>
 <div class="page-head">
     <h1><?= $isEdit ? 'Modifier la catégorie' : 'Nouvelle catégorie' ?></h1>
@@ -54,20 +55,40 @@ $palette = Batons\Theme::palette();
         </div>
     <?php endif; ?>
 
-    <fieldset>
-        <legend>Couleur</legend>
-        <div class="swatches">
-            <?php $prevRow = null; foreach ($palette as $col => [$colName, $row]): ?>
-                <?php if ($row !== $prevRow): $prevRow = $row; ?><p class="swatch-row-label" aria-hidden="true"><?= e($row) ?></p><?php endif; ?>
-                <label class="swatch" style="<?= cvars($col) ?>" title="<?= e($colName) ?>">
-                     <input type="radio" name="color" value="<?= $col ?>" aria-label="<?= e($colName) ?>" <?= strtolower($c['color']) === $col ? 'checked' : '' ?>>
-                    <span></span>
-                </label>
+    <?php
+    // Couleur en deux étapes (JS) : une teinte parmi 16, puis sa nuance parmi 4. Sans JS : les 16 rangées de 4 nuances.
+    $curColor = strtolower($c['color']);
+    $curHue = $palette[$curColor][1] ?? null;
+    ?>
+    <fieldset class="color-pick" data-color-pick>
+        <legend>Couleur <span class="muted" data-hue-name><?= $curHue ? '· ' . e($curHue) : '' ?></span></legend>
+        <div class="hue-row" role="group" aria-label="Teinte" data-hue-row>
+            <?php foreach ($hues as $hue => $tones): ?>
+                <button type="button" class="hue" style="<?= cvars($tones[2]) ?>" data-hue="<?= e($hue) ?>"
+                        aria-pressed="<?= $hue === $curHue ? 'true' : 'false' ?>" aria-label="<?= e($hue) ?>" title="<?= e($hue) ?>"><span></span></button>
             <?php endforeach; ?>
-            <label class="swatch custom" title="Autre couleur">
-                <input type="color" name="color_custom" value="<?= e($c['color']) ?>" data-color-custom aria-label="Autre couleur">
-            </label>
         </div>
+        <?php foreach ($hues as $hue => $tones): ?>
+            <div class="tone-row" role="radiogroup" aria-label="Nuance de <?= e(mb_strtolower($hue)) ?>" data-tones="<?= e($hue) ?>">
+                <span class="tone-hue" aria-hidden="true"><?= e($hue) ?></span>
+                <?php foreach ($tones as $i => $hex): ?>
+                    <label class="tone" style="<?= cvars($hex) ?>">
+                        <input type="radio" name="color" value="<?= $hex ?>" <?= $curColor === $hex ? 'checked' : '' ?>>
+                        <span><?= e(Batons\Theme::TONES[$i]) ?></span>
+                    </label>
+                <?php endforeach; ?>
+            </div>
+        <?php endforeach; ?>
+        <label class="hue custom" title="Autre couleur" data-custom-label>
+            <input type="color" name="color_custom" value="<?= e($c['color']) ?>" data-color-custom aria-label="Autre couleur (choix libre)">
+            <span></span><span class="custom-txt">Autre couleur</span>
+        </label>
+        <noscript><style>
+            /* Sans JS : pas de choix de teinte, les 16 rangées de nuances sont affichées. */
+            .hue-row { display: none; } .color-pick .tone-row { display: grid !important; grid-template-columns: auto repeat(4, minmax(0, 1fr)); }
+            .color-pick .tone-hue { display: block; } .color-pick .tone span { font-size: .8125rem; font-weight: 500; }
+        </style></noscript>
+        <p class="muted small" data-custom-note <?= $curHue ? 'hidden' : '' ?>>Couleur personnalisée : choisis une teinte pour revenir à la palette.</p>
     </fieldset>
 
     <div class="row">

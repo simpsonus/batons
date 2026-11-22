@@ -47,10 +47,14 @@ $currentGroup = false;
                 <span class="icon" aria-hidden="true"><?= icon($c['icon']) ?></span>
                 <span class="name"><span class="sr">Ajouter un bâton : </span><?= e($c['name']) ?><?php if ($c['hidden']): ?> <span class="hidden-mark" title="Catégorie masquée"><?= ui_icon('eye-off') ?><span class="sr">(masquée)</span></span><?php endif; ?></span>
                 <span class="meta">
-                    <?php $openP = $c['periods'] ? Batons\Periods::open((int) $c['id']) : null; ?>
-                    <?php if ($openP): ?>
-                        <b>En cours</b> depuis <?= e(Batons\Works::daysLabel((int) $openP['days'])) ?><span class="sr"> ; activer pour terminer</span>
-                    <?php elseif ($c['periods'] && !$openP && (int) $c['today_count'] === 0): ?>
+                    <?php
+                    // Catégorie « périodes » : l'état (en cours / fini) et la durée, pas le nombre de bâtons du jour.
+                    $lastP = $c['periods'] ? (Batons\Periods::list((int) $c['id'])[0] ?? null) : null; ?>
+                    <?php if ($lastP && $lastP['finish'] === null): ?>
+                        <span class="p-dot" aria-hidden="true"></span><b>En cours</b> · depuis <?= e(Batons\Periods::shortDuration($lastP['start'])) ?><span class="sr"> ; activer pour terminer</span>
+                    <?php elseif ($lastP): ?>
+                        Fini <?= e(Time::ago($lastP['finish'])) ?><br>a duré <b><?= e(Batons\Periods::shortDuration($lastP['start'], $lastP['finish'])) ?></b><span class="sr"> ; activer pour commencer une nouvelle période</span>
+                    <?php elseif ($c['periods']): ?>
                         <?php if ($c['last_at']): ?><span class="sr">dernier bâton </span><?php endif; ?><?= e(Time::ago($c['last_at'])) ?><span class="sr"> ; activer pour commencer</span>
                     <?php elseif ((int) $c['today_count'] > 0): ?>
                         <b><?= (int) $c['today_count'] ?></b> aujourd'hui<?php if ($c['unit'] && $c['today_sum'] !== null): ?> · <?= e(Chart::num($c['today_sum']) . ' ' . $c['unit']) ?><?php endif; ?>

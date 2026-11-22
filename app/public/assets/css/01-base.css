@@ -97,14 +97,14 @@ code { font-size: .85em; background: var(--line); padding: .05rem .3rem; border-
    ne s'encadrent pas. Avec un clavier (Tab…), tous les cadres reviennent. */
 html[data-input=pointer] :focus-visible,
 html[data-input=pointer] .chip input:focus-visible + span,
-html[data-input=pointer] .swatch input:focus-visible + span,
+html[data-input=pointer] .tone input:focus-visible + span,
 html[data-input=pointer] .app-opt:has(input:focus-visible),
 html[data-input=pointer] .tiles-coin .tile .more:focus-visible svg.ui,
 html[data-input=pointer] .drop-zone:focus-within { outline: none; }
 @media (pointer: coarse) {
     html:not([data-input=key]) :focus-visible,
     html:not([data-input=key]) .chip input:focus-visible + span,
-    html:not([data-input=key]) .swatch input:focus-visible + span,
+    html:not([data-input=key]) .tone input:focus-visible + span,
     html:not([data-input=key]) .app-opt:has(input:focus-visible),
     html:not([data-input=key]) .tiles-coin .tile .more:focus-visible svg.ui,
     html:not([data-input=key]) .drop-zone:focus-within { outline: none; }
@@ -124,7 +124,7 @@ html[data-input=pointer] .drop-zone:focus-within { outline: none; }
 svg.ui { width: 1.35rem; height: 1.35rem; fill: currentColor; flex: none; }
 
 /* Tactile : pas de sélection de texte ni de menu contextuel sur un appui long. */
-.tile, .tap, .more, .btn, .icon-btn, .seg a, .seg button, .icon-choice, .swatch, .chip, .chip span, .act-btn, .topbar > nav a {
+.tile, .tap, .more, .btn, .icon-btn, .seg a, .seg button, .icon-choice, .hue, .tone, .chip, .chip span, .act-btn, .topbar > nav a {
     -webkit-user-select: none;
     user-select: none;
     -webkit-touch-callout: none;

@@ -1,5 +1,13 @@
 # Journal des modifications
 
+## 0.34.0
+- **Catégories « périodes » (ex. Rhume)** : la tuile montre l'état au lieu de « 1 aujourd'hui » :
+  « ● En cours · depuis 2 j » pendant la période, puis « Fini il y a 2 h · a duré 4 j ».
+  Une période de moins d'un jour s'affiche en heures (« depuis 3 h »).
+- **Nouveau choix de couleur** : une teinte parmi 16, puis sa nuance (Pâle, Vive, Moyenne, Profonde).
+  Fini les 64 pastilles sur cinq lignes. « Autre couleur » reste disponible pour un choix libre ;
+  les couleurs actuelles de tes catégories ne changent pas.
+
 ## 0.33.3
 - **Plus de cadre bleu inattendu sur iPhone** : le champ de recherche à l'ouverture d'« Ajouter un film »
   (ou un livre…), le bouton « Filtrer » après avoir fermé le panneau, la tuile après un bâton, la poignée après

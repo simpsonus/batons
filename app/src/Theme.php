@@ -37,38 +37,35 @@ final class Theme
         Settings::set($userId, 'tile_shape', isset(self::SHAPES[$shape]) && $shape !== 'arr' ? $shape : null);
     }
 
+    /** Nuances proposées pour chaque teinte, de la plus claire à la plus foncée. */
+    public const TONES = ['Pâle', 'Vive', 'Moyenne', 'Profonde'];       // « nuance pâle, vive… »
+    private const TONE_ADJ = ['pâle', 'vif', 'moyen', 'profond'];         // « vert pâle, vert vif… »
+
     /**
-     * Palette proposée à la création d'une catégorie : hex => [nom, rangée].
-     * Toutes les couleurs restent lisibles en texte grâce aux variantes calculées (baseVars / tileVars).
+     * Palette des catégories : 16 teintes × 4 nuances (choix en deux étapes : teinte, puis nuance).
+     * Les couleurs dérivées (cvars, tileVars) gardent le texte lisible même sur les nuances pâles.
      */
+    public static function hues(): array
+    {
+        return [
+            'Rouge' => ['#fca5a5', '#ef4444', '#dc2626', '#991b1b'], 'Framboise' => ['#fda4af', '#f43f5e', '#e11d48', '#9f1239'],
+            'Rose' => ['#f9a8d4', '#ec4899', '#db2777', '#9d174d'], 'Fuchsia' => ['#f0abfc', '#d946ef', '#c026d3', '#86198f'],
+            'Violet' => ['#d8b4fe', '#a855f7', '#7c3aed', '#5b21b6'], 'Indigo' => ['#c7d2fe', '#818cf8', '#4f46e5', '#3730a3'],
+            'Bleu' => ['#93c5fd', '#60a5fa', '#2563eb', '#1e40af'], 'Ciel' => ['#bae6fd', '#38bdf8', '#0284c7', '#075985'],
+            'Cyan' => ['#a5f3fc', '#22d3ee', '#0891b2', '#155e75'], 'Sarcelle' => ['#99f6e4', '#2dd4bf', '#0d9488', '#115e59'],
+            'Émeraude' => ['#a7f3d0', '#34d399', '#059669', '#065f46'], 'Vert' => ['#bbf7d0', '#4ade80', '#16a34a', '#166534'],
+            'Olive' => ['#d9f99d', '#a3e635', '#65a30d', '#3f6212'], 'Jaune' => ['#fef08a', '#facc15', '#ca8a04', '#854d0e'],
+            'Orange' => ['#fed7aa', '#fb923c', '#ea580c', '#9a3412'], 'Gris' => ['#e7e5e4', '#a8a29e', '#78716c', '#44403c'],
+        ];
+    }
+
+    /** Palette à plat : [hex => [nom (« Vert moyen »…), teinte]]. */
     public static function palette(): array
     {
-        $hues = [
-            'Rouge' => ['#ef4444', '#dc2626', '#991b1b'], 'Framboise' => ['#f43f5e', '#e11d48', '#9f1239'],
-            'Rose' => ['#ec4899', '#db2777', '#9d174d'], 'Fuchsia' => ['#d946ef', '#c026d3', '#86198f'],
-            'Violet' => ['#a855f7', '#7c3aed', '#5b21b6'], 'Indigo' => ['#818cf8', '#4f46e5', '#3730a3'],
-            'Bleu' => ['#60a5fa', '#2563eb', '#1e40af'], 'Ciel' => ['#38bdf8', '#0284c7', '#075985'],
-            'Cyan' => ['#22d3ee', '#0891b2', '#155e75'], 'Sarcelle' => ['#2dd4bf', '#0d9488', '#115e59'],
-            'Émeraude' => ['#34d399', '#059669', '#065f46'], 'Vert' => ['#4ade80', '#16a34a', '#166534'],
-            'Olive' => ['#a3e635', '#65a30d', '#3f6212'], 'Jaune' => ['#facc15', '#ca8a04', '#854d0e'],
-            'Ambre' => ['#fbbf24', '#d97706', '#92400e'], 'Orange' => ['#fb923c', '#ea580c', '#9a3412'],
-        ];
         $out = [];
-        foreach (['Vives' => [0, ' vif'], 'Moyennes' => [1, ''], 'Profondes' => [2, ' profond']] as $row => [$i, $suffix]) {
-            foreach ($hues as $name => $shades) {
-                $out[$shades[$i]] = [$name . $suffix, $row];
-            }
-        }
-        $more = [
-            'Neutres' => ['#a8a29e' => 'Gris clair', '#78716c' => 'Gris', '#57534e' => 'Gris foncé', '#44403c' => 'Taupe',
-                          '#94a3b8' => 'Ardoise claire', '#64748b' => 'Ardoise', '#475569' => 'Ardoise foncée', '#1e293b' => 'Nuit'],
-            'Classiques' => ['#c2410c' => 'Orange brûlé', '#b91c1c' => 'Rouge brique', '#be185d' => 'Rose framboise',
-                             '#1d4ed8' => 'Bleu roi', '#0e7490' => 'Bleu canard', '#047857' => 'Vert sapin',
-                             '#4d7c0f' => 'Vert olive', '#a16207' => 'Ocre'],
-        ];
-        foreach ($more as $row => $cols) {
-            foreach ($cols as $hex => $name) {
-                $out[$hex] ??= [$name, $row];
+        foreach (self::hues() as $hue => $tones) {
+            foreach ($tones as $i => $hex) {
+                $out[$hex] = [$hue . ' ' . self::TONE_ADJ[$i], $hue];
             }
         }
         return $out;

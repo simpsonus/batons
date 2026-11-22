@@ -79,7 +79,8 @@ Le nom vient des bâtons qu'on trace pour compter (IIII barrés). Slug technique
   `@media (prefers-color-scheme: dark) { html:not([data-theme=light]) … }` + `html[data-theme=dark] …`.
   Toute zone colorée par une catégorie reçoit `style="<?= cvars($couleur) ?>"` (--c, --c-ink-l, --c-solid, --c-on) :
   texte coloré = `var(--c-ink)`, bouton coloré = `--c-solid` + `--c-on`, jamais la couleur brute ni du blanc en dur.
-  Tuiles : `Theme::tileVars()` en plus. Palette : `Theme::palette()` (couleurs vives permises grâce à ces variantes).
+  Tuiles : `Theme::tileVars()` en plus. Palette : `Theme::hues()` (16 teintes × 4 nuances `Theme::TONES`) / `Theme::palette()` à plat ; choix en deux étapes
+  (`[data-color-pick]` : teinte puis nuance, `<noscript>` = 16 rangées) ; couleurs vives et pâles permises grâce à ces variantes.
   Le calendrier colore avec `--c-cal` (éclairci en sombre).
 - **Bâtons à venir** : `categories.count_future` (1 = comptés). Toute nouvelle statistique / série passe le drapeau
   (`Events::stats/series/daily(…, $countFuture)`, `Categories::listWithSummary()` filtre déjà). `Time::periodUtc()`
@@ -267,6 +268,7 @@ docker build -f docker/Dockerfile -t batons . && docker run -p 8080:8080 -v $PWD
       `work_log` libellé selon le type et « Ce bâton marque » (`[data-log-submit]` / `.log-label`).
 - [x] v0.33.3 : cadre de focus seulement au clavier (`html[data-input]`, coarse pointer sans clavier = pas de cadre) ;
       renommer un groupe : sélecteur `input[name=label]` corrigé dans app.js.
+- [x] v0.34 : tuile « périodes » = état + durée (`Periods::shortDuration()`) ; choix de couleur teinte -> nuance.
 - [ ] Rappels / objectifs (« au moins 3 par semaine »).
 - [ ] i18n (anglais).
 - [ ] Intégration HA facultative : capteurs (« temps depuis », « total du jour »), webhook/API pour ajouter

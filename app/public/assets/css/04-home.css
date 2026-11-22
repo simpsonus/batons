@@ -22,6 +22,8 @@ a.tap { text-decoration: none; }
 .tap .name { font-weight: 650; line-height: 1.2; max-width: 100%; overflow-wrap: break-word; word-break: normal; }
 .tap .meta { display: block; width: 100%; min-width: 0; overflow: hidden; font-size: .85rem; color: var(--muted); margin-top: auto; }
 .tap .meta b { color: var(--c-ink); font-size: 1rem; }
+/* Période en cours : point de la couleur du texte de la tuile. */
+.p-dot { display: inline-block; width: .5rem; height: .5rem; border-radius: 50%; background: currentColor; margin-right: .35rem; vertical-align: .1em; }
 .more {
     position: absolute; top: 0; right: 0; width: var(--tap); height: var(--tap);
     display: grid; place-items: center; text-decoration: none; color: var(--muted); border-radius: 0 var(--radius) 0 10px;

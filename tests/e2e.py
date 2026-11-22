@@ -83,9 +83,13 @@ def main():
     print('Tous les parcours passent.')
 
 
-def create_category(page, base, name, group='', unit='', count_future=None, kind=None):
+def create_category(page, base, name, group='', unit='', count_future=None, kind=None, periods=False, hue=None):
     page.goto(base + '?r=category_new')
     page.fill('input[name=label]', name)
+    if periods:
+        page.check('#f-periods')
+    if hue:
+        page.click(f'[data-hue="{hue}"]')
     if kind:
         page.check(f'input[name=kind][value={kind}]')
     if group:
@@ -366,6 +370,27 @@ def run_flows(page, base):
         check(m.evaluate("getComputedStyle(document.activeElement).outlineStyle") == 'solid', 'cadre visible au clavier')
         ctx2.close()
     focus_rings()
+
+    @step('Couleur en deux étapes et tuile « période » (en cours, puis finie)')
+    def color_and_periods():
+        page.goto(base + '?r=category_new')
+        check(page.locator('[data-tones]:visible').count() == 1, 'une seule rangée de nuances visible')
+        page.click('[data-hue="Violet"]')
+        check(page.locator('[data-tones="Violet"]').is_visible(), 'la rangée de la teinte choisie')
+        check(page.evaluate("document.querySelector('input[name=color]:checked').value") == '#7c3aed', 'nuance « Moyenne » gardée')
+        page.locator('[data-tones="Violet"] .tone', has_text='Pâle').click()
+        check(page.evaluate("document.querySelector('input[name=color]:checked').value") == '#d8b4fe', 'nuance « Pâle » choisie')
+        create_category(page, base, 'Rhume', periods=True, hue='Émeraude')
+        page.goto(base)
+        tile = page.locator('.tile', has_text='Rhume')
+        tile.locator('button.tap').click()
+        page.locator('.flash').wait_for()
+        check('En cours' in tile.inner_text(), 'tuile : « En cours »')
+        tile.locator('button.tap').click()
+        page.locator('.flash', has_text='').wait_for()
+        page.locator('.tile', has_text='a duré').wait_for()
+        check('Fini' in tile.inner_text() and 'a duré' in tile.inner_text(), 'tuile : « Fini … a duré … »')
+    color_and_periods()
 
     @step('Réorganiser : renommer un groupe (crayon)')
     def rename_group():

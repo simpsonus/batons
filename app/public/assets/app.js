@@ -17,12 +17,41 @@
         if (msg && !window.confirm(msg)) ev.preventDefault();
     });
 
-    // Sélecteur de couleur libre : décoche les pastilles de la palette.
-    document.querySelectorAll('[data-color-custom]').forEach((input) => {
-        input.addEventListener('input', () => {
-            input.form.querySelectorAll('input[name="color"]').forEach((r) => { r.checked = false; });
+    // Couleur d'une catégorie : teinte (16 pastilles), puis nuance (4 boutons) ; « Autre couleur » = choix libre.
+    const pick = document.querySelector('[data-color-pick]');
+    if (pick) {
+        const row = pick.querySelector('[data-hue-row]');
+        const custom = pick.querySelector('[data-custom-label]');
+        const note = pick.querySelector('[data-custom-note]');
+        const name = pick.querySelector('[data-hue-name]');
+        pick.classList.add('js');
+        row.hidden = false;
+        const show = (hue) => {
+            pick.querySelectorAll('[data-tones]').forEach((r) => { r.hidden = r.dataset.tones !== hue; });
+            row.querySelectorAll('[data-hue]').forEach((b) => b.setAttribute('aria-pressed', b.dataset.hue === hue ? 'true' : 'false'));
+            custom.classList.toggle('on', !hue);
+            note.hidden = !!hue;
+            name.textContent = hue ? '· ' + hue : '· personnalisée';
+        };
+        const checked = pick.querySelector('input[name="color"]:checked');
+        show(checked ? checked.closest('[data-tones]').dataset.tones : null);
+        row.addEventListener('click', (ev) => {
+            const b = ev.target.closest('[data-hue]');
+            if (!b) return;
+            const tones = pick.querySelector(`[data-tones="${CSS.escape(b.dataset.hue)}"]`);
+            const radios = [...tones.querySelectorAll('input[name="color"]')];
+            // Garde la même nuance d'une teinte à l'autre (Moyenne par défaut).
+            const cur = pick.querySelector('input[name="color"]:checked');
+            const idx = cur ? [...cur.closest('[data-tones]').querySelectorAll('input')].indexOf(cur) : 2;
+            radios[idx >= 0 ? idx : 2].checked = true;
+            radios[idx >= 0 ? idx : 2].dispatchEvent(new Event('change', { bubbles: true }));
+            show(b.dataset.hue);
         });
-    });
+        pick.querySelector('[data-color-custom]').addEventListener('input', () => {
+            pick.querySelectorAll('input[name="color"]').forEach((r) => { r.checked = false; });
+            show(null);
+        });
+    }
 
     // Sélecteur d'icônes MDI : recherche à la frappe, clic = « mdi:nom » dans le champ.
     const picker = document.querySelector('[data-icon-picker]');

@@ -41,6 +41,18 @@ final class Periods
         ];
     }
 
+    /** Durée courte pour une tuile : « 3 h », « 45 min », « 4 j » (jours calendaires dès qu'on change de jour). */
+    public static function shortDuration(string $startUtc, ?string $endUtc = null): string
+    {
+        $end = $endUtc ?? Time::nowUtc();
+        $days = (int) Time::local($startUtc)->setTime(0, 0)->diff(Time::local($end)->setTime(0, 0))->days;
+        if ($days > 0) {
+            return $days . ' j';
+        }
+        $min = max(0, intdiv(strtotime($end . ' UTC') - strtotime($startUtc . ' UTC'), 60));
+        return $min < 60 ? max(1, $min) . ' min' : intdiv($min, 60) . ' h';
+    }
+
     /** Période en cours, ou null. */
     public static function open(int $categoryId): ?array
     {

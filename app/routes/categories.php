@@ -86,7 +86,7 @@ switch ($route) {
     case 'category_new':
     case 'category_edit':
         $c = $route === 'category_edit' ? $category(Http::intInput('id'))
-            : ['id' => null, 'name' => '', 'icon' => '', 'color' => '#c2410c', 'unit' => '', 'group_name' => '', 'archived' => 0, 'hidden' => 0, 'periods' => 0, 'count_future' => 0, 'kind' => in_array($_GET['kind'] ?? '', ['film', 'serie', 'livre', 'jeu'], true) ? $_GET['kind'] : 'simple'];
+            : ['id' => null, 'name' => '', 'icon' => '', 'color' => '#ea580c', 'unit' => '', 'group_name' => '', 'archived' => 0, 'hidden' => 0, 'periods' => 0, 'count_future' => 0, 'kind' => in_array($_GET['kind'] ?? '', ['film', 'serie', 'livre', 'jeu'], true) ? $_GET['kind'] : 'simple'];
         Http::render('category_form', ['c' => $c, 'errors' => [], 'groups' => Categories::groupNames($uid)],
             $c['id'] ? 'Modifier « ' . $c['name'] . ' »' : 'Nouvelle catégorie');
 

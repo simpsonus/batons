@@ -18,6 +18,7 @@ use Batons\Chart;
 use Batons\Db;
 use Batons\Events;
 use Batons\Importer;
+use Batons\Periods;
 use Batons\Theme;
 use Batons\Time;
 
@@ -239,6 +240,28 @@ function test_book_next_volume(): void
     Events::addWork($c, utc('-2 hours'), $w, null, null, 4, null, null, 'start');
     Events::addWork($c, utc('-1 hour'), $w, null, null, 2, null, null);
     same(['volume' => 5], Batons\Works::next($uid, $work, Batons\Works::lastEvent($w, $c)), 'suivant = tome commencé + 1');
+}
+
+// --- Périodes : durée courte des tuiles ; palette ---------------------------------------------------------
+
+function test_period_short_duration(): void
+{
+    $now = Time::nowUtc();
+    same('1 min', Periods::shortDuration($now, $now), 'moins d\'une minute : 1 min');
+    same('45 min', Periods::shortDuration(utc('-45 minutes'), $now), 'minutes');
+    $start = (new DateTimeImmutable('today 08:00', Time::tz()))->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d H:i:s');
+    $end = (new DateTimeImmutable('today 11:30', Time::tz()))->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d H:i:s');
+    same('3 h', Periods::shortDuration($start, $end), 'heures dans la même journée');
+    same('4 j', Periods::shortDuration(utc('-4 days'), $now), 'jours calendaires');
+}
+
+function test_palette_hues_and_tones(): void
+{
+    $hues = Theme::hues();
+    same(16, count($hues), '16 teintes');
+    check(array_reduce($hues, static fn($ok, $t) => $ok && count($t) === 4, true), '4 nuances par teinte');
+    same(64, count(Theme::palette()), '64 couleurs distinctes');
+    same(['Vert moyen', 'Vert'], Theme::palette()['#16a34a'], 'nom « Vert moyen »');
 }
 
 // --- CBOR : exemples de la RFC 8949, annexe A ----------------------------------------------------------

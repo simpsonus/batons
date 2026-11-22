@@ -85,16 +85,27 @@ form[role=search] label { margin-bottom: 0; }
 .seg button[aria-pressed="true"] { background: var(--surface); color: var(--ink); font-weight: 600; box-shadow: var(--shadow); outline: 1px solid var(--line); }
 .seg a[aria-current] { background: var(--surface); color: var(--ink); font-weight: 600; box-shadow: var(--shadow); outline: 1px solid var(--line); }
 
-/* --- Couleurs (palette) -------------------------------------------------------------------- */
-.swatches { display: flex; flex-wrap: wrap; gap: .1rem .2rem; }
-.swatch-row-label { flex: 0 0 100%; margin: .5rem 0 0; font-size: .875rem; color: var(--muted); font-weight: 600; }
-.swatch { margin: 0; flex: 0 0 auto; cursor: pointer; position: relative; display: grid; place-items: center; width: var(--tap); height: var(--tap); }
-.swatch input[type=radio] { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
-.swatch span { display: block; width: 2rem; height: 2rem; border-radius: 50%; background: var(--c); border: 3px solid var(--surface); box-shadow: 0 0 0 1px var(--field); }
-.swatch input:checked + span { box-shadow: 0 0 0 3px var(--ink); }
-.swatch input:checked + span::after { content: "✓"; display: grid; place-items: center; height: 100%; color: var(--c-on, #fff); font-weight: 700; font-size: .9rem; }
-.swatch input:focus-visible + span { outline: 3px solid var(--focus); outline-offset: 3px; }
-.swatch.custom input { width: 2rem; height: 2rem; padding: 0; border: 1px solid var(--field); border-radius: 50%; background: none; cursor: pointer; }
+/* --- Couleur d'une catégorie : teinte (16) puis nuance (4) ; sans JS, les 16 rangées de nuances ----------- */
+.hue-row { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: .2rem; margin-bottom: .6rem; max-width: 26rem; }
+.hue { position: relative; display: grid; place-items: center; aspect-ratio: 1; min-height: var(--tap); padding: 0; margin: 0;
+    border: 0; background: none; cursor: pointer; }
+.hue > span:first-of-type { width: min(2rem, 100%); aspect-ratio: 1; border-radius: 50%; background: var(--c); border: 3px solid var(--surface); box-shadow: 0 0 0 1px var(--field); }
+.hue[aria-pressed="true"] > span:first-of-type { box-shadow: 0 0 0 3px var(--ink); }
+.hue.custom > span:first-of-type { background: conic-gradient(#ef4444, #facc15, #4ade80, #22d3ee, #2563eb, #d946ef, #ef4444); }
+.hue.custom.on > span:first-of-type { box-shadow: 0 0 0 3px var(--ink); }
+.hue.custom input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; border: 0; padding: 0; }
+.color-pick > .hue.custom { display: inline-flex; align-items: center; gap: .5rem; aspect-ratio: auto; margin-top: .2rem; padding-right: .6rem; }
+.color-pick > .hue.custom > span:first-of-type { width: 2rem; flex: none; }
+.custom-txt { font-size: .9rem; font-weight: 500; white-space: nowrap; }
+.tone-row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .35rem; align-items: center; margin-bottom: .35rem; max-width: 26rem; }
+.tone-row:not(:has(input:checked)) { display: none; }   /* seule la rangée de la teinte choisie (sans attendre le JS) */
+.tone-hue { display: none; font-size: .875rem; color: var(--muted); min-width: 4.2rem; }
+.tone { position: relative; margin: 0; cursor: pointer; }
+.tone input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
+.tone span { display: grid; place-items: center; min-height: var(--tap); border-radius: 10px; background: var(--c); color: var(--c-on, #fff);
+    font-size: .875rem; font-weight: 600; border: 2px solid transparent; }
+.tone input:checked + span { box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--ink); }
+.tone input:focus-visible + span { outline: 3px solid var(--focus); outline-offset: 4px; }
 
 /* --- Sélecteur d'icône --------------------------------------------------------------------- */
 .icon-field { display: flex; align-items: center; gap: .8rem; }
