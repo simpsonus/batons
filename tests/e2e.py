@@ -93,7 +93,12 @@ def create_category(page, base, name, group='', unit='', count_future=None, kind
     if kind:
         page.check(f'input[name=kind][value={kind}]')
     if group:
-        page.fill('input[name=group]', group)
+        # Groupe existant : choisi dans la liste ; sinon « Nouveau groupe… » et son nom.
+        if group in page.locator('[data-group-select] option').all_inner_texts():
+            page.select_option('[data-group-select]', label=group)
+        else:
+            page.select_option('[data-group-select]', '__new')
+            page.fill('input[name=group]', group)
     if unit:
         page.fill('input[name=unit]', unit)
     if count_future is not None:
@@ -391,6 +396,22 @@ def run_flows(page, base):
         page.locator('.tile', has_text='a duré').wait_for()
         check('Fini' in tile.inner_text() and 'a duré' in tile.inner_text(), 'tuile : « Fini … a duré … »')
     color_and_periods()
+
+    @step('Groupe : liste des groupes existants + « Nouveau groupe… »')
+    def group_select():
+        page.goto(base + '?r=category_new')
+        check(not page.locator('[data-group-new]').is_visible(), 'champ « nouveau groupe » caché par défaut')
+        opts = page.locator('[data-group-select] option').all_inner_texts()
+        check(opts[0] == 'Aucun groupe' and opts[-1] == 'Nouveau groupe…' and len(opts) > 2, 'groupes existants proposés')
+        page.select_option('[data-group-select]', '__new')
+        check(page.locator('[data-group-new]').is_visible(), 'champ affiché avec « Nouveau groupe… »')
+        n_before = len(opts)
+        page.fill('input[name=label]', 'Tension')
+        page.fill('input[name=group]', opts[1].upper())    # même groupe, autre casse : pas de doublon
+        page.click('.form-actions button.accent')
+        page.goto(base + '?r=category_new')
+        check(len(page.locator('[data-group-select] option').all_inner_texts()) == n_before, 'pas de groupe en double')
+    group_select()
 
     @step('Réorganiser : renommer un groupe (crayon)')
     def rename_group():

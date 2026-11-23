@@ -269,6 +269,8 @@ docker build -f docker/Dockerfile -t batons . && docker run -p 8080:8080 -v $PWD
 - [x] v0.33.3 : cadre de focus seulement au clavier (`html[data-input]`, coarse pointer sans clavier = pas de cadre) ;
       renommer un groupe : sélecteur `input[name=label]` corrigé dans app.js.
 - [x] v0.34 : tuile « périodes » = état + durée (`Periods::shortDuration()`) ; choix de couleur teinte -> nuance.
+- [x] v0.34.1 : groupe d'une catégorie = `<select name="group_pick">` (groupes existants + « Nouveau groupe… » = `__new`
+      -> champ `group`) ; `Categories::groupId()` retrouve un groupe à la casse et aux accents près (`fold()`).
 - [ ] Rappels / objectifs (« au moins 3 par semaine »).
 - [ ] i18n (anglais).
 - [ ] Intégration HA facultative : capteurs (« temps depuis », « total du jour »), webhook/API pour ajouter

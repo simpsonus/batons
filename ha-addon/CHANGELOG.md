@@ -1,5 +1,11 @@
 # Journal des modifications
 
+## 0.34.1
+- **Groupe d'une catégorie : une liste** des groupes existants (« Aucun groupe », Santé, Loisirs…), avec
+  « Nouveau groupe… » en dernier choix, qui fait apparaître le champ pour taper son nom.
+- Taper le nom d'un groupe qui existe déjà, même avec d'autres majuscules ou sans accents (« sante »),
+  le rejoint au lieu de créer un doublon.
+
 ## 0.34.0
 - **Catégories « périodes » (ex. Rhume)** : la tuile montre l'état au lieu de « 1 aujourd'hui » :
   « ● En cours · depuis 2 j » pendant la période, puis « Fini il y a 2 h · a duré 4 j ».

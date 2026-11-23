@@ -264,6 +264,15 @@ function test_palette_hues_and_tones(): void
     same(['Vert moyen', 'Vert'], Theme::palette()['#16a34a'], 'nom « Vert moyen »');
 }
 
+function test_group_name_without_duplicate(): void
+{
+    $uid = user();
+    $a = cat($uid, 'Tension', ['group' => 'Santé']);
+    $b = cat($uid, 'Migraine', ['group' => 'sante']);
+    same(Categories::find($uid, $a)['group_id'], Categories::find($uid, $b)['group_id'], '« sante » rejoint « Santé »');
+    same(['Santé'], Categories::groupNames($uid), 'un seul groupe');
+}
+
 // --- CBOR : exemples de la RFC 8949, annexe A ----------------------------------------------------------
 
 function test_cbor_rfc8949_examples(): void

@@ -276,7 +276,9 @@ final class Categories
         if ($name === '') {
             return null;
         }
-        $id = Db::value('SELECT id FROM groups WHERE user_id = ? AND name = ?', [$userId, $name]);
+        // Même nom à la casse et aux accents près (« sante » rejoint « Santé ») : pas de doublon.
+        $id = Db::value('SELECT id FROM groups WHERE user_id = ? AND name = ?', [$userId, $name])
+            ?? Db::value('SELECT id FROM groups WHERE user_id = ? AND fold(name) = ? ORDER BY id LIMIT 1', [$userId, Db::fold($name)]);
         if ($id !== null) {
             return (int) $id;
         }

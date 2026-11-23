@@ -17,6 +17,18 @@
         if (msg && !window.confirm(msg)) ev.preventDefault();
     });
 
+    // Groupe d'une catégorie : le champ « Nom du nouveau groupe » n'apparaît qu'avec « Nouveau groupe… ».
+    const gSel = document.querySelector('[data-group-select]');
+    if (gSel) {
+        const box = document.querySelector('[data-group-new]');
+        const sync = (focus) => {
+            box.hidden = gSel.value !== '__new';
+            if (!box.hidden && focus) box.querySelector('input').focus();
+        };
+        gSel.addEventListener('change', () => sync(true));
+        sync(false);
+    }
+
     // Couleur d'une catégorie : teinte (16 pastilles), puis nuance (4 boutons) ; « Autre couleur » = choix libre.
     const pick = document.querySelector('[data-color-pick]');
     if (pick) {

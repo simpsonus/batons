@@ -95,6 +95,10 @@ switch ($route) {
         if ($id !== null) {
             $category($id);
         }
+        // Groupe choisi dans la liste, ou « Nouveau groupe… » + nom tapé (sans liste : le champ seul).
+        if (isset($_POST['group_pick']) && $_POST['group_pick'] !== '__new') {
+            $_POST['group'] = $_POST['group_pick'];
+        }
         [$data, $errors] = Categories::validate($_POST);
         if ($data['hidden'] && !Privacy::hasPin($uid)) {
             $errors['hidden'] = 'Définis d\'abord un code de déverrouillage (menu du logo › Afficher les éléments masqués).';

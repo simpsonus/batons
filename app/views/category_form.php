@@ -92,10 +92,26 @@ $hues = Batons\Theme::hues();
     </fieldset>
 
     <div class="row">
-        <label class="grow">Groupe <span class="muted">facultatif</span>
-            <input type="text" name="group" value="<?= e($c['group_name']) ?>" list="groups" maxlength="60" autocomplete="off" autocorrect="off" autocapitalize="sentences" spellcheck="false" data-1p-ignore data-lpignore="true" placeholder="ex. Santé, Maison">
-            <datalist id="groups"><?php foreach ($groups as $g): ?><option value="<?= e($g) ?>"><?php endforeach; ?></datalist>
-        </label>
+        <?php
+        // Groupe : liste des groupes existants + « Nouveau groupe… » (fait apparaître le champ, avec JS ; sans JS il reste affiché).
+        $curGroup = (string) $c['group_name'];
+        $inList = $curGroup === '' || in_array($curGroup, $groups, true);
+        ?>
+        <div class="grow group-pick" data-group-pick>
+            <label for="f-group-pick">Groupe <span class="muted">facultatif</span></label>
+            <select id="f-group-pick" name="group_pick" data-group-select>
+                <option value="" <?= $curGroup === '' ? 'selected' : '' ?>>Aucun groupe</option>
+                <?php foreach ($groups as $g): ?>
+                    <option value="<?= e($g) ?>" <?= $g === $curGroup ? 'selected' : '' ?>><?= e($g) ?></option>
+                <?php endforeach; ?>
+                <option value="__new" <?= $inList ? '' : 'selected' ?>>Nouveau groupe…</option>
+            </select>
+            <label class="group-new" data-group-new>
+                <span class="group-new-label">Nom du nouveau groupe</span>
+                <input type="text" name="group" value="<?= $inList ? '' : e($curGroup) ?>" maxlength="60" autocomplete="off" autocorrect="off"
+                       autocapitalize="sentences" spellcheck="false" data-1p-ignore data-lpignore="true" placeholder="ex. Santé, Maison">
+            </label>
+        </div>
         <label class="narrow">Unité <span class="muted">facultatif</span>
             <input type="text" name="unit" value="<?= e($c['unit']) ?>" maxlength="20" placeholder="km, €, mg…">
         </label>
