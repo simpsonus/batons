@@ -32,7 +32,7 @@ $back = safe_from($_POST['back'] ?? null) ?? from_url(url('category_order'));
         <?= csrf() ?>
         <input type="hidden" name="back" value="<?= e($back) ?>">
         <label for="g-label">Intitulé du groupe</label>
-        <input type="text" id="g-label" name="label" value="<?= e($name) ?>" maxlength="80" required autocomplete="off" autocorrect="off" autocapitalize="sentences" spellcheck="false" data-1p-ignore data-lpignore="true"
+        <input type="search" data-plain enterkeyhint="done" id="g-label" name="label" value="<?= e($name) ?>" maxlength="80" required autocomplete="off" autocorrect="off" autocapitalize="sentences" spellcheck="false" data-1p-ignore data-lpignore="true"
             <?= $error ? 'aria-invalid="true" aria-describedby="g-label-err"' : '' ?> autofocus>
         <?php if ($error): ?><p class="error" id="g-label-err"><?= e($error) ?></p><?php endif; ?>
         <p class="muted small">Si cet intitulé est déjà celui d'un autre groupe, on te proposera de réunir les deux.</p>

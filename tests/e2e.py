@@ -417,8 +417,9 @@ def run_flows(page, base):
     def form_sections():
         page.goto(base + '?r=category_new')
         heads = page.locator('.form-sec > h2').all_inner_texts()
-        check(heads == ['Catégorie', 'Apparence', 'Rangement', 'Comptage', 'Confidentialité'], f'sections dans l\'ordre ({heads})')
+        check(heads == ['Apparence', 'Rangement', 'Comptage', 'Confidentialité'], f'sections dans l\'ordre, pas de titre « Catégorie » ({heads})')
         check(page.locator('input[name=periods]').is_visible() and page.locator('input[name=unit]').is_visible(), 'Simple : unité et périodes')
+        check(page.locator('input[name=label]').get_attribute('type') == 'search' and page.locator('input[name=group]').get_attribute('type') == 'search', 'intitulés en type=search (pas de fiche Contact Safari)')
         page.check('input[name=kind][value=livre]')
         check(not page.locator('input[name=periods]').is_visible() and not page.locator('input[name=unit]').is_visible(), 'Livres : unité et périodes masquées')
         labels = ' '.join(page.locator('form label, form legend').all_inner_texts())

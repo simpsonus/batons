@@ -14,11 +14,10 @@ $hues = Batons\Theme::hues();
     <input type="hidden" name="back" value="<?= e($closeTo) ?>">
     <?php if ($isEdit): ?><input type="hidden" name="id" value="<?= (int) $c['id'] ?>"><?php endif; ?>
 
-    <section class="form-sec" aria-labelledby="fs-cat">
-        <h2 id="fs-cat">Catégorie</h2>
+    <section class="form-sec">
         <div class="row">
             <label class="grow">Intitulé
-                <input type="text" name="label" value="<?= e($c['name']) ?>" maxlength="80" required autocomplete="off" autocorrect="off" autocapitalize="sentences" spellcheck="false" data-1p-ignore data-lpignore="true" <?= $isEdit ? '' : 'autofocus' ?> <?= isset($errors['name']) ? 'aria-invalid="true" aria-describedby="err-label"' : '' ?> placeholder="ex. Café, Arrosage du ficus, Migraine">
+                <input type="search" data-plain enterkeyhint="done" name="label" value="<?= e($c['name']) ?>" maxlength="80" required autocomplete="off" autocorrect="off" autocapitalize="sentences" spellcheck="false" data-1p-ignore data-lpignore="true" <?= $isEdit ? '' : 'autofocus' ?> <?= isset($errors['name']) ? 'aria-invalid="true" aria-describedby="err-label"' : '' ?> placeholder="ex. Café, Arrosage du ficus, Migraine">
                 <?php if (isset($errors['name'])): ?><span class="error" id="err-label"><?= e($errors['name']) ?></span><?php endif; ?>
             </label>
         </div>
@@ -109,7 +108,7 @@ $hues = Batons\Theme::hues();
                 </select>
                 <label class="group-new" data-group-new>
                     <span class="group-new-label">Nouveau groupe</span>
-                    <input type="text" name="group" value="<?= $inList ? '' : e($curGroup) ?>" maxlength="60" autocomplete="off" autocorrect="off"
+                    <input type="search" data-plain enterkeyhint="done" name="group" value="<?= $inList ? '' : e($curGroup) ?>" maxlength="60" autocomplete="off" autocorrect="off"
                            autocapitalize="sentences" spellcheck="false" data-1p-ignore data-lpignore="true" placeholder="ex. Santé, Maison">
                 </label>
             </div>

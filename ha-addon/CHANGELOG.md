@@ -1,5 +1,10 @@
 # Journal des modifications
 
+## 0.34.3
+- Sur iPhone, « Préremplir le contact » ne devrait plus apparaître sur l'intitulé d'une catégorie,
+  le nouveau groupe ni le renommage d'un groupe.
+- Créer une catégorie : le titre « Catégorie » en haut de page est retiré (l'intitulé suit directement).
+
 ## 0.34.2
 - **Créer ou modifier une catégorie** : la page est rangée en sections (Catégorie, Apparence, Rangement,
   Comptage, Confidentialité) au lieu d'alterner réglages techniques et visuels.
