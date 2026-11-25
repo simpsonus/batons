@@ -1,5 +1,12 @@
 # Journal des modifications
 
+## 0.34.2
+- **Créer ou modifier une catégorie** : la page est rangée en sections (Catégorie, Apparence, Rangement,
+  Comptage, Confidentialité) au lieu d'alterner réglages techniques et visuels.
+- « Unité » et « Suivre des périodes » n'apparaissent plus que pour le type Simple (les séries, films,
+  livres et jeux ne les utilisent pas).
+- Sur iPhone, Safari ne propose plus de remplir le champ avec une fiche Contact (libellé « Intitulé » au lieu de « Nom »).
+
 ## 0.34.1
 - **Groupe d'une catégorie : une liste** des groupes existants (« Aucun groupe », Santé, Loisirs…), avec
   « Nouveau groupe… » en dernier choix, qui fait apparaître le champ pour taper son nom.

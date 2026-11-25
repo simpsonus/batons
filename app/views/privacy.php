@@ -42,7 +42,7 @@
     <?php endif; ?>
 
     <div data-passkey-register hidden>
-        <label>Nom de cet appareil
+        <label>Désignation de cet appareil
             <input type="text" maxlength="60" data-passkey-name autocomplete="off">
         </label>
         <button type="button" class="btn accent" data-passkey-register-btn>Enregistrer cet appareil</button>

@@ -99,6 +99,9 @@ Le nom vient des bâtons qu'on trace pour compter (IIII barrés). Slug technique
   `Backup::maybeRun()` (`VACUUM INTO`, après l'envoi de la page, `BATONS_BACKUP_DAYS`).
 - **Champs de saisie libre** (intitulés) : jamais `name="name"` ni d'id/libellé « name » — Safari y propose une
   fiche Contact malgré `autocomplete="off"`. Utiliser `name="label"` + autocomplete/autocorrect/spellcheck désactivés.
+  Le **libellé visible** compte aussi : jamais « Nom » (dire « Intitulé », « Nouveau groupe », « Désignation »).
+- **Formulaire de catégorie** en sections `.form-sec` + `h2` : Catégorie, Apparence, Rangement, Comptage, Confidentialité.
+  Réglage propre au type Simple = dans `.simple-only` (masqué en CSS `:has()` pour les autres types, serveur qui l'ignore).
 - L'interface ne mentionne pas Home Assistant (l'app doit rester neutre).
 - **Éléments masqués** (`Privacy.php`, `WebAuthn.php`, `Cbor.php`) : `categories.hidden` / `groups.hidden`.
   Verrouillé = invisibles PARTOUT (accueil, chronologie, archives, export, réorganiser, liste des groupes,
@@ -271,6 +274,7 @@ docker build -f docker/Dockerfile -t batons . && docker run -p 8080:8080 -v $PWD
 - [x] v0.34 : tuile « périodes » = état + durée (`Periods::shortDuration()`) ; choix de couleur teinte -> nuance.
 - [x] v0.34.1 : groupe d'une catégorie = `<select name="group_pick">` (groupes existants + « Nouveau groupe… » = `__new`
       -> champ `group`) ; `Categories::groupId()` retrouve un groupe à la casse et aux accents près (`fold()`).
+- [x] v0.34.2 : formulaire de catégorie en sections, Unité/Périodes réservées au type Simple, « Nom » -> « Intitulé » (Safari).
 - [ ] Rappels / objectifs (« au moins 3 par semaine »).
 - [ ] i18n (anglais).
 - [ ] Intégration HA facultative : capteurs (« temps depuis », « total du jour »), webhook/API pour ajouter

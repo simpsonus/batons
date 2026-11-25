@@ -413,6 +413,18 @@ def run_flows(page, base):
         check(len(page.locator('[data-group-select] option').all_inner_texts()) == n_before, 'pas de groupe en double')
     group_select()
 
+    @step('Formulaire de catégorie : sections, Unité/Périodes seulement pour Simple, pas de libellé « Nom »')
+    def form_sections():
+        page.goto(base + '?r=category_new')
+        heads = page.locator('.form-sec > h2').all_inner_texts()
+        check(heads == ['Catégorie', 'Apparence', 'Rangement', 'Comptage', 'Confidentialité'], f'sections dans l\'ordre ({heads})')
+        check(page.locator('input[name=periods]').is_visible() and page.locator('input[name=unit]').is_visible(), 'Simple : unité et périodes')
+        page.check('input[name=kind][value=livre]')
+        check(not page.locator('input[name=periods]').is_visible() and not page.locator('input[name=unit]').is_visible(), 'Livres : unité et périodes masquées')
+        labels = ' '.join(page.locator('form label, form legend').all_inner_texts())
+        check('Nom' not in labels.split() and 'Nom ' not in labels, 'aucun libellé « Nom » (Safari propose une fiche Contact)')
+    form_sections()
+
     @step('Réorganiser : renommer un groupe (crayon)')
     def rename_group():
         page.goto(base + '?r=category_order')
